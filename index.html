@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE HAPPY MART - Advanced Inventory & Order Management System</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for Excel Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-primary: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-info: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Entry Login Gateway */
+        .login-gateway {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .login-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent-primary), #818cf8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .login-field {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .login-field input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-login-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #0b1120;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 24px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-primary), #818cf8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            flex-shrink: 0;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item i { width: 18px; text-align: center; }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .nav-count {
+            margin-left: auto;
+            background: rgba(148, 163, 184, 0.18);
+            color: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        /* Main Workspace */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .page-title-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: var(--border-color);
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .btn-excel {
+            background-color: var(--accent-success);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transition: 0.2s;
+        }
+
+        .btn-excel:hover {
+            opacity: 0.9;
+        }
+
+        /* Live Clock / Sync Chip */
+        .clock-chip {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 14px;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+            min-width: 210px;
+        }
+
+        .clock-time {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .clock-status {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            display: inline-block;
+        }
+
+        .dot.online { background: var(--accent-success); }
+        .dot.offline { background: var(--accent-warning); }
+
+        /* Views */
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* Form Components */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .btn-submit {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--accent-danger);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-warning {
+            background-color: var(--accent-warning);
+            color: black;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background-color: var(--accent-success);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background-color: var(--card-bg);
+        }
+
+        th {
+            background-color: #162032;
+            color: var(--text-muted);
+            padding: 14px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #24334a;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 28px 16px;
+            font-weight: 600;
+        }
+
+        .empty-row:hover { background-color: transparent; }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .badge-draft { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+        .badge-pending { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+        .badge-approval { background: rgba(56, 189, 248, 0.15); color: var(--accent-info); }
+        .badge-ofd { background: rgba(99, 102, 241, 0.15); color: var(--accent-primary); }
+        .badge-delivered { background: rgba(16, 185, 129, 0.15); color: var(--accent-success); }
+        .badge-returned { background: rgba(239, 68, 68, 0.15); color: var(--accent-danger); }
+        .badge-cancelled { background: rgba(100, 116, 139, 0.25); color: #cbd5e1; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .action-btn:hover {
+            color: white;
+            background: var(--border-color);
+        }
+
+        .map-link {
+            color: #38bdf8;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stamp-main { font-weight: 600; }
+        .stamp-sub { font-size: 12px; color: var(--text-muted); }
+
+        /* Admin Password Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), #818cf8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 4px;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        .modal-input:focus { border-color: var(--accent-primary); }
+
+        .modal-buttons { display: flex; gap: 12px; }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .modal-btn-confirm { background-color: var(--accent-primary); color: white; }
+        .modal-btn-cancel { background-color: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-muted); }
+
+        /* Reason Prompt Modal */
+        .reason-card { width: 420px; text-align: left; }
+        .reason-card .modal-title, .reason-card .modal-subtitle { text-align: center; }
+        .reason-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+        .reason-textarea:focus { border-color: var(--accent-primary); }
+
+        .admin-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .admin-tab-btn {
+            padding: 10px 20px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .admin-tab-btn.active {
+            background-color: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .report-summary-box {
+            background-color: #111827;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .report-summary-title { font-size: 16px; font-weight: 700; }
+        .report-summary-val { font-size: 20px; font-weight: 800; color: var(--accent-success); }
+
+        .hint-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .toast-stack {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1200;
+        }
+
+        .toast {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+            max-width: 340px;
+        }
+
+        .toast.ok { border-left-color: var(--accent-success); }
+        .toast.warn { border-left-color: var(--accent-warning); }
+        .toast.err { border-left-color: var(--accent-danger); }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar { width: 100%; }
+            .main-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. ENTRY LOGIN GATEWAY SCREEN -->
+    <div class="login-gateway" id="mainLoginGateway">
+        <div class="login-card">
+            <div class="login-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="login-title">THE HAPPY MART Portal</div>
+            <div class="login-subtitle">Please enter your system authentication details</div>
+            <form onsubmit="handleMainLogin(event)">
+                <div class="login-field">
+                    <label>Username</label>
+                    <input type="text" id="mainUsername" placeholder="Enter Username" required autocomplete="off">
+                </div>
+                <div class="login-field">
+                    <label>Password</label>
+                    <input type="password" id="mainPassword" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="btn-login-submit"><i class="fa-solid fa-right-to-bracket"></i> Unlock System</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navigation Sidebar -->
+    <aside class="sidebar">
+        <div class="brand-header">
+            <div class="brand-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <div class="brand-title">THE HAPPY MART</div>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item active" id="nav-orders" onclick="switchView('orders')"><i class="fa-solid fa-cart-shopping"></i> Daily Orders <span class="nav-count" id="count-orders">0</span></li>
+            <li class="nav-item" id="nav-ofd" onclick="switchView('ofd')"><i class="fa-solid fa-truck-fast"></i> Out For Delivery <span class="nav-count" id="count-ofd">0</span></li>
+            <li class="nav-item" id="nav-delivered" onclick="switchView('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Orders <span class="nav-count" id="count-delivered">0</span></li>
+            <li class="nav-item" id="nav-returns" onclick="switchView('returns')"><i class="fa-solid fa-rotate-left"></i> Returns <span class="nav-count" id="count-returns">0</span></li>
+            <li class="nav-item" id="nav-cancelled" onclick="switchView('cancelled')"><i class="fa-solid fa-ban"></i> Cancelled Orders <span class="nav-count" id="count-cancelled">0</span></li>
+            <li class="nav-item" id="nav-history" onclick="switchView('history')"><i class="fa-solid fa-clock-rotate-left"></i> History <span class="nav-count" id="count-history">0</span></li>
+            <li class="nav-item" id="nav-inventory" onclick="switchView('inventory')"><i class="fa-solid fa-warehouse"></i> Inventory Stock <span class="nav-count" id="count-inventory">0</span></li>
+            <li class="nav-item" id="nav-admin" onclick="openAdminModal()"><i class="fa-solid fa-user-gear"></i> Admin Panel <span class="nav-count" id="count-approval">0</span></li>
+        </ul>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+
+        <!-- Header Controls -->
+        <div class="top-bar">
+            <div class="page-title-group">
+                <button class="btn-back" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h1 class="page-title" id="current-page-title">Daily Order Sheet</h1>
+            </div>
+            <div class="top-bar-right">
+                <div class="clock-chip">
+                    <span class="clock-time" id="liveClock">--</span>
+                    <span class="clock-status"><span class="dot" id="timeDot"></span><span id="timeStatusText">Syncing time…</span></span>
+                </div>
+                <button class="btn-excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Export All to Excel</button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: DAILY ORDERS -->
+        <section id="view-orders" class="view-section active">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;" id="orderFormHeading">Create New Order</h3>
+                <form id="orderForm" onsubmit="saveOrder(event)">
+                    <input type="hidden" id="editingOrderId" value="">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Customer Name</label>
+                            <input type="text" id="custName" required placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="custPhone" required placeholder="03XXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Map Location URL</label>
+                            <input type="url" id="custMap" placeholder="Google Maps Link">
+                        </div>
+                        <div class="form-group">
+                            <label>Select Item</label>
+                            <select id="orderItemSelect" onchange="autoFillItemPrice()" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="orderQty" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (Manual PKR)</label>
+                            <input type="number" id="orderPrice" min="0" required placeholder="Enter Price">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Remarks</label>
+                        <textarea id="orderRemarks" rows="2" placeholder="Special Instructions..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn-submit" id="orderSubmitBtn">Save Order (Draft)</button>
+                        <button type="button" class="btn-back" id="orderCancelEditBtn" style="display:none;" onclick="resetOrderForm()">Cancel Edit</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Location</th>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Created On</th>
+                            <th>Remarks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody"></tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content: flex-end;">
+                <button class="btn-submit" style="background-color: var(--accent-success);" onclick="finalizeAndSubmitOrders()">
+                    <i class="fa-solid fa-paper-plane"></i> Final Submit All Orders to Admin
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 2: OUT FOR DELIVERY (OFD) -->
+        <section id="view-ofd" class="view-section">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Approved / Dispatched On</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Location</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ofdTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 3: DELIVERED ORDERS -->
+        <section id="view-delivered" class="view-section">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Location</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total Amount</th>
+                            <th>Delivery Date</th>
+                            <th>Time</th>
+                            <th>Day</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deliveredTableBody"></tbody>
+                </table>
+            </div>
+            <div class="report-summary-box">
+                <span class="report-summary-title">Total Delivered Revenue:</span>
+                <span class="report-summary-val" id="deliveredTotalVal">PKR 0</span>
+            </div>
+        </section>
+
+        <!-- VIEW 4: RETURNS (SECTION 1 FROM REFERENCE) -->
+        <section id="view-returns" class="view-section">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Returns Report</h3>
+                <form onsubmit="generateReturnsReport(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <input type="date" id="returnsStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input type="date" id="returnsEndDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-filter"></i> Generate Report</button>
+                </form>
+
+                <div id="returnsReportContainer" style="display:none; margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="color: var(--accent-danger);"><i class="fa-solid fa-rotate-left"></i> Date-Wise Returns Report Results</h4>
+                        <button class="btn-excel" onclick="downloadReturnsExcel()"><i class="fa-solid fa-file-excel"></i> Download XLS Excel Report</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Item Name</th>
+                                    <th>Returned Qty</th>
+                                    <th>Total Amount</th>
+                                    <th>Reason / Remarks</th>
+                                    <th>Return Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="returnsReportTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="report-summary-box">
+                        <span class="report-summary-title">Total Returned Amount:</span>
+                        <span class="report-summary-val" id="returnsReportTotalVal" style="color: var(--accent-danger);">PKR 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">All Returned Orders Sheet</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Item Name</th>
+                            <th>Returned Qty</th>
+                            <th>Amount</th>
+                            <th>Reason / Remarks</th>
+                            <th>Return Date</th>
+                            <th>Time</th>
+                            <th>Day</th>
+                        </tr>
+                    </thead>
+                    <tbody id="returnsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 5: CANCELLED ORDERS (SECTION 2 FROM REFERENCE) -->
+        <section id="view-cancelled" class="view-section">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Cancelled Orders Report</h3>
+                <form onsubmit="generateCancelledReport(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <input type="date" id="cancelledStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input type="date" id="cancelledEndDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-filter"></i> Generate Report</button>
+                </form>
+
+                <div id="cancelledReportContainer" style="display:none; margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="color: var(--accent-warning);"><i class="fa-solid fa-ban"></i> Date-Wise Cancelled Orders Report Results</h4>
+                        <button class="btn-excel" onclick="downloadCancelledExcel()"><i class="fa-solid fa-file-excel"></i> Download XLS Excel Report</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Amount</th>
+                                    <th>Cancellation Reason</th>
+                                    <th>Cancel Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cancelledReportTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="report-summary-box">
+                        <span class="report-summary-title">Total Cancelled Value:</span>
+                        <span class="report-summary-val" id="cancelledReportTotalVal" style="color: var(--accent-warning);">PKR 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">All Cancelled Orders Sheet</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                            <th>Cancellation Reason</th>
+                            <th>Cancel Date</th>
+                            <th>Time</th>
+                            <th>Day</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cancelledTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 6: HISTORY (SECTION 3 FROM REFERENCE) -->
+        <section id="view-history" class="view-section">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate History Log Report</h3>
+                <form onsubmit="generateHistoryReport(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <input type="date" id="historyStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input type="date" id="historyEndDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-filter"></i> Generate Report</button>
+                </form>
+
+                <div id="historyReportContainer" style="display:none; margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="color: var(--accent-info);"><i class="fa-solid fa-clock-rotate-left"></i> Date-Wise History Log Report Results</h4>
+                        <button class="btn-excel" onclick="downloadHistoryExcel()"><i class="fa-solid fa-file-excel"></i> Download XLS Excel Report</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Total Price</th>
+                                    <th>Creation Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyReportTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="report-summary-box">
+                        <span class="report-summary-title">Total Orders Log Value:</span>
+                        <span class="report-summary-val" id="historyReportTotalVal" style="color: var(--accent-info);">PKR 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">Master History Records</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Total Price</th>
+                            <th>Creation Date</th>
+                            <th>Approved On</th>
+                            <th>Delivery Date/Time</th>
+                            <th>Return Date/Time</th>
+                            <th>Cancel Date/Time</th>
+                            <th>Final Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 7: INVENTORY STOCK (SECTION 4 FROM REFERENCE) -->
+        <section id="view-inventory" class="view-section">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Delivery & Sales Report</h3>
+                <form onsubmit="generateReport(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <input type="date" id="reportStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input type="date" id="reportEndDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-filter"></i> Submit & Generate Report</button>
+                </form>
+
+                <div id="reportResultContainer" style="display:none; margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="color: var(--accent-success);"><i class="fa-solid fa-file-invoice-dollar"></i> Date-Wise Sales & Delivery Report Results</h4>
+                        <button class="btn-excel" onclick="downloadInventorySalesExcel()"><i class="fa-solid fa-file-excel"></i> Download XLS Excel Report</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                    <th>Google Maps Location</th>
+                                    <th>Delivery Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="report-summary-box">
+                        <span class="report-summary-title">Total Sales Revenue / Budget:</span>
+                        <span class="report-summary-val" id="reportTotalBudget">PKR 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">Current Inventory Stock Sheet</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item ID</th>
+                            <th>Item Name</th>
+                            <th>Unit Price</th>
+                            <th>Available Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 8: ADMIN PANEL -->
+        <section id="view-admin" class="view-section">
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" id="tab-btn-appr" onclick="switchAdminSubTab('approvals')"><i class="fa-solid fa-clipboard-check"></i> Approvals</button>
+                <button class="admin-tab-btn" id="tab-btn-inv" onclick="switchAdminSubTab('inventory')"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</button>
+                <button class="admin-tab-btn" id="tab-btn-ord" onclick="switchAdminSubTab('orders')"><i class="fa-solid fa-list-check"></i> Master Control</button>
+                <button class="admin-tab-btn" id="tab-btn-del" onclick="switchAdminSubTab('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Control</button>
+                <button class="admin-tab-btn" id="tab-btn-ret" onclick="switchAdminSubTab('returns')"><i class="fa-solid fa-rotate-left"></i> Returns Control</button>
+                <button class="admin-tab-btn" id="tab-btn-can" onclick="switchAdminSubTab('cancelled')"><i class="fa-solid fa-ban"></i> Cancelled Control</button>
+                <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
+            </div>
+
+            <!-- SUB TAB 0: ORDER APPROVALS -->
+            <div id="admin-sub-approvals">
+                <div class="card">
+                    <div class="section-heading"><i class="fa-solid fa-clipboard-check"></i> Orders Waiting for Admin Approval</div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Location</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                    <th>Submitted On</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvalTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
+                        <button class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
+                    </div>
+                    <p class="hint-text">Approved orders move straight into Out For Delivery. Rejected orders go back to Daily Orders as editable drafts.</p>
+                </div>
+            </div>
+
+            <!-- SUB TAB 1: INVENTORY CONTROL -->
+            <div id="admin-sub-inventory" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;" id="adminFormHeading">Add New Inventory Item</h3>
+                    <form id="adminItemForm" onsubmit="saveAdminItem(event)">
+                        <input type="hidden" id="editItemId" value="">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Item Name</label>
+                                <input type="text" id="adminItemName" required placeholder="e.g. Wireless Headphones">
+                            </div>
+                            <div class="form-group">
+                                <label>Default Price (PKR)</label>
+                                <input type="number" id="adminItemPrice" min="0" required placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Quantity</label>
+                                <input type="number" id="adminItemQty" min="0" required placeholder="0">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button type="submit" class="btn-submit" id="adminSubmitBtn" style="background-color: var(--accent-success);">Save Item</button>
+                            <button type="button" class="btn-back" id="adminCancelBtn" style="display:none;" onclick="resetAdminForm()">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item ID</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Current Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminInventoryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB TAB 2: MASTER ORDERS CONTROL -->
+            <div id="admin-sub-orders" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">System Master Orders Control</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Stage</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 3: DELIVERED ORDERS CONTROL -->
+            <div id="admin-sub-delivered" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-circle-check" style="color:var(--accent-success)"></i> Admin Control: Delivered Orders</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Delivery Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminDeliveredTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 4: RETURNS CONTROL -->
+            <div id="admin-sub-returns" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminReturnsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 5: CANCELLED CONTROL -->
+            <div id="admin-sub-cancelled" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCancelledTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 6: HISTORY CONTROL -->
+            <div id="admin-sub-history" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-info)"></i> Admin Control: Complete History</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Item</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminHistoryTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Admin Password Modal Portal -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+            <div class="modal-title">Admin Access Portal</div>
+            <div class="modal-subtitle">Enter security passcode to access Admin Control Panel</div>
+            <input type="password" id="adminPassInput" class="modal-input" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter') verifyAdminPass()">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeAdminModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="verifyAdminPass()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reason Modal (Return / Cancel) -->
+    <div class="modal-overlay" id="reasonModal">
+        <div class="modal-card reason-card">
+            <div class="modal-icon" id="reasonIconBox"><i class="fa-solid fa-comment-dots"></i></div>
+            <div class="modal-title" id="reasonTitle">Reason</div>
+            <div class="modal-subtitle" id="reasonSubtitle">Write a short reason for this action</div>
+            <textarea id="reasonInput" class="reason-textarea" rows="3" placeholder="Type the reason here..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeReasonModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="reasonConfirmBtn" onclick="confirmReasonModal()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-stack" id="toastStack"></div>
+
+    <script>
+        /* =========================================================
+           THE HAPPY MART — ORDER & INVENTORY ENGINE
+           Flow: Draft -> Pending Approval -> OFD -> Delivered / Returned / Cancelled
+        ========================================================= */
+
+        const ADMIN_PASSCODE = "1379";
+        const DB_KEY = 'urbanhub_db_v2';
+
+        /* MAIN GATEWAY LOGIN HANDLER */
+        function handleMainLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('mainUsername').value.trim();
+            const p = document.getElementById('mainPassword').value.trim();
+
+            if (u === "malikanas" && p === "anas2k3") {
+                document.getElementById('mainLoginGateway').style.display = 'none';
+                showToast_('Welcome Anas! System unlocked successfully.', 'ok');
+            } else {
+                alert('Invalid Credentials! Access Denied.');
+                document.getElementById('mainPassword').value = '';
+            }
+        }
+
+        const STATUS = {
+            DRAFT: 'Draft',
+            APPROVAL: 'Pending Approval',
+            OFD: 'OFD',
+            DELIVERED: 'Delivered',
+            RETURNED: 'Returned',
+            CANCELLED: 'Cancelled'
+        };
+
+        const defaultInventory = [
+            { id: 101, name: "THE HAPPY MART T-Shirt", price: 1500, stock: 50 },
+            { id: 102, name: "Leather Jacket", price: 8500, stock: 15 },
+            { id: 103, name: "Casual Sneakers", price: 4500, stock: 30 }
+        ];
+
+        const defaultOrders = [
+            {
+                id: 1001,
+                customer: "Ali Khan",
+                phone: "03001234567",
+                map: "https://maps.google.com",
+                itemId: 101,
+                itemName: "THE HAPPY MART T-Shirt",
+                qty: 2,
+                price: 1500,
+                status: STATUS.OFD,
+                remarks: "Deliver after 5 PM",
+                creationDate: "2026-08-20",
+                createdStamp: { date: "2026-08-20", time: "10:00 AM", day: "Thursday", display: "2026-08-20 (Thursday) 10:00 AM" },
+                submittedStamp: { date: "2026-08-20", time: "10:05 AM", day: "Thursday", display: "2026-08-20 (Thursday) 10:05 AM" },
+                approvedStamp: { date: "2026-08-20", time: "10:10 AM", day: "Thursday", display: "2026-08-20 (Thursday) 10:10 AM" },
+                deliveredStamp: null,
+                returnStamp: null,
+                cancelStamp: null,
+                deliveryDate: "",
+                returnDate: "",
+                cancelDate: "",
+                returnReason: "",
+                cancelReason: "",
+                isSubmitted: true,
+                isApproved: true
+            }
+        ];
+
+        let inventory = [];
+        let orders = [];
+        let returns = [];
+        let meta = { lastUpdated: null, device: '' };
+        let navigationHistory = ['orders'];
+
+        // Global holders for temporary report downloads
+        let lastFilteredReturns = [];
+        let lastFilteredCancelled = [];
+        let lastFilteredHistory = [];
+        let lastFilteredInventorySales = [];
+
+        /* ---------------- Automatic Backend Time Engine ---------------- */
+        let timeOffsetMs = 0;
+        let timeSourceLabel = 'System clock';
+        let timeIsOnline = false;
+
+        const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+        function pad2(n) { return String(n).padStart(2, '0'); }
+
+        function nowDate() {
+            return new Date(Date.now() + timeOffsetMs);
+        }
+
+        function makeStamp(d) {
+            const dt = d || nowDate();
+            const date = `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+            let h = dt.getHours();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            const time = `${pad2(h)}:${pad2(dt.getMinutes())} ${ampm}`;
+            const day = DAY_NAMES[dt.getDay()];
+            return { date, time, day, display: `${date} (${day}) ${time}` };
+        }
+
+        async function fetchWithTimeout(url, ms) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), ms);
+            try {
+                const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+                clearTimeout(timer);
+                return res;
+            } catch (err) {
+                clearTimeout(timer);
+                throw err;
+            }
+        }
+
+        async function syncBackendTime() {
+            const sources = [
+                { url: 'https://worldtimeapi.org/api/ip', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
+                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
+                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time' }
+            ];
+
+            for (const src of sources) {
+                try {
+                    const res = await fetchWithTimeout(src.url, 5000);
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    const ms = src.read(data);
+                    if (!ms || isNaN(ms)) continue;
+                    timeOffsetMs = ms - Date.now();
+                    timeSourceLabel = src.label;
+                    timeIsOnline = true;
+                    updateClock();
+                    return true;
+                } catch (err) { /* silent failover */ }
+            }
+
+            timeOffsetMs = 0;
+            timeSourceLabel = 'System clock';
+            timeIsOnline = false;
+            updateClock();
+            return false;
+        }
+
+        function updateClock() {
+            const s = makeStamp();
+            const el = document.getElementById('liveClock');
+            if (el) el.innerText = `${s.day}, ${s.date} · ${s.time}`;
+            const dot = document.getElementById('timeDot');
+            const txt = document.getElementById('timeStatusText');
+            if (dot) dot.className = 'dot ' + (timeIsOnline ? 'online' : 'offline');
+            if (txt) txt.innerText = timeSourceLabel + (timeIsOnline ? ' (Synced)' : ' (Local)');
+        }
+
+        /* ---------------- Helpers ---------------- */
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function money(n) {
+            const v = Number(n) || 0;
+            return 'PKR ' + v.toLocaleString();
+        }
+
+        function badgeClassFor(status) {
+            switch (status) {
+                case STATUS.DRAFT: return 'badge-draft';
+                case STATUS.APPROVAL: return 'badge-approval';
+                case STATUS.OFD: return 'badge-ofd';
+                case STATUS.DELIVERED: return 'badge-delivered';
+                case STATUS.RETURNED: return 'badge-returned';
+                case STATUS.CANCELLED: return 'badge-cancelled';
+                default: return 'badge-pending';
+            }
+        }
+
+        function stampCell(stamp, fallback) {
+            if (!stamp) return `<span class="stamp-sub">${esc(fallback || '-')}</span>`;
+            return `<span class="stamp-main">${esc(stamp.date)}</span><br><span class="stamp-sub">${esc(stamp.day)} · ${esc(stamp.time)}</span>`;
+        }
+
+        function emptyRow(cols, text) {
+            return `<tr class="empty-row"><td colspan="${cols}">${esc(text)}</td></tr>`;
+        }
+
+        function showToast_(message, type) {
+            const stack = document.getElementById('toastStack');
+            if (!stack) return;
+            const div = document.createElement('div');
+            div.className = 'toast ' + (type || '');
+            div.innerText = message;
+            stack.appendChild(div);
+            setTimeout(() => { div.remove(); }, 4200);
+        }
+
+        function nextOrderId() {
+            const ids = orders.map(o => Number(o.id) || 0);
+            const base = ids.length ? Math.max(...ids) : 1000;
+            return Math.max(base, 1000) + 1;
+        }
+
+        function nextItemId() {
+            const ids = inventory.map(i => Number(i.id) || 0);
+            const base = ids.length ? Math.max(...ids) : 100;
+            return Math.max(base, 100) + 1;
+        }
+
+        function orderTotal(o) { return (Number(o.price) || 0) * (Number(o.qty) || 0); }
+
+        /* ---------------- Local Storage Engine ---------------- */
+        function normalizeOrder(o) {
+            const created = o.createdStamp || { date: o.creationDate || '', time: '', day: '', display: o.creationDate || '' };
+
+            let status = o.status;
+            if (status === 'Pending') status = o.isSubmitted ? STATUS.APPROVAL : STATUS.DRAFT;
+            if (!Object.values(STATUS).includes(status)) status = STATUS.DRAFT;
+            if (status === STATUS.DRAFT && o.isSubmitted && !o.isApproved) status = STATUS.APPROVAL;
+
+            return {
+                id: Number(o.id),
+                customer: o.customer || '',
+                phone: o.phone || '',
+                map: o.map || '',
+                itemId: Number(o.itemId) || 0,
+                itemName: o.itemName || '',
+                qty: Number(o.qty) || 0,
+                price: Number(o.price) || 0,
+                status: status,
+                remarks: o.remarks || '',
+                creationDate: o.creationDate || created.date || '',
+                createdStamp: created,
+                submittedStamp: o.submittedStamp || null,
+                approvedStamp: o.approvedStamp || null,
+                deliveredStamp: o.deliveredStamp || null,
+                returnStamp: o.returnStamp || null,
+                cancelStamp: o.cancelStamp || null,
+                deliveryDate: o.deliveryDate || (o.deliveredStamp ? o.deliveredStamp.display : ''),
+                returnDate: o.returnDate || (o.returnStamp ? o.returnStamp.display : ''),
+                cancelDate: o.cancelDate || (o.cancelStamp ? o.cancelStamp.display : ''),
+                returnReason: o.returnReason || '',
+                cancelReason: o.cancelReason || '',
+                isSubmitted: !!o.isSubmitted,
+                isApproved: o.isApproved !== undefined ? !!o.isApproved : (status === STATUS.OFD || status === STATUS.DELIVERED || status === STATUS.RETURNED || status === STATUS.CANCELLED)
+            };
+        }
+
+        function loadLocalData() {
+            let raw = null;
+            try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; }
+
+            if (!raw) {
+                let oldInv = null, oldOrd = null, oldRet = null;
+                try { oldInv = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {}
+                try { oldOrd = JSON.parse(localStorage.getItem('urbanhub_orders')); } catch (e) {}
+                try { oldRet = JSON.parse(localStorage.getItem('urbanhub_returns')); } catch (e) {}
+                if (oldInv || oldOrd || oldRet) {
+                    raw = { inventory: oldInv || defaultInventory, orders: oldOrd || [], returns: oldRet || [], meta: { lastUpdated: null } };
+                }
+            }
+
+            if (raw && Array.isArray(raw.orders)) {
+                inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({
+                    id: Number(i.id), name: i.name || '', price: Number(i.price) || 0, stock: Number(i.stock) || 0
+                })) : JSON.parse(JSON.stringify(defaultInventory));
+                orders = raw.orders.map(normalizeOrder);
+                returns = Array.isArray(raw.returns) ? raw.returns : [];
+                meta = raw.meta || { lastUpdated: null, device: '' };
+            } else {
+                inventory = JSON.parse(JSON.stringify(defaultInventory));
+                orders = defaultOrders.map(normalizeOrder);
+                returns = [];
+                meta = { lastUpdated: null, device: '' };
+            }
+        }
+
+        function buildPayload() {
+            return { inventory, orders, returns, meta };
+        }
+
+        function saveData() {
+            meta.lastUpdated = new Date(Date.now() + timeOffsetMs).toISOString();
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(buildPayload()));
+            } catch (e) {
+                showToast_('Browser storage issue encountered.', 'err');
+            }
+        }
+
+        /* ---------------- Boot Script ---------------- */
+        window.onload = function () {
+            loadLocalData();
+            renderAllTables();
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            syncBackendTime();
+            setInterval(syncBackendTime, 300000);
+        };
+
+        window.addEventListener('online', () => { syncBackendTime(); });
+
+        /* ---------------- Modal Controls ---------------- */
+        function openAdminModal() {
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('adminModal').style.display = 'flex';
+            document.getElementById('adminPassInput').focus();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function verifyAdminPass() {
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === ADMIN_PASSCODE) {
+                closeAdminModal();
+                switchView('admin');
+                switchAdminSubTab('approvals');
+            } else {
+                alert("Incorrect Admin Password! Access Denied.");
+                document.getElementById('adminPassInput').value = '';
+            }
+        }
+
+        let reasonPending = null;
+
+        function openReasonModal(title, subtitle, confirmLabel, iconClass, accent, callback) {
+            reasonPending = callback;
+            document.getElementById('reasonTitle').innerText = title;
+            document.getElementById('reasonSubtitle').innerText = subtitle;
+            document.getElementById('reasonConfirmBtn').innerText = confirmLabel;
+            document.getElementById('reasonIconBox').innerHTML = `<i class="${iconClass}"></i>`;
+            document.getElementById('reasonIconBox').style.background = accent;
+            document.getElementById('reasonInput').value = '';
+            document.getElementById('reasonModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('reasonInput').focus(), 60);
+        }
+
+        function closeReasonModal() {
+            document.getElementById('reasonModal').style.display = 'none';
+            reasonPending = null;
+        }
+
+        function confirmReasonModal() {
+            const value = document.getElementById('reasonInput').value.trim();
+            if (!value) {
+                showToast_('Write a short reason to continue.', 'warn');
+                return;
+            }
+            const cb = reasonPending;
+            closeReasonModal();
+            if (cb) cb(value);
+        }
+
+        /* ---------------- Navigation ---------------- */
+        function switchView(viewId, isBack) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const section = document.getElementById(`view-${viewId}`);
+            if (section) section.classList.add('active');
+
+            const navElem = document.getElementById(`nav-${viewId}`);
+            if (navElem) navElem.classList.add('active');
+
+            const titles = {
+                orders: 'Daily Order Sheet',
+                ofd: 'Out For Delivery (OFD)',
+                delivered: 'Delivered Orders',
+                returns: 'Returned Orders',
+                cancelled: 'Cancelled Orders',
+                history: 'Complete History',
+                inventory: 'Inventory Stock Sheet & Analytics',
+                admin: 'Admin Control Panel'
+            };
+
+            document.getElementById('current-page-title').innerText = titles[viewId] || 'THE HAPPY MART';
+
+            if (!isBack && navigationHistory[navigationHistory.length - 1] !== viewId) {
+                navigationHistory.push(viewId);
+            }
+            window.scrollTo(0, 0);
+            const main = document.querySelector('.main-content');
+            if (main) main.scrollTop = 0;
+        }
+
+        function goBack() {
+            if (navigationHistory.length > 1) {
+                navigationHistory.pop();
+                const previousView = navigationHistory[navigationHistory.length - 1];
+                switchView(previousView, true);
+            }
+        }
+
+        function switchAdminSubTab(subTab) {
+            const map = {
+                approvals: ['admin-sub-approvals', 'tab-btn-appr'],
+                inventory: ['admin-sub-inventory', 'tab-btn-inv'],
+                orders: ['admin-sub-orders', 'tab-btn-ord'],
+                delivered: ['admin-sub-delivered', 'tab-btn-del'],
+                returns: ['admin-sub-returns', 'tab-btn-ret'],
+                cancelled: ['admin-sub-cancelled', 'tab-btn-can'],
+                history: ['admin-sub-history', 'tab-btn-his']
+            };
+            Object.keys(map).forEach(k => {
+                const item = map[k];
+                if (item && document.getElementById(item[0])) {
+                    document.getElementById(item[0]).style.display = (k === subTab) ? 'block' : 'none';
+                    document.getElementById(item[1]).classList.toggle('active', k === subTab);
+                }
+            });
+        }
+
+        /* ---------------- Rendering ---------------- */
+        function renderAllTables() {
+            renderOrdersTable();
+            renderOFDTable();
+            renderDeliveredTable();
+            renderReturnsTable();
+            renderCancelledTable();
+            renderHistoryTable();
+            renderInventoryTable();
+            renderApprovalTable();
+            renderAdminInventoryTable();
+            renderAdminOrdersTable();
+            renderAdminSectionTables();
+            populateDropdown();
+            updateSidebarCounts();
+        }
+
+        function updateSidebarCounts() {
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            set('count-orders', orders.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).length);
+            set('count-ofd', orders.filter(o => o.status === STATUS.OFD).length);
+            set('count-delivered', orders.filter(o => o.status === STATUS.DELIVERED).length);
+            set('count-returns', orders.filter(o => o.status === STATUS.RETURNED).length);
+            set('count-cancelled', orders.filter(o => o.status === STATUS.CANCELLED).length);
+            set('count-history', orders.length);
+            set('count-inventory', inventory.length);
+            set('count-approval', orders.filter(o => o.status === STATUS.APPROVAL).length);
+        }
+
+        function populateDropdown() {
+            const select = document.getElementById('orderItemSelect');
+            const keep = select.value;
+            select.innerHTML = '<option value="">-- Select Inventory Item --</option>';
+            inventory.forEach(item => {
+                select.innerHTML += `<option value="${item.id}">${esc(item.name)} (Stock: ${item.stock})</option>`;
+            });
+            if (keep) select.value = keep;
+        }
+
+        function autoFillItemPrice() {
+            const id = document.getElementById('orderItemSelect').value;
+            const item = inventory.find(i => i.id == id);
+            document.getElementById('orderPrice').value = item ? item.price : '';
+        }
+
+        /* ---------------- Daily Orders ---------------- */
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const list = orders
+                .filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL)
+                .sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(12, 'No draft or pending orders. Create an order above to start.'); return; }
+
+            tbody.innerHTML = list.map(o => {
+                const canUserEdit = o.status === STATUS.DRAFT;
+                return `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(o.price)}</td>
+                        <td><b>${money(orderTotal(o))}</b></td>
+                        <td><span class="badge ${badgeClassFor(o.status)}">${canUserEdit ? 'Draft (Editable)' : 'Pending Approval'}</span></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
+                        <td>${esc(o.remarks) || '-'}</td>
+                        <td>
+                            ${canUserEdit
+                                ? `<button class="action-btn" style="color:var(--accent-warning)" onclick="editOrderDraft(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                                   <button class="action-btn" style="color:var(--accent-danger)" onclick="deleteOrderDraft(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>`
+                                : `<span style="font-size:12px; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> With Admin</span>`}
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function saveOrder(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editingOrderId').value;
+            const itemId = parseInt(document.getElementById('orderItemSelect').value, 10);
+            const qty = parseInt(document.getElementById('orderQty').value, 10);
+            const customPrice = parseFloat(document.getElementById('orderPrice').value);
+            const item = inventory.find(i => i.id === itemId);
+
+            if (!item) { showToast_('Pick an item from the inventory list.', 'warn'); return; }
+            if (!qty || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
+            if (isNaN(customPrice) || customPrice < 0) { showToast_('Enter a valid price.', 'warn'); return; }
+
+            if (editId) {
+                const order = orders.find(o => o.id == editId);
+                if (!order || order.status !== STATUS.DRAFT) {
+                    showToast_('That order is locked and can no longer be edited.', 'warn');
+                    resetOrderForm();
+                    return;
+                }
+
+                const sameItem = order.itemId === item.id;
+                if (sameItem) {
+                    const diffQty = qty - order.qty;
+                    if (diffQty > 0 && item.stock < diffQty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                    item.stock -= diffQty;
+                } else {
+                    if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                    const oldItem = inventory.find(i => i.id === order.itemId);
+                    if (oldItem) oldItem.stock += order.qty;
+                    item.stock -= qty;
+                }
+
+                order.customer = document.getElementById('custName').value.trim();
+                order.phone = document.getElementById('custPhone').value.trim();
+                order.map = document.getElementById('custMap').value.trim();
+                order.itemId = item.id;
+                order.itemName = item.name;
+                order.qty = qty;
+                order.price = customPrice;
+                order.remarks = document.getElementById('orderRemarks').value.trim();
+                showToast_(`Order #${order.id} updated.`, 'ok');
+            } else {
+                if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                item.stock -= qty;
+                const stamp = makeStamp();
+                const newOrder = normalizeOrder({
+                    id: nextOrderId(),
+                    customer: document.getElementById('custName').value.trim(),
+                    phone: document.getElementById('custPhone').value.trim(),
+                    map: document.getElementById('custMap').value.trim(),
+                    itemId: item.id,
+                    itemName: item.name,
+                    qty: qty,
+                    price: customPrice,
+                    status: STATUS.DRAFT,
+                    remarks: document.getElementById('orderRemarks').value.trim(),
+                    creationDate: stamp.date,
+                    createdStamp: stamp,
+                    isSubmitted: false,
+                    isApproved: false
+                });
+                orders.push(newOrder);
+                showToast_(`Order #${newOrder.id} saved as draft.`, 'ok');
+            }
+
+            saveData();
+            resetOrderForm();
+            renderAllTables();
+        }
+
+        function editOrderDraft(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be edited.', 'warn'); return; }
+
+            document.getElementById('editingOrderId').value = order.id;
+            document.getElementById('custName').value = order.customer;
+            document.getElementById('custPhone').value = order.phone;
+            document.getElementById('custMap').value = order.map;
+            document.getElementById('orderItemSelect').value = order.itemId;
+            document.getElementById('orderQty').value = order.qty;
+            document.getElementById('orderPrice').value = order.price;
+            document.getElementById('orderRemarks').value = order.remarks;
+
+            document.getElementById('orderFormHeading').innerText = `Edit Draft Order #${order.id}`;
+            document.getElementById('orderSubmitBtn').innerText = "Update Order";
+            document.getElementById('orderCancelEditBtn').style.display = "inline-block";
+            window.scrollTo(0, 0);
+            const main = document.querySelector('.main-content');
+            if (main) main.scrollTop = 0;
+        }
+
+        function deleteOrderDraft(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be deleted here.', 'warn'); return; }
+            if (!confirm(`Delete draft order #${id}?`)) return;
+
+            const item = inventory.find(i => i.id === order.itemId);
+            if (item) item.stock += order.qty;
+            orders = orders.filter(o => o.id !== id);
+            saveData();
+            resetOrderForm();
+            renderAllTables();
+            showToast_(`Draft order #${id} deleted. Stock returned.`, 'ok');
+        }
+
+        function resetOrderForm() {
+            document.getElementById('editingOrderId').value = "";
+            document.getElementById('orderForm').reset();
+            document.getElementById('orderQty').value = 1;
+            document.getElementById('orderFormHeading').innerText = "Create New Order";
+            document.getElementById('orderSubmitBtn').innerText = "Save Order (Draft)";
+            document.getElementById('orderCancelEditBtn').style.display = "none";
+        }
+
+        function finalizeAndSubmitOrders() {
+            const drafts = orders.filter(o => o.status === STATUS.DRAFT);
+            if (!drafts.length) { showToast_('There are no draft orders to submit.', 'warn'); return; }
+
+            const stamp = makeStamp();
+            drafts.forEach(o => {
+                o.status = STATUS.APPROVAL;
+                o.isSubmitted = true;
+                o.isApproved = false;
+                o.submittedStamp = stamp;
+            });
+
+            saveData();
+            renderAllTables();
+            showToast_(`${drafts.length} order(s) sent to Admin for approval.`, 'ok');
+        }
+
+        /* ---------------- Admin Approvals ---------------- */
+        function renderApprovalTable() {
+            const tbody = document.getElementById('approvalTableBody');
+            const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(10, 'Nothing is waiting for approval right now.'); return; }
+
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><b>#${o.id}</b></td>
+                    <td>${esc(o.customer)}</td>
+                    <td>${esc(o.phone)}</td>
+                    <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                    <td>${esc(o.itemName)}</td>
+                    <td>${o.qty}</td>
+                    <td>${money(o.price)}</td>
+                    <td><b>${money(orderTotal(o))}</b></td>
+                    <td>${stampCell(o.submittedStamp, '-')}</td>
+                    <td>
+                        <button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button>
+                        <button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function approveOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order || order.status !== STATUS.APPROVAL) return;
+            order.status = STATUS.OFD;
+            order.isApproved = true;
+            order.approvedStamp = makeStamp();
+            saveData();
+            renderAllTables();
+            showToast_(`Order #${id} approved and moved to Out For Delivery.`, 'ok');
+        }
+
+        function approveAllOrders() {
+            const list = orders.filter(o => o.status === STATUS.APPROVAL);
+            if (!list.length) { showToast_('Nothing is waiting for approval.', 'warn'); return; }
+            const stamp = makeStamp();
+            list.forEach(o => { o.status = STATUS.OFD; o.isApproved = true; o.approvedStamp = stamp; });
+            saveData();
+            renderAllTables();
+            showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok');
+        }
+
+        function rejectOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order || order.status !== STATUS.APPROVAL) return;
+            order.status = STATUS.DRAFT;
+            order.isSubmitted = false;
+            order.isApproved = false;
+            order.submittedStamp = null;
+            saveData();
+            renderAllTables();
+            showToast_(`Order #${id} sent back to Daily Orders as a draft.`, 'ok');
+        }
+
+        function rejectAllOrders() {
+            const list = orders.filter(o => o.status === STATUS.APPROVAL);
+            if (!list.length) { showToast_('Nothing is waiting for approval.', 'warn'); return; }
+            list.forEach(o => { o.status = STATUS.DRAFT; o.isSubmitted = false; o.isApproved = false; o.submittedStamp = null; });
+            saveData();
+            renderAllTables();
+            showToast_(`${list.length} order(s) sent back to Daily Orders.`, 'warn');
+        }
+
+        /* ---------------- Out For Delivery ---------------- */
+        function renderOFDTable() {
+            const tbody = document.getElementById('ofdTableBody');
+            const list = orders.filter(o => o.status === STATUS.OFD).sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
+
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><b>#${o.id}</b></td>
+                    <td>${stampCell(o.approvedStamp, o.creationDate)}</td>
+                    <td>${esc(o.customer)}</td>
+                    <td>${esc(o.phone)}</td>
+                    <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                    <td>${esc(o.itemName)}</td>
+                    <td>${o.qty}</td>
+                    <td><b>${money(orderTotal(o))}</b></td>
+                    <td style="white-space:nowrap;">
+                        <button class="action-btn" style="color:var(--accent-success)" onclick="markDelivered(${o.id})"><i class="fa-solid fa-circle-check"></i> Delivered</button>
+                        <button class="action-btn" style="color:var(--accent-danger)" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
+                        <button class="action-btn" style="color:#cbd5e1" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancelled</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function markDelivered(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order || order.status !== STATUS.OFD) return;
+            const stamp = makeStamp();
+            order.status = STATUS.DELIVERED;
+            order.deliveredStamp = stamp;
+            order.deliveryDate = stamp.display;
+            saveData();
+            renderAllTables();
+            showToast_(`Order #${orderId} delivered on ${stamp.day}, ${stamp.date} at ${stamp.time}.`, 'ok');
+        }
+
+        function processReturn(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order || order.status !== STATUS.OFD) return;
+
+            openReasonModal(
+                `Return Order #${orderId}`,
+                'Why is this order coming back? The stock will be added back to inventory.',
+                'Mark as Returned',
+                'fa-solid fa-rotate-left',
+                'linear-gradient(135deg, #ef4444, #f87171)',
+                function (reason) {
+                    const stamp = makeStamp();
+                    order.status = STATUS.RETURNED;
+                    order.returnStamp = stamp;
+                    order.returnDate = stamp.display;
+                    order.returnReason = reason;
+
+                    const item = inventory.find(i => i.id === order.itemId);
+                    if (item) item.stock += order.qty;
+
+                    returns = returns.filter(r => r.orderId !== order.id);
+                    returns.push({
+                        orderId: order.id,
+                        customer: order.customer,
+                        phone: order.phone,
+                        itemName: order.itemName,
+                        qty: order.qty,
+                        amount: orderTotal(order),
+                        reason: reason,
+                        date: stamp.date,
+                        time: stamp.time,
+                        day: stamp.day
+                    });
+
+                    saveData();
+                    renderAllTables();
+                    showToast_(`Order #${orderId} moved to Returns. Stock restored.`, 'warn');
+                }
+            );
+        }
+
+        function processCancel(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order || order.status !== STATUS.OFD) return;
+
+            openReasonModal(
+                `Cancel Order #${orderId}`,
+                'Why is this order being cancelled? The stock will be added back to inventory.',
+                'Mark as Cancelled',
+                'fa-solid fa-ban',
+                'linear-gradient(135deg, #64748b, #94a3b8)',
+                function (reason) {
+                    const stamp = makeStamp();
+                    order.status = STATUS.CANCELLED;
+                    order.cancelStamp = stamp;
+                    order.cancelDate = stamp.display;
+                    order.cancelReason = reason;
+
+                    const item = inventory.find(i => i.id === order.itemId);
+                    if (item) item.stock += order.qty;
+
+                    saveData();
+                    renderAllTables();
+                    showToast_(`Order #${orderId} moved to Cancelled. Stock restored.`, 'warn');
+                }
+            );
+        }
+
+        /* ---------------- Delivered ---------------- */
+        function renderDeliveredTable() {
+            const tbody = document.getElementById('deliveredTableBody');
+            const list = orders.filter(o => o.status === STATUS.DELIVERED).sort((a, b) => a.id - b.id);
+            let total = 0;
+
+            if (!list.length) {
+                tbody.innerHTML = emptyRow(12, 'No delivered orders yet. Mark an order delivered in Out For Delivery.');
+            } else {
+                tbody.innerHTML = list.map(o => {
+                    total += orderTotal(o);
+                    const s = o.deliveredStamp || {};
+                    return `
+                        <tr>
+                            <td><b>#${o.id}</b></td>
+                            <td>${esc(o.customer)}</td>
+                            <td>${esc(o.phone)}</td>
+                            <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                            <td>${esc(o.itemName)}</td>
+                            <td>${o.qty}</td>
+                            <td>${money(o.price)}</td>
+                            <td><b>${money(orderTotal(o))}</b></td>
+                            <td>${esc(s.date || '-')}</td>
+                            <td>${esc(s.time || '-')}</td>
+                            <td>${esc(s.day || '-')}</td>
+                            <td>${esc(o.remarks) || '-'}</td>
+                        </tr>`;
+                }).join('');
+            }
+
+            document.getElementById('deliveredTotalVal').innerText = money(total);
+        }
+
+        /* ---------------- Returns ---------------- */
+        function renderReturnsTable() {
+            const tbody = document.getElementById('returnsTableBody');
+            const list = orders.filter(o => o.status === STATUS.RETURNED).sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(10, 'No returned orders yet.'); return; }
+
+            tbody.innerHTML = list.map(o => {
+                const s = o.returnStamp || {};
+                return `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td>${esc(o.returnReason) || '-'}</td>
+                        <td>${esc(s.date || '-')}</td>
+                        <td>${esc(s.time || '-')}</td>
+                        <td>${esc(s.day || '-')}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        /* NEW ADDITION: SECTION 1 REPORT GENERATION (RETURNS) */
+        function generateReturnsReport(e) {
+            e.preventDefault();
+            const start = document.getElementById('returnsStartDate').value;
+            const end = document.getElementById('returnsEndDate').value;
+
+            if (start > end) { showToast_('From Date must be before To Date.', 'warn'); return; }
+
+            lastFilteredReturns = orders.filter(o => {
+                if (o.status !== STATUS.RETURNED) return false;
+                const d = o.returnStamp ? o.returnStamp.date : (o.returnDate || '').split(' ')[0];
+                return d && d >= start && d <= end;
+            }).sort((a, b) => a.id - b.id);
+
+            const tbody = document.getElementById('returnsReportTableBody');
+            let total = 0;
+
+            if (!lastFilteredReturns.length) {
+                tbody.innerHTML = emptyRow(8, 'No returned orders found in this date range.');
+            } else {
+                tbody.innerHTML = lastFilteredReturns.map(o => {
+                    const tot = orderTotal(o);
+                    total += tot;
+                    const s = o.returnStamp || {};
+                    return `
+                        <tr>
+                            <td><b>#${o.id}</b></td>
+                            <td>${esc(o.customer)}</td>
+                            <td>${esc(o.phone)}</td>
+                            <td>${esc(o.itemName)}</td>
+                            <td>${o.qty}</td>
+                            <td><b>${money(tot)}</b></td>
+                            <td>${esc(o.returnReason) || '-'}</td>
+                            <td>${esc(s.date || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
+                        </tr>`;
+                }).join('');
+            }
+
+            document.getElementById('returnsReportTotalVal').innerText = money(total);
+            document.getElementById('returnsReportContainer').style.display = 'block';
+        }
+
+        function downloadReturnsExcel() {
+            if (!lastFilteredReturns.length) { showToast_('No data available to download.', 'warn'); return; }
+            const wb = XLSX.utils.book_new();
+            const data = lastFilteredReturns.map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item Name": o.itemName,
+                "Returned Qty": o.qty, "Amount": orderTotal(o), "Reason": o.returnReason,
+                "Return Date": o.returnStamp ? o.returnStamp.date : '',
+                "Return Day": o.returnStamp ? o.returnStamp.day : '',
+                "Return Time": o.returnStamp ? o.returnStamp.time : ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Returns Report");
+            XLSX.writeFile(wb, `Returns_Report_${makeStamp().date}.xlsx`);
+            showToast_('Returns Report Excel file downloaded.', 'ok');
+        }
+
+        /* ---------------- Cancelled ---------------- */
+        function renderCancelledTable() {
+            const tbody = document.getElementById('cancelledTableBody');
+            const list = orders.filter(o => o.status === STATUS.CANCELLED).sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(10, 'No cancelled orders yet.'); return; }
+
+            tbody.innerHTML = list.map(o => {
+                const s = o.cancelStamp || {};
+                return `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td>${esc(o.cancelReason) || '-'}</td>
+                        <td>${esc(s.date || '-')}</td>
+                        <td>${esc(s.time || '-')}</td>
+                        <td>${esc(s.day || '-')}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        /* NEW ADDITION: SECTION 2 REPORT GENERATION (CANCELLED) */
+        function generateCancelledReport(e) {
+            e.preventDefault();
+            const start = document.getElementById('cancelledStartDate').value;
+            const end = document.getElementById('cancelledEndDate').value;
+
+            if (start > end) { showToast_('From Date must be before To Date.', 'warn'); return; }
+
+            lastFilteredCancelled = orders.filter(o => {
+                if (o.status !== STATUS.CANCELLED) return false;
+                const d = o.cancelStamp ? o.cancelStamp.date : (o.cancelDate || '').split(' ')[0];
+                return d && d >= start && d <= end;
+            }).sort((a, b) => a.id - b.id);
+
+            const tbody = document.getElementById('cancelledReportTableBody');
+            let total = 0;
+
+            if (!lastFilteredCancelled.length) {
+                tbody.innerHTML = emptyRow(8, 'No cancelled orders found in this date range.');
+            } else {
+                tbody.innerHTML = lastFilteredCancelled.map(o => {
+                    const tot = orderTotal(o);
+                    total += tot;
+                    const s = o.cancelStamp || {};
+                    return `
+                        <tr>
+                            <td><b>#${o.id}</b></td>
+                            <td>${esc(o.customer)}</td>
+                            <td>${esc(o.phone)}</td>
+                            <td>${esc(o.itemName)}</td>
+                            <td>${o.qty}</td>
+                            <td><b>${money(tot)}</b></td>
+                            <td>${esc(o.cancelReason) || '-'}</td>
+                            <td>${esc(s.date || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
+                        </tr>`;
+                }).join('');
+            }
+
+            document.getElementById('cancelledReportTotalVal').innerText = money(total);
+            document.getElementById('cancelledReportContainer').style.display = 'block';
+        }
+
+        function downloadCancelledExcel() {
+            if (!lastFilteredCancelled.length) { showToast_('No data available to download.', 'warn'); return; }
+            const wb = XLSX.utils.book_new();
+            const data = lastFilteredCancelled.map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item Name": o.itemName,
+                "Qty": o.qty, "Amount": orderTotal(o), "Reason": o.cancelReason,
+                "Cancel Date": o.cancelStamp ? o.cancelStamp.date : '',
+                "Cancel Day": o.cancelStamp ? o.cancelStamp.day : '',
+                "Cancel Time": o.cancelStamp ? o.cancelStamp.time : ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Cancelled Report");
+            XLSX.writeFile(wb, `Cancelled_Report_${makeStamp().date}.xlsx`);
+            showToast_('Cancelled Report Excel file downloaded.', 'ok');
+        }
+
+        /* ---------------- History ---------------- */
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            const list = [...orders].sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(12, 'History is empty. Create your first order in Daily Orders.'); return; }
+
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><b>#${o.id}</b></td>
+                    <td>${esc(o.customer)}</td>
+                    <td>${esc(o.phone)}</td>
+                    <td>${esc(o.itemName)}</td>
+                    <td>${o.qty}</td>
+                    <td>${money(orderTotal(o))}</td>
+                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
+                    <td>${stampCell(o.approvedStamp, '-')}</td>
+                    <td>${stampCell(o.deliveredStamp, '-')}</td>
+                    <td>${stampCell(o.returnStamp, '-')}</td>
+                    <td>${stampCell(o.cancelStamp, '-')}</td>
+                    <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
+                </tr>`).join('');
+        }
+
+        /* NEW ADDITION: SECTION 3 REPORT GENERATION (HISTORY) */
+        function generateHistoryReport(e) {
+            e.preventDefault();
+            const start = document.getElementById('historyStartDate').value;
+            const end = document.getElementById('historyEndDate').value;
+
+            if (start > end) { showToast_('From Date must be before To Date.', 'warn'); return; }
+
+            lastFilteredHistory = orders.filter(o => {
+                const d = o.createdStamp ? o.createdStamp.date : o.creationDate;
+                return d && d >= start && d <= end;
+            }).sort((a, b) => a.id - b.id);
+
+            const tbody = document.getElementById('historyReportTableBody');
+            let total = 0;
+
+            if (!lastFilteredHistory.length) {
+                tbody.innerHTML = emptyRow(8, 'No history records found in this date range.');
+            } else {
+                tbody.innerHTML = lastFilteredHistory.map(o => {
+                    const tot = orderTotal(o);
+                    total += tot;
+                    const s = o.createdStamp || {};
+                    return `
+                        <tr>
+                            <td><b>#${o.id}</b></td>
+                            <td>${esc(o.customer)}</td>
+                            <td>${esc(o.phone)}</td>
+                            <td>${esc(o.itemName)}</td>
+                            <td>${o.qty}</td>
+                            <td><b>${money(tot)}</b></td>
+                            <td>${esc(s.date || o.creationDate || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
+                            <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
+                        </tr>`;
+                }).join('');
+            }
+
+            document.getElementById('historyReportTotalVal').innerText = money(total);
+            document.getElementById('historyReportContainer').style.display = 'block';
+        }
+
+        function downloadHistoryExcel() {
+            if (!lastFilteredHistory.length) { showToast_('No data available to download.', 'warn'); return; }
+            const wb = XLSX.utils.book_new();
+            const data = lastFilteredHistory.map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item Name": o.itemName,
+                "Qty": o.qty, "Total Amount": orderTotal(o),
+                "Creation Date": o.createdStamp ? o.createdStamp.display : o.creationDate,
+                "Status": o.status
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "History Report");
+            XLSX.writeFile(wb, `History_Report_${makeStamp().date}.xlsx`);
+            showToast_('History Report Excel file downloaded.', 'ok');
+        }
+
+        /* ---------------- Inventory & Reports (SECTION 4 FROM REFERENCE) ---------------- */
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            if (!inventory.length) { tbody.innerHTML = emptyRow(5, 'No items yet. Add stock from the Admin Panel.'); return; }
+
+            tbody.innerHTML = inventory.map(i => `
+                <tr>
+                    <td>#${i.id}</td>
+                    <td><b>${esc(i.name)}</b></td>
+                    <td>${money(i.price)}</td>
+                    <td><b>${i.stock}</b></td>
+                    <td><span class="badge ${i.stock > 5 ? 'badge-delivered' : 'badge-returned'}">${i.stock > 5 ? 'In Stock' : 'Low Stock'}</span></td>
+                </tr>`).join('');
+        }
+
+        function generateReport(e) {
+            e.preventDefault();
+            const start = document.getElementById('reportStartDate').value;
+            const end = document.getElementById('reportEndDate').value;
+
+            if (start > end) { showToast_('The From date must come before the To date.', 'warn'); return; }
+
+            lastFilteredInventorySales = orders.filter(o => {
+                if (o.status !== STATUS.DELIVERED) return false;
+                const d = o.deliveredStamp ? o.deliveredStamp.date : (o.deliveryDate || '').split(' ')[0];
+                return d && d >= start && d <= end;
+            }).sort((a, b) => a.id - b.id);
+
+            const tbody = document.getElementById('reportTableBody');
+            let grandTotal = 0;
+
+            if (!lastFilteredInventorySales.length) {
+                tbody.innerHTML = emptyRow(7, 'No deliveries found in this date range.');
+            } else {
+                tbody.innerHTML = lastFilteredInventorySales.map(o => {
+                    const total = orderTotal(o);
+                    grandTotal += total;
+                    const s = o.deliveredStamp || {};
+                    return `
+                        <tr>
+                            <td><b>#${o.id}</b></td>
+                            <td>${esc(o.itemName)}</td>
+                            <td>${o.qty}</td>
+                            <td>${money(o.price)}</td>
+                            <td><b>${money(total)}</b></td>
+                            <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link">Google Map Location</a>` : 'N/A'}</td>
+                            <td>${esc(s.date || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
+                        </tr>`;
+                }).join('');
+            }
+
+            document.getElementById('reportTotalBudget').innerText = money(grandTotal);
+            document.getElementById('reportResultContainer').style.display = 'block';
+        }
+
+        function downloadInventorySalesExcel() {
+            if (!lastFilteredInventorySales.length) { showToast_('No data available to download.', 'warn'); return; }
+            const wb = XLSX.utils.book_new();
+            const data = lastFilteredInventorySales.map(o => ({
+                "Order ID": o.id, "Item Name": o.itemName, "Qty": o.qty, "Unit Price": o.price,
+                "Total Amount": orderTotal(o), "Map Link": o.map,
+                "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
+                "Delivery Time": o.deliveredStamp ? o.deliveredStamp.time : ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
+            XLSX.writeFile(wb, `Sales_Report_${makeStamp().date}.xlsx`);
+            showToast_('Inventory Sales Report Excel file downloaded.', 'ok');
+        }
+
+        /* ---------------- Admin: Inventory ---------------- */
+        function renderAdminInventoryTable() {
+            const tbody = document.getElementById('adminInventoryTableBody');
+            if (!inventory.length) { tbody.innerHTML = emptyRow(5, 'No inventory items yet. Add one above.'); return; }
+
+            tbody.innerHTML = inventory.map(i => `
+                <tr>
+                    <td>#${i.id}</td>
+                    <td><b>${esc(i.name)}</b></td>
+                    <td>${money(i.price)}</td>
+                    <td><b>${i.stock}</b></td>
+                    <td>
+                        <button class="btn-warning" onclick="editAdminItem(${i.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button class="btn-danger" onclick="deleteAdminItem(${i.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function saveAdminItem(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editItemId').value;
+            const name = document.getElementById('adminItemName').value.trim();
+            const price = parseFloat(document.getElementById('adminItemPrice').value);
+            const stock = parseInt(document.getElementById('adminItemQty').value, 10);
+
+            if (!name) { showToast_('Give the item a name.', 'warn'); return; }
+            if (isNaN(price) || price < 0) { showToast_('Enter a valid price.', 'warn'); return; }
+            if (isNaN(stock) || stock < 0) { showToast_('Enter a valid stock quantity.', 'warn'); return; }
+
+            if (editId) {
+                const item = inventory.find(i => i.id == editId);
+                if (item) {
+                    item.name = name;
+                    item.price = price;
+                    item.stock = stock;
+                    orders.forEach(o => { if (o.itemId == editId) o.itemName = name; });
+                    showToast_(`Item #${item.id} updated.`, 'ok');
+                }
+            } else {
+                const item = { id: nextItemId(), name, price, stock };
+                inventory.push(item);
+                showToast_(`${name} added to inventory.`, 'ok');
+            }
+
+            saveData();
+            resetAdminForm();
+            renderAllTables();
+        }
+
+        function editAdminItem(id) {
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('editItemId').value = item.id;
+            document.getElementById('adminItemName').value = item.name;
+            document.getElementById('adminItemPrice').value = item.price;
+            document.getElementById('adminItemQty').value = item.stock;
+
+            document.getElementById('adminFormHeading').innerText = `Edit Inventory Item #${item.id}`;
+            document.getElementById('adminSubmitBtn').innerText = "Update & Save";
+            document.getElementById('adminCancelBtn').style.display = "inline-block";
+        }
+
+        function deleteAdminItem(id) {
+            const used = orders.some(o => o.itemId === id && (o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL || o.status === STATUS.OFD));
+            if (used) { showToast_('This item is on an active order. Close those orders first.', 'warn'); return; }
+            if (!confirm("Remove this item from inventory?")) return;
+            inventory = inventory.filter(i => i.id !== id);
+            saveData();
+            resetAdminForm();
+            renderAllTables();
+            showToast_('Item removed from inventory.', 'ok');
+        }
+
+        function resetAdminForm() {
+            document.getElementById('editItemId').value = "";
+            document.getElementById('adminItemForm').reset();
+            document.getElementById('adminFormHeading').innerText = "Add New Inventory Item";
+            document.getElementById('adminSubmitBtn').innerText = "Save Item";
+            document.getElementById('adminCancelBtn').style.display = "none";
+        }
+
+        /* ---------------- Admin: Orders Management ---------------- */
+        function renderAdminOrdersTable() {
+            const tbody = document.getElementById('adminOrdersTableBody');
+            const list = [...orders].sort((a, b) => a.id - b.id);
+
+            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No orders in the system yet.'); return; }
+
+            const stageText = {
+                [STATUS.DRAFT]: '<b style="color:var(--text-muted)">Draft</b>',
+                [STATUS.APPROVAL]: '<b style="color:var(--accent-info)">Waiting Approval</b>',
+                [STATUS.OFD]: '<b style="color:var(--accent-primary)">Approved / OFD</b>',
+                [STATUS.DELIVERED]: '<b style="color:var(--accent-success)">Delivered</b>',
+                [STATUS.RETURNED]: '<b style="color:var(--accent-danger)">Returned</b>',
+                [STATUS.CANCELLED]: '<b style="color:#cbd5e1">Cancelled</b>'
+            };
+
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><b>#${o.id}</b></td>
+                    <td>${esc(o.customer)}</td>
+                    <td>${esc(o.phone)}</td>
+                    <td>${esc(o.itemName)}</td>
+                    <td>${o.qty}</td>
+                    <td>${money(o.price)}</td>
+                    <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
+                    <td>${stageText[o.status] || '-'}</td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        /* ADMIN SPECIFIC 4 SECTIONS RENDER FUNCTION */
+        function renderAdminSectionTables() {
+            // 1. Delivered
+            const delBody = document.getElementById('adminDeliveredTableBody');
+            const delList = orders.filter(o => o.status === STATUS.DELIVERED);
+            if (!delList.length) { delBody.innerHTML = emptyRow(8, 'No delivered items found.'); }
+            else {
+                delBody.innerHTML = delList.map(o => `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td>${o.deliveredStamp ? esc(o.deliveredStamp.date) : '-'}</td>
+                        <td>
+                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>`).join('');
+            }
+
+            // 2. Returns
+            const retBody = document.getElementById('adminReturnsTableBody');
+            const retList = orders.filter(o => o.status === STATUS.RETURNED);
+            if (!retList.length) { retBody.innerHTML = emptyRow(8, 'No returned items found.'); }
+            else {
+                retBody.innerHTML = retList.map(o => `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td>${esc(o.returnReason) || '-'}</td>
+                        <td>
+                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>`).join('');
+            }
+
+            // 3. Cancelled
+            const canBody = document.getElementById('adminCancelledTableBody');
+            const canList = orders.filter(o => o.status === STATUS.CANCELLED);
+            if (!canList.length) { canBody.innerHTML = emptyRow(8, 'No cancelled items found.'); }
+            else {
+                canBody.innerHTML = canList.map(o => `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.phone)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${o.qty}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td>${esc(o.cancelReason) || '-'}</td>
+                        <td>
+                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>`).join('');
+            }
+
+            // 4. History
+            const hisBody = document.getElementById('adminHistoryTableBody');
+            const hisList = [...orders];
+            if (!hisList.length) { hisBody.innerHTML = emptyRow(7, 'No history items found.'); }
+            else {
+                hisBody.innerHTML = hisList.map(o => `
+                    <tr>
+                        <td><b>#${o.id}</b></td>
+                        <td>${esc(o.customer)}</td>
+                        <td>${esc(o.itemName)}</td>
+                        <td>${money(orderTotal(o))}</td>
+                        <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
+                        <td>${o.createdStamp ? esc(o.createdStamp.date) : '-'}</td>
+                        <td>
+                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>`).join('');
+            }
+        }
+
+        function adminEditOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            const newCust = prompt("Update Customer Name:", order.customer);
+            if (newCust === null) return;
+            const newPhone = prompt("Update Phone Number:", order.phone);
+            if (newPhone === null) return;
+            const newPrice = prompt("Update Price (PKR):", order.price);
+            if (newPrice === null) return;
+
+            order.customer = newCust.trim() || order.customer;
+            order.phone = newPhone.trim() || order.phone;
+            const parsed = parseFloat(newPrice);
+            order.price = (!isNaN(parsed) && parsed >= 0) ? parsed : order.price;
+
+            saveData();
+            renderAllTables();
+            showToast_(`Order #${id} updated by Admin.`, 'ok');
+        }
+
+        function adminDeleteOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+            if (!confirm(`Admin action: permanently delete order #${id}?`)) return;
+
+            if (order.status === STATUS.DRAFT || order.status === STATUS.APPROVAL || order.status === STATUS.OFD) {
+                const item = inventory.find(i => i.id === order.itemId);
+                if (item) item.stock += order.qty;
+            }
+
+            orders = orders.filter(o => o.id !== id);
+            returns = returns.filter(r => r.orderId !== id);
+            saveData();
+            renderAllTables();
+            showToast_(`Order #${id} deleted by Admin.`, 'ok');
+        }
+
+        /* ---------------- Excel Export ---------------- */
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            const sorted = [...orders].sort((a, b) => a.id - b.id);
+
+            const sheet = (rows, fallback) => XLSX.utils.json_to_sheet(rows.length ? rows : [fallback]);
+
+            const daily = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
+                "Item": o.itemName, "Qty": o.qty, "Unit Price": o.price, "Total Amount": orderTotal(o),
+                "Status": o.status, "Created Date": o.createdStamp ? o.createdStamp.date : o.creationDate,
+                "Created Day": o.createdStamp ? o.createdStamp.day : '', "Created Time": o.createdStamp ? o.createdStamp.time : '',
+                "Remarks": o.remarks
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(daily, { "Order ID": "No records" }), "Daily Orders");
+
+            const ofd = sorted.filter(o => o.status === STATUS.OFD).map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
+                "Item": o.itemName, "Qty": o.qty, "Total Amount": orderTotal(o),
+                "Approved Date": o.approvedStamp ? o.approvedStamp.date : '',
+                "Approved Day": o.approvedStamp ? o.approvedStamp.day : '',
+                "Approved Time": o.approvedStamp ? o.approvedStamp.time : ''
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(ofd, { "Order ID": "No records" }), "Out For Delivery");
+
+            const delivered = sorted.filter(o => o.status === STATUS.DELIVERED).map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
+                "Item": o.itemName, "Qty": o.qty, "Unit Price": o.price, "Total Amount": orderTotal(o),
+                "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
+                "Delivery Day": o.deliveredStamp ? o.deliveredStamp.day : '',
+                "Delivery Time": o.deliveredStamp ? o.deliveredStamp.time : '',
+                "Remarks": o.remarks
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(delivered, { "Order ID": "No records" }), "Delivered Orders");
+
+            const returned = sorted.filter(o => o.status === STATUS.RETURNED).map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item": o.itemName,
+                "Returned Qty": o.qty, "Amount": orderTotal(o), "Reason": o.returnReason,
+                "Return Date": o.returnStamp ? o.returnStamp.date : '',
+                "Return Day": o.returnStamp ? o.returnStamp.day : '',
+                "Return Time": o.returnStamp ? o.returnStamp.time : ''
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(returned, { "Order ID": "No records" }), "Returns");
+
+            const cancelled = sorted.filter(o => o.status === STATUS.CANCELLED).map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item": o.itemName,
+                "Qty": o.qty, "Amount": orderTotal(o), "Reason": o.cancelReason,
+                "Cancel Date": o.cancelStamp ? o.cancelStamp.date : '',
+                "Cancel Day": o.cancelStamp ? o.cancelStamp.day : '',
+                "Cancel Time": o.cancelStamp ? o.cancelStamp.time : ''
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(cancelled, { "Order ID": "No records" }), "Cancelled Orders");
+
+            const inv = inventory.map(i => ({ "Item ID": i.id, "Item Name": i.name, "Price": i.price, "Current Stock": i.stock }));
+            XLSX.utils.book_append_sheet(wb, sheet(inv, { "Item ID": "No records" }), "Inventory Stock");
+
+            const history = sorted.map(o => ({
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Item": o.itemName,
+                "Qty": o.qty, "Total Amount": orderTotal(o),
+                "Created": o.createdStamp ? o.createdStamp.display : o.creationDate,
+                "Approved": o.approvedStamp ? o.approvedStamp.display : '',
+                "Delivered": o.deliveredStamp ? o.deliveredStamp.display : '',
+                "Returned": o.returnStamp ? o.returnStamp.display : '',
+                "Cancelled": o.cancelStamp ? o.cancelStamp.display : '',
+                "Final Status": o.status
+            }));
+            XLSX.utils.book_append_sheet(wb, sheet(history, { "Order ID": "No records" }), "History");
+
+            XLSX.writeFile(wb, `Urban_Hub_Complete_Database_${makeStamp().date}.xlsx`);
+            showToast_('Excel file downloaded.', 'ok');
+        }
+    </script>
+</body>
+</html>
