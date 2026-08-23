@@ -2821,6 +2821,8 @@
         function saveEmployees() {
             try { localStorage.setItem(EMPLOYEE_DB_KEY,JSON.stringify(employees)); }
             catch(e) { showToast_('Employee storage issue encountered.','err'); }
+            persistLocalBackup();
+            pushCloudState('employees');
         }
 
         function saveEmployee(e) {
@@ -3327,22 +3329,115 @@
         }
 
         function buildPayload() {
-            return { inventory, orders, returns, meta };
+            return { inventory, orders, returns, meta, employees };
+        }
+
+        /* ================= CLOUD PERSISTENCE LAYER =================
+           Browser storage remains a local safety cache. The authoritative
+           copy is /api/state, backed by the production database. */
+        let cloudSyncBusy = false;
+        let cloudSyncTimer = null;
+        let cloudReady = false;
+        let cloudLastUpdated = null;
+
+        async function cloudRequest(method, body) {
+            try {
+                const res = await fetch('/api/state', {
+                    method,
+                    headers: body ? {'Content-Type':'application/json'} : {},
+                    body: body ? JSON.stringify(body) : undefined,
+                    cache: 'no-store',
+                    credentials: 'same-origin'
+                });
+                if (!res.ok) throw new Error('Cloud request failed: ' + res.status);
+                return await res.json();
+            } catch (err) {
+                return null;
+            }
+        }
+
+        function persistLocalBackup() {
+            try {
+                const payload = JSON.stringify(buildPayload());
+                localStorage.setItem(DB_KEY, payload);
+                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees));
+                localStorage.setItem(DB_KEY + '_backup_latest', payload);
+            } catch(e) {}
+        }
+
+        async function pushCloudState(reason='update') {
+            if (cloudSyncBusy) {
+                clearTimeout(cloudSyncTimer);
+                cloudSyncTimer = setTimeout(() => pushCloudState('queued'), 500);
+                return;
+            }
+            cloudSyncBusy = true;
+            meta.lastUpdated = new Date(Date.now() + timeOffsetMs).toISOString();
+            persistLocalBackup();
+            const result = await cloudRequest('PUT', {
+                payload: buildPayload(),
+                expectedUpdatedAt: cloudLastUpdated,
+                reason
+            });
+            if (result && result.ok) {
+                cloudReady = true;
+                cloudLastUpdated = result.updatedAt || meta.lastUpdated;
+                meta.lastUpdated = cloudLastUpdated;
+            } else if (result && result.conflict) {
+                const latest = await cloudRequest('GET');
+                if (latest && latest.payload) {
+                    applyCloudPayload(latest.payload);
+                    cloudLastUpdated = latest.updatedAt || null;
+                    renderAllTables();
+                    renderAllEmployeeViews();
+                    showToast_('Latest cloud data loaded. No local data was overwritten blindly.', 'warn');
+                }
+            } else if (!result) {
+                showToast_('Cloud temporarily unavailable. Local safety copy retained; retrying when online.', 'warn');
+            }
+            cloudSyncBusy = false;
         }
 
         function saveData() {
             meta.lastUpdated = new Date(Date.now() + timeOffsetMs).toISOString();
+            persistLocalBackup();
+            pushCloudState('data');
+        }
+
+        function applyCloudPayload(raw) {
+            if (!raw || typeof raw !== 'object') return;
+            if (Array.isArray(raw.inventory)) inventory = raw.inventory.map(i => ({
+                id:Number(i.id), name:i.name||'', price:Number(i.price)||0, stock:Number(i.stock)||0
+            }));
+            if (Array.isArray(raw.orders)) orders = raw.orders.map(normalizeOrder);
+            if (Array.isArray(raw.returns)) returns = raw.returns;
+            if (raw.meta && typeof raw.meta === 'object') meta = raw.meta;
+            if (Array.isArray(raw.employees)) employees = raw.employees.map(normalizeEmployee);
             try {
                 localStorage.setItem(DB_KEY, JSON.stringify(buildPayload()));
-            } catch (e) {
-                showToast_('Browser storage issue encountered.', 'err');
+                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees));
+            } catch(e) {}
+        }
+
+        async function syncCloudOnBoot() {
+            const result = await cloudRequest('GET');
+            if (result && result.payload) {
+                applyCloudPayload(result.payload);
+                cloudReady = true;
+                cloudLastUpdated = result.updatedAt || null;
+                return;
+            }
+            // First deployment: migrate the current browser's existing data once.
+            if (inventory.length || orders.length || returns.length || employees.length) {
+                await pushCloudState('initial-migration');
             }
         }
 
         /* ---------------- Boot Script ---------------- */
-        window.onload = function () {
+        window.onload = async function () {
             loadLocalData();
             loadEmployees();
+            await syncCloudOnBoot();
             cleanupExpiredWarningReadStates();
             renderAllTables();
             renderEmployeeManagement();
@@ -3361,7 +3456,13 @@
             setInterval(syncBackendTime, 300000);
         };
 
-        window.addEventListener('online', () => { syncBackendTime(); });
+        window.addEventListener('online', () => {
+            syncBackendTime();
+            syncCloudOnBoot();
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) syncCloudOnBoot();
+        });
 
         // Defensive auth wiring: keeps Employee Sign In functional even if the inline form event is interrupted.
         document.addEventListener('click', function(ev){
