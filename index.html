@@ -920,6 +920,27 @@
         }
         .employee-profile-title { font-size:24px; font-weight:800; }
         .employee-profile-meta { color:var(--text-muted); font-size:13px; margin-top:5px; line-height:1.6; }
+        .daily-overtime-cell{font-weight:800;color:#a7f3d0}
+        .salary-cut-cell,.salary-cut-value{color:#fca5a5!important;font-weight:800}
+        .overtime-value{color:#a7f3d0!important;font-weight:800}
+        .break-violation-badge{background:rgba(239,68,68,.16);color:#fca5a5;border:1px solid rgba(239,68,68,.35)}
+        .break-ok-badge{background:rgba(16,185,129,.13);color:#6ee7b7;border:1px solid rgba(16,185,129,.28)}
+        .warning-letters-wrapper{overflow:hidden}
+        .employee-warning-letter{position:relative;background:linear-gradient(145deg,#fff,#f4f7fb);color:#111827;border:1px solid #cbd5e1;border-radius:14px;padding:22px;box-shadow:0 18px 45px rgba(0,0,0,.22);overflow:hidden}
+        .employee-warning-letter::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 45%,rgba(255,255,255,.55) 50%,transparent 55%);transform:translateX(-120%);animation:warningLetterShine 5s ease-in-out infinite}
+        .warning-letter-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+        .warning-letter-brand{font-size:22px;font-weight:900;letter-spacing:.8px;color:#111827}
+        .warning-letter-doc{font-size:10px;font-weight:900;letter-spacing:1.2px;color:#64748b;text-align:right}
+        .warning-letter-rule{height:3px;background:linear-gradient(90deg,#111827,#ef4444,#111827);margin:14px 0 18px;border-radius:99px}
+        .warning-letter-alert{display:inline-block;font-size:20px;font-weight:1000;letter-spacing:1.5px;color:#dc2626;text-shadow:0 0 14px rgba(239,68,68,.28);animation:warningHeadingPulse 1.8s ease-in-out infinite}
+        .warning-letter-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;color:#475569;font-size:11px}
+        .warning-letter-title{margin-top:18px;font-size:16px;font-weight:900;color:#111827}
+        .warning-letter-body{margin-top:10px;font-size:13px;line-height:1.8;color:#1e293b;white-space:pre-wrap;min-height:80px}
+        .warning-letter-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px;padding-top:12px;border-top:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700}
+        .warning-letter-admin-actions{margin-top:16px;padding-top:12px;border-top:1px dashed #cbd5e1}
+        @keyframes warningLetterShine{0%,60%{transform:translateX(-120%);opacity:0}70%{opacity:1}100%{transform:translateX(120%);opacity:0}}
+        @keyframes warningHeadingPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 2px rgba(220,38,38,.2))}50%{transform:scale(1.045);filter:drop-shadow(0 0 10px rgba(220,38,38,.35))}}
+
         .employee-warning-list { display:flex; flex-direction:column; gap:10px; }
         .employee-warning-item {
             background:#111827;
@@ -1187,6 +1208,46 @@
         @media(max-width:600px){.warning-letter-card{padding:22px}.warning-letter-actions{justify-content:stretch}.warning-letter-close{width:100%}}
         .employee-credential-note { font-size:12px; color:var(--text-muted); line-height:1.6; margin-top:8px; }
         .employee-password-cell { font-family:monospace; letter-spacing:.3px; }
+
+        /* ================= EMPLOYEE LIVE WORKING-TIME MONITOR ================= */
+        .employee-presence-card{
+            background:linear-gradient(135deg,rgba(17,24,39,.96),rgba(15,23,42,.92));
+            border:1px solid var(--border-color);
+            border-radius:14px;
+            padding:16px;
+            margin:0 0 18px 0;
+        }
+        .employee-presence-head{
+            display:flex;justify-content:space-between;align-items:center;
+            gap:12px;flex-wrap:wrap;margin-bottom:14px;
+        }
+        .employee-presence-title{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px}
+        .employee-presence-status{
+            display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+            font-size:11px;font-weight:800;border:1px solid var(--border-color);
+        }
+        .employee-presence-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+        .employee-presence-status.online{color:#6ee7b7;background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35)}
+        .employee-presence-status.online .employee-presence-dot{background:#10b981;box-shadow:0 0 12px rgba(16,185,129,.85)}
+        .employee-presence-status.break{color:#fcd34d;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)}
+        .employee-presence-status.break .employee-presence-dot{background:#f59e0b;box-shadow:0 0 12px rgba(245,158,11,.85)}
+        .employee-presence-status.away{color:#93c5fd;background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.35)}
+        .employee-presence-status.away .employee-presence-dot{background:#3b82f6;box-shadow:0 0 12px rgba(59,130,246,.75)}
+        .employee-presence-status.offline{color:#fca5a5;background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.32)}
+        .employee-presence-status.offline .employee-presence-dot{background:#ef4444;box-shadow:0 0 12px rgba(239,68,68,.65)}
+        .employee-presence-grid{
+            display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;
+        }
+        .employee-presence-box{
+            background:#0b1220;border:1px solid var(--border-color);border-radius:10px;padding:11px 12px;
+        }
+        .employee-presence-box .label{font-size:10px;color:var(--text-muted);font-weight:800;text-transform:uppercase;margin-bottom:4px}
+        .employee-presence-box .value{font-size:14px;font-weight:800;color:#f8fafc}
+        .employee-presence-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+        .employee-presence-note{font-size:11px;color:var(--text-muted);line-height:1.55;margin-top:10px}
+        .presence-online-badge{white-space:nowrap}
+        .presence-hours-live{color:#6ee7b7!important}
+
         .employee-admin-warning-form { margin-top:16px; }
         @media (max-width: 900px) {
             body { flex-direction: column; height: auto; overflow: auto; }
@@ -2001,7 +2062,7 @@
                     <div class="table-responsive">
                         <table>
                             <thead><tr>
-                                <th>ID</th><th>Employee</th><th>Phone</th><th>Email</th><th>Password</th><th>Monthly Salary</th><th>Daily Salary</th><th>Present</th><th>Leaves</th><th>Absent</th><th>Salary Paid</th><th>Actions</th>
+                                <th>ID</th><th>Employee</th><th>Phone</th><th>Email</th><th>Password</th><th>Live Status</th><th>Today Hours</th><th>Monthly Salary</th><th>Daily Salary</th><th>Present</th><th>Leaves</th><th>Absent</th><th>Break Violations</th><th>Salary Cut</th><th>Salary Paid</th><th>Actions</th>
                             </tr></thead>
                             <tbody id="adminEmployeesTableBody"></tbody>
                         </table>
@@ -2134,11 +2195,9 @@
             CANCELLED: 'Cancelled'
         };
 
-        const defaultInventory = [
-            { id: 101, name: "THE HAPPY MART T-Shirt", price: 1500, stock: 50 },
-            { id: 102, name: "Leather Jacket", price: 8500, stock: 15 },
-            { id: 103, name: "Casual Sneakers", price: 4500, stock: 30 }
-        ];
+        /* Inventory starts completely empty. Items appear only after the
+           Admin manually adds them. */
+        const defaultInventory = [];
 
         const defaultOrders = [
             {
@@ -2376,7 +2435,7 @@
             const adminMonth = document.getElementById('adminAttendanceMonth');
             if (adminMonth && !adminMonth.value) adminMonth.value = month;
             if (!employees.length) {
-                body.innerHTML = emptyRow(12, 'No employees added yet.');
+                body.innerHTML = emptyRow(16, 'No employees added yet.');
                 const portal = document.getElementById('adminEmployeePortal');
                 if (portal) portal.innerHTML = '';
                 return;
@@ -2388,8 +2447,11 @@
                     <td>#${emp.id}</td>
                     <td><a href="javascript:void(0)" class="employee-name-link" onclick="openAdminEmployeePortal(${emp.id})">${esc(emp.name)}</a></td>
                     <td>${esc(emp.phone || '-')}</td><td>${esc(emp.email || '-')}</td><td class="employee-password-cell">${esc(emp.loginPassword || 'Not created')}</td>
+                    <td id="adminPresenceStatusCell-${emp.id}">${presenceStatusHtml(emp)}</td><td id="adminPresenceHoursCell-${emp.id}" class="presence-hours-live">${presenceDisplay(emp).todayLabel}</td>
                     <td>${formatMoney2(emp.monthlySalary)}</td><td>${formatMoney2(emp.dailySalary)}</td>
                     <td>${st.present}</td><td>${st.leaves}</td><td>${st.absent}</td>
+                    <td>${st.breakViolationCount} <span class="employee-mini-note">(${st.breakPenaltyDays} cut day${st.breakPenaltyDays===1?'':'s'})</span></td>
+                    <td class="salary-cut-cell">${formatMoney2(st.breakSalaryCut)}</td>
                     <td><span class="badge ${paid?'employee-paid-badge':'badge-pending'}">${paid?'Paid':'Unpaid'}</span></td>
                     <td style="white-space:nowrap">
                         <button class="btn-submit" onclick="openAdminEmployeePortal(${emp.id})"><i class="fa-solid fa-eye"></i> Portal</button>
@@ -2573,17 +2635,24 @@
         function renderWarningLetters(emp, adminMode=false) {
             const warnings = Array.isArray(emp.warningLetters) ? emp.warningLetters : [];
             const visible = adminMode ? warnings : activeEmployeeWarnings(emp);
-            const items = visible.length ? visible.map(w => `<div class="employee-warning-item ${w.sent && !isWarningExpired(w) ? 'warning-active-card' : ''}">
-                <div class="employee-warning-item-title">${esc(w.title || 'Warning Letter')}</div>
-                <div class="employee-warning-item-date">${esc(w.sentAt || w.date || '-')} ${adminMode ? `· ${w.sent ? (isWarningExpired(w) ? 'Expired' : 'Sent') : 'Draft'}` : ''}</div>
-                <div class="employee-warning-item-text">${esc(w.details || '')}</div>
-                ${adminMode ? `<div class="employee-warning-expiry-note">${w.sent ? warningExpiryLabel(w) : '2-month validity starts when sent'}</div><div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            const items = visible.length ? visible.map(w => `<div class="employee-warning-letter ${w.sent && !isWarningExpired(w) ? 'warning-active-card warning-alert-live' : ''}">
+                <div class="warning-letter-head">
+                    <div class="warning-letter-brand">THE HAPPY MART</div>
+                    <div class="warning-letter-doc">OFFICIAL EMPLOYEE NOTICE</div>
+                </div>
+                <div class="warning-letter-rule"></div>
+                <div class="warning-letter-alert">WARNING LETTER</div>
+                <div class="warning-letter-meta"><span>Employee: <b>${esc(emp.name)}</b></span><span>Date: ${esc(w.sentAt || w.date || '-')}</span></div>
+                <div class="warning-letter-title">${esc(w.title || 'Official Warning')}</div>
+                <div class="warning-letter-body">${esc(w.details || '')}</div>
+                <div class="warning-letter-footer"><span>Issued by: Admin / Management</span><span>${w.sent ? (isWarningExpired(w) ? 'Expired' : 'Active') : 'Draft'}</span></div>
+                ${adminMode ? `<div class="warning-letter-admin-actions"><div class="employee-warning-expiry-note">${w.sent ? warningExpiryLabel(w) : '2-month validity starts when sent'}</div><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
                     <button class="btn-warning" onclick="editWarningLetter(${emp.id},${Number(w.id)})"><i class="fa-solid fa-pen"></i> Edit</button>
                     ${!w.sent ? `<button class="btn-success" onclick="sendWarningLetter(${emp.id},${Number(w.id)})"><i class="fa-solid fa-paper-plane"></i> Send</button>` : ''}
                     <button class="btn-danger" onclick="deleteWarningLetter(${emp.id},${Number(w.id)})"><i class="fa-solid fa-trash"></i> Delete</button>
-                </div>` : ''}
+                </div></div>` : ''}
             </div>`).join('') : `<div class="employee-mini-note">${adminMode ? 'No warning letters recorded.' : 'No active warning letters have been sent to you.'}</div>`;
-            return `<div class="employee-card" style="margin:18px 0 0 0; padding:16px;">
+            return `<div class="employee-card warning-letters-wrapper" style="margin:18px 0 0 0; padding:16px;">
                 <div class="employee-card-header">
                     <div class="employee-card-title" style="font-size:16px;"><i class="fa-solid fa-file-circle-exclamation"></i> Warning Letters</div>
                     ${adminMode ? `<span class="employee-mini-note">Warnings remain in Admin records after expiry until you delete them.</span>` : ''}
@@ -2641,6 +2710,527 @@
             showToast_('Warning letter sent to the employee portal.','ok');
         }
 
+
+        /* ================= LIVE EMPLOYEE PRESENCE / WORKING HOURS ================= */
+        const EMPLOYEE_HEARTBEAT_MS = 20000;
+        const EMPLOYEE_STALE_MS = 65000;
+        const EMPLOYEE_UI_REFRESH_MS = 1000;
+        const EMPLOYEE_PRESENCE_POLL_MS = 5000;
+        const EMPLOYEE_STANDARD_DAILY_SECONDS = 8 * 60 * 60;
+        const EMPLOYEE_BREAK_LIMIT_SECONDS = 60 * 60;
+        let employeePresenceTimer = null;
+        let employeePresenceUiTimer = null;
+
+        function presenceNowIso(){
+            return nowDate().toISOString();
+        }
+
+        function presenceNowMs(){
+            return nowDate().getTime();
+        }
+
+        function ensureEmployeePresence(emp){
+            if(!emp.presence || typeof emp.presence!=='object') emp.presence={};
+            if(!['online','offline','break','away'].includes(emp.presence.status)) emp.presence.status='offline';
+            if(!emp.presence.days || typeof emp.presence.days!=='object') emp.presence.days={};
+            if(!Array.isArray(emp.presence.sessionHistory)) emp.presence.sessionHistory=[];
+            if(emp.presence.currentSessionId===undefined) emp.presence.currentSessionId=null;
+            return emp.presence;
+        }
+
+        function ensurePresenceDay(emp,dateKey){
+            const p=ensureEmployeePresence(emp);
+            if(!p.days[dateKey] || typeof p.days[dateKey]!=='object'){
+                p.days[dateKey]={sessions:[]};
+            }
+            if(!Array.isArray(p.days[dateKey].sessions)) p.days[dateKey].sessions=[];
+            return p.days[dateKey];
+        }
+
+        function activePresenceSession(emp){
+            const p=ensureEmployeePresence(emp);
+            const day=ensurePresenceDay(emp, makeStamp().date);
+            let session=day.sessions.find(s=>s.id===p.currentSessionId && !s.logoutAt);
+            if(!session){
+                for(const d of Object.values(p.days)){
+                    if(!d || !Array.isArray(d.sessions)) continue;
+                    const found=d.sessions.find(s=>s.id===p.currentSessionId && !s.logoutAt);
+                    if(found){ session=found; break; }
+                }
+            }
+            return session || null;
+        }
+
+        function parsePresenceTime(value){
+            const n=Date.parse(value||'');
+            return Number.isFinite(n)?n:null;
+        }
+
+        function secondsBetween(a,b){
+            const x=parsePresenceTime(a), y=parsePresenceTime(b);
+            if(x===null || y===null || y<=x) return 0;
+            return Math.floor((y-x)/1000);
+        }
+
+        function intervalSeconds(list,startMs,endMs){
+            if(!Array.isArray(list) || endMs<=startMs) return 0;
+            let total=0;
+            for(const item of list){
+                const a=parsePresenceTime(item.startAt);
+                const b=parsePresenceTime(item.endAt) || endMs;
+                if(a===null) continue;
+                const left=Math.max(startMs,a);
+                const right=Math.min(endMs,b);
+                if(right>left) total += Math.floor((right-left)/1000);
+            }
+            return total;
+        }
+
+        function getPresenceDaySeconds(emp,dateKey,atMs=presenceNowMs()){
+            const p=ensureEmployeePresence(emp);
+            const day=p.days && p.days[dateKey];
+            if(!day || !Array.isArray(day.sessions)) return 0;
+
+            let total=0;
+            for(const session of day.sessions){
+                const start=parsePresenceTime(session.loginAt);
+                if(start===null) continue;
+
+                let end=parsePresenceTime(session.logoutAt);
+                if(end===null){
+                    const isCurrent = p.currentSessionId===session.id;
+                    const last=parsePresenceTime(session.lastSeenAt);
+                    /* Live session uses the current clock so the counter never freezes
+                       between heartbeats. A stale/non-current session stops at lastSeen. */
+                    end=isCurrent ? atMs : Math.min(atMs,last===null?atMs:last);
+                }
+                if(end<=start) continue;
+
+                let seconds=Math.floor((end-start)/1000);
+                seconds -= intervalSeconds(session.breaks,start,end);
+                seconds -= intervalSeconds(session.awayPeriods,start,end);
+                total += Math.max(0,seconds);
+            }
+            return Math.max(0,total);
+        }
+
+        function getPresenceDayBreakSeconds(emp,dateKey,atMs=presenceNowMs()){
+            const p=ensureEmployeePresence(emp);
+            const day=p.days && p.days[dateKey];
+            if(!day || !Array.isArray(day.sessions)) return 0;
+            let total=0;
+            for(const session of day.sessions){
+                const start=parsePresenceTime(session.loginAt);
+                if(start===null) continue;
+                const end=parsePresenceTime(session.logoutAt) ||
+                    (p.currentSessionId===session.id ? atMs : (parsePresenceTime(session.lastSeenAt)||atMs));
+                total += intervalSeconds(session.breaks,start,end);
+            }
+            return Math.max(0,total);
+        }
+
+        function getPresenceDayOvertimeSeconds(emp,dateKey,atMs=presenceNowMs()){
+            return Math.max(0,getPresenceDaySeconds(emp,dateKey,atMs)-EMPLOYEE_STANDARD_DAILY_SECONDS);
+        }
+
+        function isBreakViolationDay(emp,dateKey,atMs=presenceNowMs()){
+            return getPresenceDayBreakSeconds(emp,dateKey,atMs) > EMPLOYEE_BREAK_LIMIT_SECONDS;
+        }
+
+        function formatWorkDuration(totalSeconds){
+            const s=Math.max(0,Math.floor(Number(totalSeconds)||0));
+            const h=Math.floor(s/3600);
+            const m=Math.floor((s%3600)/60);
+            const sec=s%60;
+            return `${h}h ${String(m).padStart(2,'0')}m ${String(sec).padStart(2,'0')}s`;
+        }
+
+        function presenceDisplay(emp){
+            const p=ensureEmployeePresence(emp);
+            const now=presenceNowMs();
+            const last=parsePresenceTime(p.lastSeenAt);
+            let status=p.status||'offline';
+
+            if(!last || (now-last)>EMPLOYEE_STALE_MS || !navigator.onLine && loggedInEmployeeId===emp.id){
+                status='offline';
+            } else {
+                /* Connectivity status is intentionally binary for Admin + Employee views.
+                   Break/away remain separate details but the employee is still Online. */
+                status='online';
+            }
+
+            const today=makeStamp().date;
+            const hoursToday=getPresenceDaySeconds(emp,today,now);
+
+            let currentSession=activePresenceSession(emp);
+            let currentStart=currentSession ? currentSession.loginAt : null;
+            let lastSeen=p.lastSeenAt;
+
+            return {
+                status,
+                todaySeconds:hoursToday,
+                todayLabel:formatWorkDuration(hoursToday),
+                currentStart,
+                lastSeen,
+                lastSeenLabel:lastSeen ? makeStamp(new Date(lastSeen)).display : '-',
+                statusLabel:status==='online'?'Online':status==='break'?'On Break':status==='away'?'Away / Inactive':'Offline'
+            };
+        }
+
+        function presenceStatusHtml(emp){
+            const d=presenceDisplay(emp);
+            const breakState = emp.presence && emp.presence.status==='break' ? ' · On Break' : '';
+            const awayState = emp.presence && emp.presence.status==='away' ? ' · Away' : '';
+            return `<span class="employee-presence-status ${d.status} presence-online-badge"><span class="employee-presence-dot"></span>${d.status==='online'?'Online':'Offline'}${d.status==='online'?(breakState||awayState):''}</span>`;
+        }
+
+        function startEmployeePresenceSession(emp){
+            const p=ensureEmployeePresence(emp);
+            const now=presenceNowIso();
+            const stale=p.currentSessionId && parsePresenceTime(p.lastSeenAt)!==null &&
+                (presenceNowMs()-parsePresenceTime(p.lastSeenAt)>EMPLOYEE_STALE_MS);
+
+            const old=activePresenceSession(emp);
+            if(old && (stale || p.status==='offline')){
+                old.logoutAt=old.lastSeenAt||now;
+            }
+
+            const day=ensurePresenceDay(emp,makeStamp().date);
+            const id=`${emp.id}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+            day.sessions.push({
+                id,
+                loginAt:now,
+                lastSeenAt:now,
+                logoutAt:null,
+                breaks:[],
+                awayPeriods:[]
+            });
+            p.currentSessionId=id;
+            p.status='online';
+            p.lastSeenAt=now;
+            p.lastOfflineAt=null;
+
+            saveEmployees();
+            updateEmployeePresenceUI();
+        }
+
+        function closeEmployeePresenceSession(emp,reason='logout'){
+            const p=ensureEmployeePresence(emp);
+            const session=activePresenceSession(emp);
+            if(!session) {
+                p.status='offline';
+                p.lastOfflineAt=presenceNowIso();
+                p.currentSessionId=null;
+                return;
+            }
+
+            const now=presenceNowIso();
+
+            if(Array.isArray(session.breaks)){
+                const openBreak=session.breaks.find(x=>x.startAt && !x.endAt);
+                if(openBreak) openBreak.endAt=now;
+            }
+            if(Array.isArray(session.awayPeriods)){
+                const openAway=session.awayPeriods.find(x=>x.startAt && !x.endAt);
+                if(openAway) openAway.endAt=now;
+            }
+
+            session.lastSeenAt=now;
+            session.logoutAt=now;
+            session.logoutReason=reason;
+
+            p.status='offline';
+            p.lastOfflineAt=now;
+            p.lastSeenAt=now;
+            p.currentSessionId=null;
+
+            saveEmployees();
+            updateEmployeePresenceUI();
+        }
+
+        function heartbeatEmployeePresence(){
+            if(!loggedInEmployeeId) return;
+
+            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(!emp) return;
+
+            if(!navigator.onLine){
+                setEmployeePresenceOfflineLocal();
+                return;
+            }
+
+            const p=ensureEmployeePresence(emp);
+            const session=activePresenceSession(emp);
+            if(!session){
+                startEmployeePresenceSession(emp);
+                return;
+            }
+
+            const now=presenceNowIso();
+            session.lastSeenAt=now;
+            p.lastSeenAt=now;
+
+            if(p.status!=='break' && p.status!=='away') p.status='online';
+
+            saveEmployees();
+            updateEmployeePresenceUI();
+        }
+
+        function setEmployeePresenceBreak(isStarting){
+            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(!emp) return;
+            const p=ensureEmployeePresence(emp);
+            const session=activePresenceSession(emp);
+            if(!session) return;
+
+            const now=presenceNowIso();
+
+            if(isStarting){
+                if(p.status==='break') return;
+                if(Array.isArray(session.awayPeriods)){
+                    const openAway=session.awayPeriods.find(x=>x.startAt && !x.endAt);
+                    if(openAway) openAway.endAt=now;
+                }
+                session.breaks.push({startAt:now,endAt:null});
+                p.status='break';
+            }else{
+                const openBreak=Array.isArray(session.breaks)?session.breaks.find(x=>x.startAt && !x.endAt):null;
+                if(openBreak) openBreak.endAt=now;
+                p.status='online';
+            }
+
+            session.lastSeenAt=now;
+            p.lastSeenAt=now;
+            saveEmployees();
+            updateEmployeePresenceUI();
+            renderEmployeeSelfPortal();
+        }
+
+        function setEmployeePresenceAway(isAway){
+            if(!loggedInEmployeeId) return;
+            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(!emp) return;
+            const p=ensureEmployeePresence(emp);
+            const session=activePresenceSession(emp);
+            if(!session) return;
+
+            const now=presenceNowIso();
+
+            if(isAway){
+                if(p.status==='break') return;
+                if(!session.awayPeriods.some(x=>x.startAt && !x.endAt)){
+                    session.awayPeriods.push({startAt:now,endAt:null});
+                }
+                p.status='away';
+            }else{
+                const open=session.awayPeriods.find(x=>x.startAt && !x.endAt);
+                if(open) open.endAt=now;
+                p.status='online';
+            }
+
+            session.lastSeenAt=now;
+            p.lastSeenAt=now;
+            saveEmployees();
+            updateEmployeePresenceUI();
+        }
+
+        function setEmployeePresenceOfflineLocal(){
+            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(!emp) return;
+            const p=ensureEmployeePresence(emp);
+            p.status='offline';
+            updateEmployeePresenceUI();
+        }
+
+        function employeePresenceHeartbeatStart(){
+            if(employeePresenceTimer) clearInterval(employeePresenceTimer);
+            employeePresenceTimer=setInterval(heartbeatEmployeePresence,EMPLOYEE_HEARTBEAT_MS);
+            if(loggedInEmployeeId) heartbeatEmployeePresence();
+        }
+
+        function employeePresenceUiRefreshStart(){
+            if(employeePresenceUiTimer) clearInterval(employeePresenceUiTimer);
+            employeePresenceUiTimer=setInterval(updateEmployeePresenceUI,EMPLOYEE_UI_REFRESH_MS);
+        }
+
+
+        function presenceSessionWorkingSeconds(session,atMs=presenceNowMs()){
+            if(!session) return 0;
+            const start=parsePresenceTime(session.loginAt);
+            if(start===null) return 0;
+            let end=parsePresenceTime(session.logoutAt);
+            if(end===null){
+                const owner = employees.find(e=>e.presence && e.presence.currentSessionId===session.id);
+                const isCurrent = !!owner;
+                const last=parsePresenceTime(session.lastSeenAt);
+                end=isCurrent ? atMs : Math.min(atMs,last===null?atMs:last);
+            }
+            if(end<=start) return 0;
+            let total=Math.floor((end-start)/1000);
+            total -= intervalSeconds(session.breaks,start,end);
+            total -= intervalSeconds(session.awayPeriods,start,end);
+            return Math.max(0,total);
+        }
+
+        function presenceTimeLabel(iso){
+            if(!iso) return '—';
+            return makeStamp(new Date(iso)).time;
+        }
+
+        function presenceSessionHistoryMarkup(emp){
+            const dateKey=makeStamp().date;
+            const p=ensureEmployeePresence(emp);
+            const day=p.days && p.days[dateKey];
+            const sessions=day && Array.isArray(day.sessions) ? day.sessions : [];
+
+            if(!sessions.length){
+                return `<div class="employee-mini-note">No work session recorded today.</div>`;
+            }
+
+            const rows=sessions.map((session,index)=>{
+                const active=!session.logoutAt && p.currentSessionId===session.id;
+                const stale=!active && !session.logoutAt;
+                const end=active ? null : (session.logoutAt || session.lastSeenAt);
+                const breaks=Array.isArray(session.breaks)?session.breaks.filter(b=>b.startAt):[];
+                const breakText=breaks.length
+                    ? breaks.map(b=>`${presenceTimeLabel(b.startAt)}–${presenceTimeLabel(b.endAt)}`).join(', ')
+                    : 'None';
+                const duration=presenceSessionWorkingSeconds(session);
+                return `<tr>
+                    <td><b>#${index+1}</b></td>
+                    <td>${esc(presenceTimeLabel(session.loginAt))}</td>
+                    <td>${end ? esc(presenceTimeLabel(end)) : (stale?'Offline / last seen':'Still Online')}</td>
+                    <td>${esc(formatWorkDuration(duration))}</td>
+                    <td>${esc(breakText)}</td>
+                </tr>`;
+            }).join('');
+
+            return `<div class="table-responsive" style="margin:0;">
+                <table>
+                    <thead><tr><th>Session</th><th>On Time</th><th>Off / Last Seen</th><th>Working Time</th><th>Breaks</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function employeePresenceSummaryMarkup(emp,adminMode=false){
+            const d=presenceDisplay(emp);
+            const day=makeStamp().date;
+            const session=activePresenceSession(emp);
+            const action=(!adminMode && loggedInEmployeeId===emp.id)
+                ? (d.status==='break'
+                    ? `<button class="btn-success" type="button" onclick="setEmployeePresenceBreak(false)"><i class="fa-solid fa-play"></i> End Break</button>`
+                    : `<button class="btn-warning" type="button" onclick="setEmployeePresenceBreak(true)"><i class="fa-solid fa-mug-hot"></i> Start Break</button>`)
+                : '';
+
+            return `<div class="employee-presence-card" id="employeePresenceCard-${emp.id}">
+                <div class="employee-presence-head">
+                    <div class="employee-presence-title"><i class="fa-solid fa-user-clock"></i> Live Working Time</div>
+                    <div id="employeePresenceStatus-${emp.id}">${presenceStatusHtml(emp)}</div>
+                </div>
+                <div class="employee-presence-grid">
+                    <div class="employee-presence-box"><div class="label">Today Working Time</div><div class="value presence-hours-live" id="employeePresenceToday-${emp.id}">${d.todayLabel}</div></div>
+                    <div class="employee-presence-box"><div class="label">Current Session Started</div><div class="value" id="employeePresenceStart-${emp.id}">${d.currentStart ? esc(makeStamp(new Date(d.currentStart)).display) : '-'}</div></div>
+                    <div class="employee-presence-box"><div class="label">Last Seen / Activity</div><div class="value" id="employeePresenceLast-${emp.id}">${d.lastSeenLabel}</div></div>
+                    <div class="employee-presence-box"><div class="label">Last Offline</div><div class="value" id="employeePresenceOffline-${emp.id}">${emp.presence && emp.presence.lastOfflineAt ? esc(makeStamp(new Date(emp.presence.lastOfflineAt)).display) : '-'}</div></div>
+                    <div class="employee-presence-box"><div class="label">Current Status</div><div class="value" id="employeePresenceStatusText-${emp.id}">${d.statusLabel}</div></div>
+                </div>
+                ${action?`<div class="employee-presence-actions">${action}</div>`:''}
+                <div class="employee-presence-note">Working time excludes recorded breaks and away/inactive periods. If the employee's browser closes or internet connection is lost, the system uses the last heartbeat to mark the session offline and stops counting time after the last confirmed activity.</div>
+                <div style="margin-top:14px;">
+                    <div class="employee-card-title" style="font-size:13px;margin-bottom:9px;"><i class="fa-solid fa-clock-rotate-left"></i> Today's Sessions</div>
+                    <div id="employeePresenceSessions-${emp.id}">${presenceSessionHistoryMarkup(emp)}</div>
+                </div>
+            </div>`;
+        }
+
+        function updateEmployeePresenceUI(){
+            employees.forEach(emp=>{
+                const d=presenceDisplay(emp);
+                const tableStatus=document.getElementById(`adminPresenceStatusCell-${emp.id}`);
+                if(tableStatus) tableStatus.innerHTML=presenceStatusHtml(emp);
+                const tableHours=document.getElementById(`adminPresenceHoursCell-${emp.id}`);
+                if(tableHours) tableHours.innerText=d.todayLabel;
+                const status=document.getElementById(`employeePresenceStatus-${emp.id}`);
+                if(status) status.innerHTML=presenceStatusHtml(emp);
+                const today=document.getElementById(`employeePresenceToday-${emp.id}`);
+                if(today) today.innerText=d.todayLabel;
+                const start=document.getElementById(`employeePresenceStart-${emp.id}`);
+                if(start) start.innerText=d.currentStart?makeStamp(new Date(d.currentStart)).display:'-';
+                const last=document.getElementById(`employeePresenceLast-${emp.id}`);
+                if(last) last.innerText=d.lastSeenLabel;
+                const offline=document.getElementById(`employeePresenceOffline-${emp.id}`);
+                if(offline) offline.innerText=emp.presence && emp.presence.lastOfflineAt ? makeStamp(new Date(emp.presence.lastOfflineAt)).display : '-';
+                const st=document.getElementById(`employeePresenceStatusText-${emp.id}`);
+                if(st) st.innerText=d.statusLabel;
+                const sessions=document.getElementById(`employeePresenceSessions-${emp.id}`);
+                if(sessions) sessions.innerHTML=presenceSessionHistoryMarkup(emp);
+            });
+
+            const selected=document.getElementById('adminEmployeePortal');
+            if(selected && adminSelectedEmployeeId){
+                const emp=employees.find(e=>e.id===Number(adminSelectedEmployeeId));
+                const box=document.getElementById(`employeePresenceCard-${adminSelectedEmployeeId}`);
+                if(emp && !box) renderAdminEmployeePortal(adminSelectedEmployeeId);
+            }
+        }
+
+        let employeePresenceCloudPollTimer = null;
+        let employeePresenceCloudPollBusy = false;
+
+        async function pollRemoteEmployeePresence(){
+            if(employeePresenceCloudPollBusy) return;
+            if(!navigator.onLine) return;
+            employeePresenceCloudPollBusy=true;
+            try{
+                const result=await cloudRequest('GET');
+                const remote=Array.isArray(result && result.payload && result.payload.employees)
+                    ? result.payload.employees : [];
+                if(remote.length){
+                    let changed=false;
+                    remote.forEach(re=>{
+                        const local=employees.find(e=>Number(e.id)===Number(re.id));
+                        if(local && re.presence){
+                            const remoteStamp=String(re.presence.lastSeenAt||re.presence.lastOfflineAt||'');
+                            const localStamp=String(local.presence && (local.presence.lastSeenAt||local.presence.lastOfflineAt)||'');
+                            if(remoteStamp && remoteStamp!==localStamp){
+                                local.presence=JSON.parse(JSON.stringify(re.presence));
+                                changed=true;
+                            }
+                        }
+                    });
+                    if(changed) updateEmployeePresenceUI();
+                }
+            }catch(e){
+                console.warn('Employee presence cloud poll failed:',e);
+            }finally{
+                employeePresenceCloudPollBusy=false;
+            }
+        }
+
+        function employeePresenceCloudPollStart(){
+            if(employeePresenceCloudPollTimer) clearInterval(employeePresenceCloudPollTimer);
+            employeePresenceCloudPollTimer=setInterval(pollRemoteEmployeePresence,EMPLOYEE_PRESENCE_POLL_MS);
+            pollRemoteEmployeePresence();
+        }
+
+        function initEmployeePresence(){
+            employeePresenceHeartbeatStart();
+            employeePresenceUiRefreshStart();
+            employeePresenceCloudPollStart();
+
+            window.addEventListener('offline',setEmployeePresenceOfflineLocal);
+            window.addEventListener('online',()=>{
+                if(loggedInEmployeeId) heartbeatEmployeePresence();
+            });
+
+            document.addEventListener('visibilitychange',()=>{
+                if(!loggedInEmployeeId) return;
+                if(document.hidden) setEmployeePresenceAway(true);
+                else setEmployeePresenceAway(false);
+            });
+        }
+
         function buildEmployeePortalMarkup(emp, monthKey, adminMode=false) {
             const s = getEmployeeMonthStats(emp, monthKey);
             const paid = isSalaryPaid(emp, monthKey);
@@ -2656,6 +3246,7 @@
                         <button class="btn-back" onclick="${adminMode ? `adminSelectedEmployeeId=null; renderAdminEmployeeManagement();` : `document.getElementById('employeePortalCard').scrollIntoView({behavior:'smooth',block:'start'})`} "><i class="fa-solid fa-xmark"></i> Close</button>
                     </div>
                 </div>
+                ${employeePresenceSummaryMarkup(emp,adminMode)}
                 <div class="employee-detail-grid">
                     <div class="employee-detail-box"><div class="label">Monthly Salary</div><div class="value">${formatMoney2(emp.monthlySalary)}</div></div>
                     <div class="employee-detail-box"><div class="label">Daily Salary</div><div class="value">${formatMoney2(emp.dailySalary)}</div></div>
@@ -2666,9 +3257,13 @@
                     <div class="employee-detail-box"><div class="label">Absent</div><div class="value">${s.absent}</div></div>
                     <div class="employee-detail-box"><div class="label">Salary Earned</div><div class="value employee-salary-total">${formatMoney2(s.earned)}</div></div>
                     <div class="employee-detail-box"><div class="label">Salary Paid</div><div class="value">${paid ? 'Done' : 'Pending'}</div></div>
+                    <div class="employee-detail-box"><div class="label">Total Break Time</div><div class="value">${formatWorkDuration(s.totalBreakSeconds)}</div></div>
+                    <div class="employee-detail-box"><div class="label">Break Violations (&gt;60 min)</div><div class="value">${s.breakViolationCount}</div></div>
+                    <div class="employee-detail-box"><div class="label">Salary Cut for Breaks</div><div class="value salary-cut-value">${formatMoney2(s.breakSalaryCut)}</div></div>
+                    <div class="employee-detail-box"><div class="label">Overtime</div><div class="value overtime-value">${formatWorkDuration(s.totalOvertimeSeconds)}</div></div>
                     <div class="employee-detail-box"><div class="label">Paid At</div><div class="value" style="font-size:13px;">${esc(paidAt)}</div></div>
                 </div>
-                <div class="employee-calendar-note">${paid ? 'This month is finalized. Attendance changes are disabled until Admin changes the salary status.' : 'Attendance is editable for non-Sunday dates. Sundays are automatically included in salary and their attendance is not editable.'}</div>
+                <div class="employee-calendar-note">${paid ? 'This month is finalized. Attendance changes are disabled until Admin changes the salary status.' : 'Attendance is editable for non-Sunday dates. Sundays are automatically included in salary and their attendance is not editable.'} Break rule: more than 60 minutes total break on a day is a violation. Every 3 violation days in the month causes 1 day salary cut (${formatMoney2(emp.dailySalary)}).</div>
             </div>`;
         }
 
@@ -2684,6 +3279,10 @@
                 const sunday=isSundayDate(key);
                 const status=attendanceStatus(emp,key);
                 const dailyEarned=(status==='Present' || status==='Sunday') ? s.daily : 0;
+                const workSeconds=getPresenceDaySeconds(emp,key);
+                const breakSeconds=getPresenceDayBreakSeconds(emp,key);
+                const overtimeSeconds=getPresenceDayOvertimeSeconds(emp,key);
+                const breakViolation=breakSeconds>EMPLOYEE_BREAK_LIMIT_SECONDS;
                 rows.push(`<tr class="${sunday?'attendance-sunday':''}">
                     <td><b>${esc(key)}</b></td><td>${esc(getDayName(key))}</td>
                     <td>${sunday ? '<span class="badge employee-paid-badge">Sunday</span>' : `<select class="attendance-status-select ${readOnly || (paid&&!adminMode)?'employee-locked-control':''}" ${readOnly || (paid&&!adminMode)?'disabled':''} onchange="setAttendance(${emp.id}, '${key}', this.value, ${adminMode})">
@@ -2692,7 +3291,12 @@
                         <option value="Leave" ${status==='Leave'?'selected':''}>Leave</option>
                         <option value="Absent" ${status==='Absent'?'selected':''}>Absent</option>
                     </select>`}</td>
-                    <td>${formatMoney2(s.daily)}</td><td class="employee-salary-total">${formatMoney2(dailyEarned)}</td>
+                    <td>${formatMoney2(s.daily)}</td>
+                    <td class="employee-salary-total">${formatMoney2(dailyEarned)}</td>
+                    <td>${formatWorkDuration(workSeconds)}</td>
+                    <td class="daily-overtime-cell">${formatWorkDuration(overtimeSeconds)}</td>
+                    <td>${formatWorkDuration(breakSeconds)}</td>
+                    <td>${breakViolation ? '<span class="badge break-violation-badge">Over 60 min</span>' : '<span class="badge break-ok-badge">Within 60 min</span>'}</td>
                 </tr>`);
             }
             return rows.join('');
@@ -2720,13 +3324,14 @@
                 <button class="btn-warning" type="button" onclick="createWarningLetter(${emp.id})"><i class="fa-solid fa-paper-plane"></i> Send Warning Letter</button>
                 <p class="employee-credential-note">After sending, the employee will see a red warning alert in their portal.</p>
             </div>` + `<div class="employee-card" style="margin-top:18px;">
+                <div class="employee-calendar-note" style="margin-bottom:12px;"><b>Break policy:</b> Total daily break allowance is 60 minutes. More than 60 minutes on a day is a break violation. Every 3 violation days in the selected month causes 1 day salary cut at the employee daily salary rate. Current: <b>${getEmployeeMonthStats(emp,month).breakViolationCount}</b> violation day(s) → <b>${getEmployeeMonthStats(emp,month).breakPenaltyDays}</b> salary-cut day(s) → <b>${formatMoney2(getEmployeeMonthStats(emp,month).breakSalaryCut)}</b>.</div>
                 <div class="employee-card-header">
                     <div class="employee-card-title"><i class="fa-solid fa-calendar-days"></i> Daily Attendance — ${esc(month)}</div>
                     <div class="employee-inline-actions">
                         <button class="btn-success" onclick="adminToggleSalaryLock(${emp.id})">${isSalaryPaid(emp,month)?'Allow Changes':'Mark Paid'}</button>
                     </div>
                 </div>
-                <div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th></tr></thead><tbody>${buildAttendanceTable(emp,month,true)}</tbody></table></div>
+                <div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,month,true)}</tbody></table></div>
             </div>`;
         }
 
@@ -2764,8 +3369,19 @@
         function getEmployeeMonthStats(employee,monthKey) {
             const days=getDaysInMonth(monthKey);
             let present=0,leaves=0,absent=0,empty=0,sundays=0;
+            let breakViolationCount=0;
+            let totalBreakSeconds=0;
+            let totalWorkingSeconds=0;
+            let totalOvertimeSeconds=0;
             for(let day=1;day<=days;day++){
                 const key=getDateKey(monthKey,day);
+                const breakSeconds=getPresenceDayBreakSeconds(employee,key);
+                const workingSeconds=getPresenceDaySeconds(employee,key);
+                const overtimeSeconds=getPresenceDayOvertimeSeconds(employee,key);
+                totalBreakSeconds += breakSeconds;
+                totalWorkingSeconds += workingSeconds;
+                totalOvertimeSeconds += overtimeSeconds;
+                if(breakSeconds>EMPLOYEE_BREAK_LIMIT_SECONDS) breakViolationCount++;
                 if(isSundayDate(key)){sundays++;continue;}
                 const status=attendanceStatus(employee,key);
                 if(status==='Leave') leaves++;
@@ -2773,15 +3389,18 @@
                 else if(status==='Present') present++;
                 else empty++;
             }
+            const breakPenaltyDays=Math.floor(breakViolationCount/3);
             const daily=Number(employee.dailySalary)||0;
             const monthly=Number(employee.monthlySalary)||0;
             const rawEarned=(present+sundays)*daily;
             const attendanceEarned=Math.max(0,monthly-((leaves+absent)*daily));
-            const earned=attendanceEarned;
+            const breakSalaryCut=breakPenaltyDays*daily;
+            const earned=Math.max(0,attendanceEarned-breakSalaryCut);
             const workingDays=days-sundays;
             const paidDays=present+sundays;
             const deduction=Math.max(0,monthly-earned);
-            return {days,workingDays,sundays,present,leaves,absent,empty,earned,rawEarned,deduction,daily,paidDays};
+            return {days,workingDays,sundays,present,leaves,absent,empty,earned,rawEarned,deduction,daily,paidDays,
+                breakViolationCount,breakPenaltyDays,breakSalaryCut,totalBreakSeconds,totalWorkingSeconds,totalOvertimeSeconds};
         }
 
         function formatMoney2(n) {
@@ -2808,7 +3427,14 @@
                     sent:w.sent!==false, read:!!w.read, sentAt:w.sentAt||w.date||null, expiresAt:w.expiresAt||null
                 })):[],
                 loginPassword:typeof e.loginPassword==='string'?e.loginPassword:'',
-                accountCreatedAt:e.accountCreatedAt||null
+                accountCreatedAt:e.accountCreatedAt||null,
+                presence:(e.presence&&typeof e.presence==='object')?e.presence:{
+                    status:'offline',
+                    lastSeenAt:null,
+                    lastOfflineAt:null,
+                    currentSessionId:null,
+                    days:{}
+                }
             };
         }
 
@@ -2936,7 +3562,7 @@
             const wb=XLSX.utils.book_new();
             const summary=employees.map(emp=>{
                 const s=getEmployeeMonthStats(emp,monthKey), rec=employeeMonthRecord(emp,monthKey);
-                return {'Employee ID':emp.id,'Employee Name':emp.name,'Contact':emp.phone,'Email':emp.email,'Month':monthKey,'Monthly Salary':emp.monthlySalary,'Daily Salary':emp.dailySalary,'Working Days':s.workingDays,'Sunday Days':s.sundays,'Present Days':s.present,'Leaves':s.leaves,'Absent Days':s.absent,'Salary Earned':s.earned,'Salary Paid':isSalaryPaid(emp,monthKey)?'Yes':'No','Paid At':rec.paidAt||'','Warning Letters':Array.isArray(emp.warningLetters)?emp.warningLetters.length:0};
+                return {'Employee ID':emp.id,'Employee Name':emp.name,'Contact':emp.phone,'Email':emp.email,'Month':monthKey,'Monthly Salary':emp.monthlySalary,'Daily Salary':emp.dailySalary,'Working Days':s.workingDays,'Sunday Days':s.sundays,'Present Days':s.present,'Leaves':s.leaves,'Absent Days':s.absent,'Salary Earned':s.earned,'Break Violations (>60m)':s.breakViolationCount,'Break Penalty Days':s.breakPenaltyDays,'Break Salary Cut':s.breakSalaryCut,'Total Break Time':formatWorkDuration(s.totalBreakSeconds),'Total Overtime':formatWorkDuration(s.totalOvertimeSeconds),'Salary Paid':isSalaryPaid(emp,monthKey)?'Yes':'No','Paid At':rec.paidAt||'','Warning Letters':Array.isArray(emp.warningLetters)?emp.warningLetters.length:0};
             });
             XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary.length?summary:[{'Employee ID':'No records'}]),'Employees');
             const attendanceRows=[];
@@ -2944,7 +3570,7 @@
                 const days=getDaysInMonth(monthKey),s=getEmployeeMonthStats(emp,monthKey);
                 for(let day=1;day<=days;day++){
                     const key=getDateKey(monthKey,day),status=attendanceStatus(emp,key);
-                    attendanceRows.push({'Employee ID':emp.id,'Employee Name':emp.name,'Date':key,'Day':getDayName(key),'Attendance':status,'Daily Salary':emp.dailySalary,'Daily Earned':(status==='Present'||status==='Sunday')?s.daily:0});
+                    attendanceRows.push({'Employee ID':emp.id,'Employee Name':emp.name,'Date':key,'Day':getDayName(key),'Attendance':status,'Daily Salary':emp.dailySalary,'Daily Earned':(status==='Present'||status==='Sunday')?s.daily:0,'Working Time':formatWorkDuration(getPresenceDaySeconds(emp,key)),'Overtime':formatWorkDuration(getPresenceDayOvertimeSeconds(emp,key)),'Break Time':formatWorkDuration(getPresenceDayBreakSeconds(emp,key)),'Break >60 Minutes':isBreakViolationDay(emp,key)?'Yes':'No'});
                 }
             });
             XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(attendanceRows.length?attendanceRows:[{'Employee ID':'No records'}]),'Attendance');
@@ -3048,6 +3674,7 @@
             }
 
             loggedInEmployeeId=emp.id;
+            startEmployeePresenceSession(emp);
             closeEmployeeAuthModals();
             const overlay=document.getElementById('employeeSelfOverlay');
             if(overlay) overlay.style.display='block';
@@ -3060,6 +3687,8 @@
         }
 
         function employeeSelfLogout(){
+            const current=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(current) closeEmployeePresenceSession(current,'logout');
             loggedInEmployeeId=null;
             const overlay=document.getElementById('employeeSelfOverlay');
             const content=document.getElementById('employeeSelfContent');
@@ -3089,12 +3718,12 @@
             const unread=activeWarnings.filter(w=>!w.read);
             const alerts=unread.map(w=>`<div class="employee-warning-alert warning-alert-live" onclick="openEmployeeWarning(${Number(w.id)})"><div class="employee-warning-alert-title"><i class="fa-solid fa-triangle-exclamation"></i> NEW WARNING LETTER</div><div class="employee-warning-alert-text">${esc(w.title||'Warning Letter')} — Click to open official notice</div></div>`).join('');
             const warnings=activeWarnings;
-            content.innerHTML=`${alerts}<div class="employee-card">
+            content.innerHTML=`${alerts}${employeePresenceSummaryMarkup(emp,false)}<div class="employee-card">
                 <div class="employee-portal-head"><div><div class="employee-profile-title">${esc(emp.name)}</div><div class="employee-profile-meta">Contact: ${esc(emp.phone||'Not provided')} · Email: ${esc(emp.email||'Not provided')}</div></div><div class="employee-inline-actions"><label class="employee-mini-note" style="display:flex;align-items:center;gap:8px;">Month <span id="employeeSelfMonthPicker"></span><input type="month" id="employeeSelfMonth" value="${esc(monthKey)}" min="1980-01" max="${esc(latestMonthKey())}" onchange="renderEmployeeSelfPortal()" class="employee-month-hidden"></label></div></div>
                 <div class="employee-detail-grid">
                     <div class="employee-detail-box"><div class="label">Monthly Salary</div><div class="value">${formatMoney2(emp.monthlySalary)}</div></div><div class="employee-detail-box"><div class="label">Daily Salary</div><div class="value">${formatMoney2(emp.dailySalary)}</div></div><div class="employee-detail-box"><div class="label">Present</div><div class="value">${s.present}</div></div><div class="employee-detail-box"><div class="label">Leaves</div><div class="value">${s.leaves}</div></div><div class="employee-detail-box"><div class="label">Absent</div><div class="value">${s.absent}</div></div><div class="employee-detail-box"><div class="label">Sundays</div><div class="value">${s.sundays}</div></div><div class="employee-detail-box"><div class="label">Salary Earned</div><div class="value employee-salary-total">${formatMoney2(s.earned)}</div></div><div class="employee-detail-box"><div class="label">Salary Paid</div><div class="value">${isSalaryPaid(emp,monthKey)?'Done':'Pending'}</div></div>
                 </div></div>
-            <div class="employee-card"><div class="employee-card-title" style="font-size:16px;margin-bottom:12px;"><i class="fa-solid fa-calendar-days"></i> Daily Attendance</div><div class="employee-calendar-note">Sunday is automatically included as a paid day. Attendance controls are view-only in the employee portal.</div><div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th></tr></thead><tbody>${buildAttendanceTable(emp,monthKey,false,true)}</tbody></table></div></div>
+            <div class="employee-card"><div class="employee-card-title" style="font-size:16px;margin-bottom:12px;"><i class="fa-solid fa-calendar-days"></i> Daily Attendance</div><div class="employee-calendar-note">Sunday is automatically included as a paid day. Attendance controls are view-only in the employee portal.</div><div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,monthKey,false,true)}</tbody></table></div></div>
             <div class="employee-card"><div class="employee-card-title" style="font-size:16px;margin-bottom:12px;"><i class="fa-solid fa-file-circle-exclamation"></i> Warning Letters</div><div class="employee-warning-list">${warnings.length?warnings.map(w=>`<div class="employee-warning-item"><div class="employee-warning-item-title">${esc(w.title||'Warning Letter')}</div><div class="employee-warning-item-date">${esc(w.sentAt||w.date||'-')}</div><div class="employee-warning-item-text">${esc(w.details||'')}</div></div>`).join(''):'<div class="employee-mini-note">No warning letters have been sent to you.</div>'}</div></div>`;
       ;
             enhanceMonthPickers();
@@ -3333,111 +3962,478 @@
         }
 
         /* ================= CLOUD PERSISTENCE LAYER =================
-           Browser storage remains a local safety cache. The authoritative
-           copy is /api/state, backed by the production database. */
-        let cloudSyncBusy = false;
-        let cloudSyncTimer = null;
-        let cloudReady = false;
-        let cloudLastUpdated = null;
+           Authoritative storage: /api/state -> Supabase.
+           localStorage: emergency browser backup only.
 
-        async function cloudRequest(method, body) {
-            try {
-                const res = await fetch('/api/state', {
-                    method,
-                    headers: body ? {'Content-Type':'application/json'} : {},
-                    body: body ? JSON.stringify(body) : undefined,
-                    cache: 'no-store',
-                    credentials: 'same-origin'
-                });
-                if (!res.ok) throw new Error('Cloud request failed: ' + res.status);
-                return await res.json();
-            } catch (err) {
-                return null;
-            }
+           Important behavior:
+           - Cloud is read FIRST whenever the application starts.
+           - A successful user change is queued and written to the cloud.
+           - Writes are serialized so rapid add/edit/delete actions cannot
+             overwrite one another because of overlapping requests.
+           - A cloud conflict is retried against the newest cloud timestamp
+             using the CURRENT local state, so a deliberate local delete/edit
+             is not silently replaced by an older cloud copy.
+           - If the cloud is temporarily unavailable, the browser keeps a
+             local backup and retries automatically when connectivity returns.
+        */
+
+        let cloudReady = false;
+        let cloudHydrating = false;
+        let cloudLastUpdated = null;
+        let cloudWriteChain = Promise.resolve();
+        let cloudRetryTimer = null;
+        let cloudSaveVersion = 0;
+
+        function buildPayload() {
+            return {
+                inventory: Array.isArray(inventory) ? inventory : [],
+                orders: Array.isArray(orders) ? orders : [],
+                returns: Array.isArray(returns) ? returns : [],
+                meta: meta || { lastUpdated: null, device: '' },
+                employees: Array.isArray(employees) ? employees : []
+            };
         }
 
         function persistLocalBackup() {
             try {
                 const payload = JSON.stringify(buildPayload());
                 localStorage.setItem(DB_KEY, payload);
-                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees));
+                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees || []));
                 localStorage.setItem(DB_KEY + '_backup_latest', payload);
-            } catch(e) {}
+            } catch (e) {
+                showToast_('Browser safety backup could not be updated.', 'err');
+            }
         }
 
-        async function pushCloudState(reason='update') {
-            if (cloudSyncBusy) {
-                clearTimeout(cloudSyncTimer);
-                cloudSyncTimer = setTimeout(() => pushCloudState('queued'), 500);
-                return;
-            }
-            cloudSyncBusy = true;
-            meta.lastUpdated = new Date(Date.now() + timeOffsetMs).toISOString();
-            persistLocalBackup();
-            const result = await cloudRequest('PUT', {
-                payload: buildPayload(),
-                expectedUpdatedAt: cloudLastUpdated,
-                reason
-            });
-            if (result && result.ok) {
-                cloudReady = true;
-                cloudLastUpdated = result.updatedAt || meta.lastUpdated;
-                meta.lastUpdated = cloudLastUpdated;
-            } else if (result && result.conflict) {
-                const latest = await cloudRequest('GET');
-                if (latest && latest.payload) {
-                    applyCloudPayload(latest.payload);
-                    cloudLastUpdated = latest.updatedAt || null;
-                    renderAllTables();
-                    renderAllEmployeeViews();
-                    showToast_('Latest cloud data loaded. No local data was overwritten blindly.', 'warn');
+        async function cloudRequest(method, body) {
+            const options = {
+                method,
+                cache: 'no-store',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json'
                 }
-            } else if (!result) {
-                showToast_('Cloud temporarily unavailable. Local safety copy retained; retrying when online.', 'warn');
+            };
+
+            if (body !== undefined) {
+                options.headers['Content-Type'] = 'application/json';
+                options.body = JSON.stringify(body);
             }
-            cloudSyncBusy = false;
+
+            const response = await fetch('/api/state', options);
+
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = null;
+            }
+
+            if (!response.ok) {
+                const message =
+                    data && data.error
+                        ? data.error
+                        : `Cloud request failed (${response.status})`;
+
+                const error = new Error(message);
+                error.status = response.status;
+                error.data = data;
+                throw error;
+            }
+
+            return data;
         }
 
-        function saveData() {
-            meta.lastUpdated = new Date(Date.now() + timeOffsetMs).toISOString();
-            persistLocalBackup();
-            pushCloudState('data');
+        function normalizeCloudPayload(raw) {
+            if (!raw || typeof raw !== 'object') return null;
+
+            return {
+                inventory: Array.isArray(raw.inventory)
+                    ? raw.inventory.map(i => ({
+                        id: Number(i.id),
+                        name: i.name || '',
+                        price: Number(i.price) || 0,
+                        stock: Number(i.stock) || 0
+                    }))
+                    : [],
+
+                orders: Array.isArray(raw.orders)
+                    ? raw.orders.map(normalizeOrder)
+                    : [],
+
+                returns: Array.isArray(raw.returns)
+                    ? raw.returns
+                    : [],
+
+                meta: raw.meta && typeof raw.meta === 'object'
+                    ? raw.meta
+                    : { lastUpdated: null, device: '' },
+
+                employees: Array.isArray(raw.employees)
+                    ? raw.employees.map(normalizeEmployee)
+                    : []
+            };
         }
 
         function applyCloudPayload(raw) {
-            if (!raw || typeof raw !== 'object') return;
-            if (Array.isArray(raw.inventory)) inventory = raw.inventory.map(i => ({
-                id:Number(i.id), name:i.name||'', price:Number(i.price)||0, stock:Number(i.stock)||0
-            }));
-            if (Array.isArray(raw.orders)) orders = raw.orders.map(normalizeOrder);
-            if (Array.isArray(raw.returns)) returns = raw.returns;
-            if (raw.meta && typeof raw.meta === 'object') meta = raw.meta;
-            if (Array.isArray(raw.employees)) employees = raw.employees.map(normalizeEmployee);
+            const payload = normalizeCloudPayload(raw);
+            if (!payload) return false;
+
+            inventory = payload.inventory;
+            orders = payload.orders;
+            returns = payload.returns;
+            meta = payload.meta;
+            employees = payload.employees;
+
             try {
                 localStorage.setItem(DB_KEY, JSON.stringify(buildPayload()));
                 localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees));
-            } catch(e) {}
+            } catch (e) {}
+
+            return true;
+        }
+
+        async function fetchLatestCloudState() {
+            const result = await cloudRequest('GET');
+
+            if (result && result.payload && typeof result.payload === 'object') {
+                return {
+                    hasPayload: true,
+                    payload: result.payload,
+                    updatedAt: result.updatedAt || null
+                };
+            }
+
+            return {
+                hasPayload: false,
+                payload: null,
+                updatedAt: null
+            };
+        }
+
+        /*
+         * One writer at a time. Every save waits for the previous save to
+         * finish, then captures the latest CURRENT state. Therefore if the
+         * user deletes an item and immediately edits/adds another item, the
+         * final queued write contains the newest complete state.
+         */
+        function pushCloudState(reason = 'update') {
+            cloudSaveVersion += 1;
+            const requestedVersion = cloudSaveVersion;
+
+            cloudWriteChain = cloudWriteChain
+                .catch(() => {})
+                .then(async () => {
+
+                    /*
+                     * If another save superseded this request while we were
+                     * waiting, the newest request will perform the actual
+                     * write. We still continue if this is the newest version.
+                     */
+                    if (requestedVersion !== cloudSaveVersion) return;
+
+                    const payload = buildPayload();
+
+                    try {
+                        const result = await cloudRequest('PUT', {
+                            payload,
+                            expectedUpdatedAt: cloudLastUpdated,
+                            reason
+                        });
+
+                        if (result && result.ok) {
+                            cloudReady = true;
+                            cloudLastUpdated =
+                                result.updatedAt ||
+                                cloudLastUpdated ||
+                                new Date().toISOString();
+
+                            persistLocalBackup();
+                            return;
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Conflict means another browser/device saved a newer
+                         * version. Do NOT blindly replace the user's local
+                         * change. Pull only the newest timestamp, then retry
+                         * the user's current complete state.
+                         */
+                        if (error.status === 409) {
+                            try {
+                                const latest = await fetchLatestCloudState();
+
+                                if (latest.hasPayload) {
+                                    cloudLastUpdated = latest.updatedAt || null;
+                                    cloudReady = true;
+
+                                    /*
+                                     * IMPORTANT:
+                                     * We intentionally do not call
+                                     * applyCloudPayload() here. The user's
+                                     * current state remains authoritative for
+                                     * this write and will be retried below.
+                                     */
+                                    const retryPayload = buildPayload();
+
+                                    const retryResult = await cloudRequest('PUT', {
+                                        payload: retryPayload,
+                                        expectedUpdatedAt: cloudLastUpdated,
+                                        reason: reason + '-conflict-retry'
+                                    });
+
+                                    if (retryResult && retryResult.ok) {
+                                        cloudLastUpdated =
+                                            retryResult.updatedAt ||
+                                            cloudLastUpdated;
+
+                                        persistLocalBackup();
+                                        return;
+                                    }
+                                }
+
+                            } catch (retryError) {
+                                console.error(
+                                    'Cloud conflict retry failed:',
+                                    retryError
+                                );
+                            }
+
+                        } else {
+                            console.error('Cloud save failed:', error);
+                        }
+
+                        /*
+                         * Do not destroy the current browser state.
+                         * Keep it in local backup and retry when online.
+                         */
+                        persistLocalBackup();
+
+                        clearTimeout(cloudRetryTimer);
+                        cloudRetryTimer = setTimeout(() => {
+                            if (navigator.onLine) {
+                                pushCloudState('automatic-retry');
+                            }
+                        }, 3000);
+                    }
+                });
+
+            return cloudWriteChain;
+        }
+
+        function saveData(reason = 'data') {
+            meta.lastUpdated =
+                new Date(Date.now() + timeOffsetMs).toISOString();
+
+            /*
+             * Immediate browser safety copy.
+             */
+            persistLocalBackup();
+
+            /*
+             * Permanent cloud copy.
+             */
+            if (!cloudHydrating) {
+                pushCloudState(reason);
+            }
         }
 
         async function syncCloudOnBoot() {
-            const result = await cloudRequest('GET');
-            if (result && result.payload) {
-                applyCloudPayload(result.payload);
+
+            /*
+             * Never let two boot/visibility synchronizations run at the
+             * same time. This prevents a GET from overwriting a fresh local
+             * edit while a PUT is still running.
+             */
+            if (cloudHydrating) return;
+            cloudHydrating = true;
+
+            try {
+                const result = await fetchLatestCloudState();
+
+                if (result.hasPayload) {
+
+                    /*
+                     * One-time inventory cleanup for this version (V2): the
+                     * currently persisted legacy inventory must begin empty. This removes the old
+                     * preloaded inventory once, while leaving orders,
+                     * employees, attendance, salary and other cloud data
+                     * untouched. After the flag is saved, future boots use
+                     * the cloud inventory exactly as the Admin left it.
+                     */
+                    const cloudPayload = result.payload && typeof result.payload === 'object'
+                        ? JSON.parse(JSON.stringify(result.payload))
+                        : {};
+
+                    if (!cloudPayload.meta || typeof cloudPayload.meta !== 'object') {
+                        cloudPayload.meta = {};
+                    }
+
+                    if (cloudPayload.meta.inventoryEmptyInitializedV2 !== true) {
+                        cloudPayload.inventory = [];
+                        cloudPayload.meta.inventoryEmptyInitializedV2 = true;
+
+                        applyCloudPayload(cloudPayload);
+
+                        cloudReady = true;
+                        cloudLastUpdated = result.updatedAt || null;
+
+                        persistLocalBackup();
+                        await pushCloudState('inventory-empty-reset-v2');
+
+                        return;
+                    }
+
+                    /*
+                     * After the one-time reset, cloud is the only source of
+                     * truth. A deleted item therefore stays deleted across
+                     * refreshes, browsers and devices.
+                     */
+                    applyCloudPayload(cloudPayload);
+
+                    cloudReady = true;
+                    cloudLastUpdated = result.updatedAt || null;
+
+                    persistLocalBackup();
+
+                    return;
+                }
+
+                /*
+                 * First cloud initialization only:
+                 * migrate the currently existing browser data once.
+                 */
                 cloudReady = true;
-                cloudLastUpdated = result.updatedAt || null;
-                return;
-            }
-            // First deployment: migrate the current browser's existing data once.
-            if (inventory.length || orders.length || returns.length || employees.length) {
+                cloudLastUpdated = null;
+
+                persistLocalBackup();
+
                 await pushCloudState('initial-migration');
+
+            } catch (error) {
+
+                console.error('Cloud initialization failed:', error);
+
+                /*
+                 * Cloud is temporarily unavailable. Keep using the current
+                 * local data and retain it safely for the next retry.
+                 */
+                cloudReady = false;
+                persistLocalBackup();
+
+                showToast_(
+                    'Cloud temporarily unavailable. Local safety copy retained.',
+                    'warn'
+                );
+
+            } finally {
+                cloudHydrating = false;
             }
         }
 
+        /*
+         * Save the latest local snapshot if the browser is being closed.
+         * This does NOT replace the cloud; it is only the emergency local
+         * fallback.
+         */
+        window.addEventListener('beforeunload', function () {
+            try {
+                persistLocalBackup();
+            } catch (e) {}
+        });
+
         /* ---------------- Boot Script ---------------- */
+        window.onload = async function () {
+            /*
+             * Load the local safety copy first so the UI has a valid state
+             * immediately, then replace it with the authoritative cloud
+             * state when the API responds.
+             */
+            loadLocalData();
+            loadEmployees();
+
+            await syncCloudOnBoot();
+
+            cleanupExpiredWarningReadStates();
+
+            renderAllTables();
+            renderEmployeeManagement();
+
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            setInterval(() => {
+                if (loggedInEmployeeId) {
+                    const liveClock =
+                        document.getElementById('employeePortalLiveClock');
+
+                    if (liveClock) {
+                        const stamp = makeStamp();
+
+                        liveClock.innerText =
+                            `Live · ${stamp.day}, ${stamp.date} · ${stamp.time}`;
+                    }
+                }
+            }, 1000);
+
+            setInterval(syncAttendanceCalendar, 60000);
+
+            applyMonthInputBounds();
+
+            syncBackendTime();
+            setInterval(syncBackendTime, 300000);
+        };
+
+        /*
+         * Reconnect after internet returns.
+         * We do not run a cloud GET while a user save is in progress.
+         */
+        window.addEventListener('online', async () => {
+            syncBackendTime();
+
+            if (!cloudWriteChain) {
+                await syncCloudOnBoot();
+                return;
+            }
+
+            try {
+                await cloudWriteChain;
+            } catch (e) {}
+
+            await syncCloudOnBoot();
+        });
+
+        /*
+         * When the tab becomes visible again, refresh from cloud only after
+         * pending writes finish. This prevents an older GET from restoring
+         * deleted inventory.
+         */
+        document.addEventListener('visibilitychange', async () => {
+            if (document.hidden) return;
+
+            try {
+                await cloudWriteChain;
+            } catch (e) {}
+
+            await syncCloudOnBoot();
+
+            renderAllTables();
+            renderEmployeeManagement();
+        });
+
+        // Defensive auth wiring: keeps Employee Sign In functional even if the inline form event is interrupted.
+        document.addEventListener('click', function(ev){
+            const loginBtn=ev.target.closest('#employeeLoginSubmitBtn');
+            if(loginBtn){ ev.preventDefault(); submitEmployeeLogin(ev); }
+        });
+
+
         window.onload = async function () {
             loadLocalData();
             loadEmployees();
             await syncCloudOnBoot();
+            initEmployeePresence();
             cleanupExpiredWarningReadStates();
             renderAllTables();
             renderEmployeeManagement();
@@ -3468,6 +4464,35 @@
         document.addEventListener('click', function(ev){
             const loginBtn=ev.target.closest('#employeeLoginSubmitBtn');
             if(loginBtn){ ev.preventDefault(); submitEmployeeLogin(ev); }
+        });
+
+
+        window.addEventListener('pagehide', function(){
+            if(!loggedInEmployeeId) return;
+            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
+            if(!emp) return;
+            const p=ensureEmployeePresence(emp);
+            const session=activePresenceSession(emp);
+            if(session){
+                const now=presenceNowIso();
+                session.lastSeenAt=now;
+                session.logoutAt=now;
+                session.logoutReason='pagehide';
+                p.status='offline';
+                p.lastOfflineAt=now;
+                p.lastSeenAt=now;
+                p.currentSessionId=null;
+                try{
+                    const payload=buildPayload();
+                    fetch('/api/state',{
+                        method:'PUT',
+                        keepalive:true,
+                        headers:{'Content-Type':'application/json','Accept':'application/json'},
+                        body:JSON.stringify({payload,expectedUpdatedAt:cloudLastUpdated,reason:'employee-pagehide'})
+                    }).catch(()=>{});
+                    persistLocalBackup();
+                }catch(e){}
+            }
         });
 
         /* ---------------- Modal Controls ---------------- */
