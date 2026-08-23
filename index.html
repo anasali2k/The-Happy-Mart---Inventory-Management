@@ -2860,7 +2860,7 @@
             }
 
             const today=makeStamp().date;
-            const hoursToday=getPresenceDaySeconds(emp,today,now);
+            const hoursToday=employeeWorkingSecondsExcludingActiveBreak(emp,now);
 
             let currentSession=activePresenceSession(emp);
             let currentStart=currentSession ? currentSession.loginAt : null;
@@ -2974,6 +2974,49 @@
 
             saveEmployees();
             updateEmployeePresenceUI();
+        }
+
+
+        function activeEmployeeBreakSeconds(emp, atMs=presenceNowMs()){
+            if(!emp || !emp.presence) return 0;
+            const session=activePresenceSession(emp);
+            if(!session || !Array.isArray(session.breaks)) return 0;
+            const openBreak=session.breaks.find(x=>x && x.startAt && !x.endAt);
+            if(!openBreak) return 0;
+
+            const start=parsePresenceTime(openBreak.startAt);
+            if(start===null) return 0;
+
+            return Math.max(0, Math.floor((atMs-start)/1000));
+        }
+
+        function employeeWorkingSecondsExcludingActiveBreak(emp, atMs=presenceNowMs()){
+            if(!emp || !emp.presence) return 0;
+            const session=activePresenceSession(emp);
+            if(!session) return 0;
+
+            const base = getPresenceDaySeconds(emp, makeStamp(new Date(atMs)).date, atMs);
+            const activeBreak = activeEmployeeBreakSeconds(emp, atMs);
+            return Math.max(0, base - activeBreak);
+        }
+
+        function employeeBreakButtonMarkup(emp){
+            if(!emp || loggedInEmployeeId!==emp.id) return '';
+            const d=presenceDisplay(emp);
+            const isOnBreak = !!(emp.presence && emp.presence.status === 'break');
+
+            if(isOnBreak){
+                return `<button class="btn-success" type="button" onclick="setEmployeePresenceBreak(false)">
+                    <i class="fa-solid fa-play"></i> Back To Work
+                    <span id="employeeCurrentBreakTime-${emp.id}" style="margin-left:8px;font-weight:800;">
+                        • Break: ${formatWorkDuration(activeEmployeeBreakSeconds(emp))}
+                    </span>
+                </button>`;
+            }
+
+            return `<button class="btn-warning" type="button" onclick="setEmployeePresenceBreak(true)">
+                <i class="fa-solid fa-mug-hot"></i> Start Break
+            </button>`;
         }
 
         function setEmployeePresenceBreak(isStarting){
@@ -3118,9 +3161,7 @@
             const day=makeStamp().date;
             const session=activePresenceSession(emp);
             const action=(!adminMode && loggedInEmployeeId===emp.id)
-                ? (d.status==='break'
-                    ? `<button class="btn-success" type="button" onclick="setEmployeePresenceBreak(false)"><i class="fa-solid fa-play"></i> End Break</button>`
-                    : `<button class="btn-warning" type="button" onclick="setEmployeePresenceBreak(true)"><i class="fa-solid fa-mug-hot"></i> Start Break</button>`)
+                ? employeeBreakButtonMarkup(emp)
                 : '';
 
             return `<div class="employee-presence-card" id="employeePresenceCard-${emp.id}">
@@ -3135,7 +3176,9 @@
                     <div class="employee-presence-box"><div class="label">Last Offline</div><div class="value" id="employeePresenceOffline-${emp.id}">${emp.presence && emp.presence.lastOfflineAt ? esc(makeStamp(new Date(emp.presence.lastOfflineAt)).display) : '-'}</div></div>
                     <div class="employee-presence-box"><div class="label">Current Status</div><div class="value" id="employeePresenceStatusText-${emp.id}">${d.statusLabel}</div></div>
                 </div>
-                ${action?`<div class="employee-presence-actions">${action}</div>`:''}
+                ${!adminMode && loggedInEmployeeId===emp.id
+                    ? `<div class="employee-presence-actions" id="employeePresenceBreakAction-${emp.id}">${action}</div>`
+                    : ''}
                 <div class="employee-presence-note">Working time excludes recorded breaks and away/inactive periods. If the employee's browser closes or internet connection is lost, the system uses the last heartbeat to mark the session offline and stops counting time after the last confirmed activity.</div>
                 <div style="margin-top:14px;">
                     <div class="employee-card-title" style="font-size:13px;margin-bottom:9px;"><i class="fa-solid fa-clock-rotate-left"></i> Today's Sessions</div>
@@ -3163,6 +3206,11 @@
                 if(offline) offline.innerText=emp.presence && emp.presence.lastOfflineAt ? makeStamp(new Date(emp.presence.lastOfflineAt)).display : '-';
                 const st=document.getElementById(`employeePresenceStatusText-${emp.id}`);
                 if(st) st.innerText=d.statusLabel;
+
+                const breakAction=document.getElementById(`employeePresenceBreakAction-${emp.id}`);
+                if(breakAction && loggedInEmployeeId===emp.id){
+                    breakAction.innerHTML=employeeBreakButtonMarkup(emp);
+                }
                 const sessions=document.getElementById(`employeePresenceSessions-${emp.id}`);
                 if(sessions) sessions.innerHTML=presenceSessionHistoryMarkup(emp);
             });
@@ -4255,8 +4303,8 @@
                 if (result.hasPayload) {
 
                     /*
-                     * One-time inventory cleanup for this version (V2): the
-                     * currently persisted legacy inventory must begin empty. This removes the old
+                     * One-time inventory cleanup for this version: the
+                     * inventory must begin empty. This removes the old
                      * preloaded inventory once, while leaving orders,
                      * employees, attendance, salary and other cloud data
                      * untouched. After the flag is saved, future boots use
@@ -4270,9 +4318,9 @@
                         cloudPayload.meta = {};
                     }
 
-                    if (cloudPayload.meta.inventoryEmptyInitializedV2 !== true) {
+                    if (cloudPayload.meta.inventoryEmptyInitialized !== true) {
                         cloudPayload.inventory = [];
-                        cloudPayload.meta.inventoryEmptyInitializedV2 = true;
+                        cloudPayload.meta.inventoryEmptyInitialized = true;
 
                         applyCloudPayload(cloudPayload);
 
@@ -4280,7 +4328,7 @@
                         cloudLastUpdated = result.updatedAt || null;
 
                         persistLocalBackup();
-                        await pushCloudState('inventory-empty-reset-v2');
+                        await pushCloudState('inventory-initial-empty-reset');
 
                         return;
                     }
