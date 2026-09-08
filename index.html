@@ -1342,7 +1342,145 @@
         @keyframes employeeOrbit{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
         @keyframes networkNode{0%{transform:translate3d(0,55px,0) scale(.25);opacity:0}12%{opacity:1}45%{transform:translate3d(18px,-18vh,0) scale(1);opacity:.72}100%{transform:translate3d(-35px,-112vh,0) scale(1.5);opacity:0}}
 
-    </style>
+    
+        /* ================= FINAL 3D COMMAND-CENTER UI ================= */
+        :root{
+            --glass:rgba(15,23,42,.68);
+            --glass-border:rgba(148,163,184,.20);
+            --glow:rgba(99,102,241,.34);
+        }
+        body{
+            background:#050a16;
+        }
+        .sidebar,
+        .card,
+        .employee-card,
+        .employee-stat,
+        .employee-presence-card,
+        .modal-card,
+        .clock-chip{
+            background:linear-gradient(145deg,rgba(30,41,59,.82),rgba(10,17,31,.72));
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            border-color:var(--glass-border);
+            box-shadow:
+                0 18px 50px rgba(0,0,0,.24),
+                inset 0 1px 0 rgba(255,255,255,.045);
+        }
+        .card,.employee-card,.employee-stat,.employee-presence-card{
+            transform:translateZ(0);
+            transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;
+        }
+        .card:hover,.employee-card:hover,.employee-stat:hover,.employee-presence-card:hover{
+            transform:translateY(-2px);
+            border-color:rgba(129,140,248,.30);
+            box-shadow:0 24px 65px rgba(0,0,0,.30),0 0 28px rgba(99,102,241,.08);
+        }
+        button,.nav-item,.action-btn,.admin-tab-btn,.map-link{
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-submit,.btn-success,.btn-warning,.btn-danger,.btn-excel,
+        .btn-back,.btn-login-submit,.btn-employee-login,.btn-employee-signup,
+        .modal-btn,.admin-tab-btn,.action-btn,.nav-item,.employee-month-trigger,
+        .employee-month-nav,.employee-month-btn{
+            position:relative;
+            overflow:hidden;
+            transition:
+                transform .18s ease,
+                box-shadow .22s ease,
+                filter .22s ease,
+                background .22s ease,
+                border-color .22s ease;
+        }
+        .btn-submit::before,.btn-success::before,.btn-warning::before,.btn-danger::before,
+        .btn-excel::before,.btn-back::before,.btn-login-submit::before,
+        .btn-employee-login::before,.btn-employee-signup::before,.modal-btn::before,
+        .admin-tab-btn::before,.action-btn::before,.nav-item::before,
+        .employee-month-trigger::before,.employee-month-nav::before,.employee-month-btn::before{
+            content:"";
+            position:absolute;
+            top:-60%;
+            left:-85%;
+            width:42%;
+            height:220%;
+            transform:skewX(-20deg);
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+            pointer-events:none;
+            transition:left .55s ease;
+        }
+        .btn-submit:hover,.btn-success:hover,.btn-warning:hover,.btn-danger:hover,
+        .btn-excel:hover,.btn-back:hover,.btn-login-submit:hover,
+        .btn-employee-login:hover,.btn-employee-signup:hover,.modal-btn:hover,
+        .admin-tab-btn:hover,.action-btn:hover,.nav-item:hover,
+        .employee-month-trigger:hover,.employee-month-nav:hover,.employee-month-btn:hover{
+            transform:translateY(-2px) scale(1.012);
+            filter:saturate(1.12);
+            box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 22px var(--glow);
+        }
+        .btn-submit:hover::before,.btn-success:hover::before,.btn-warning:hover::before,
+        .btn-danger:hover::before,.btn-excel:hover::before,.btn-back:hover::before,
+        .btn-login-submit:hover::before,.btn-employee-login:hover::before,
+        .btn-employee-signup:hover::before,.modal-btn:hover::before,
+        .admin-tab-btn:hover::before,.action-btn:hover::before,.nav-item:hover::before,
+        .employee-month-trigger:hover::before,.employee-month-nav:hover::before,
+        .employee-month-btn:hover::before{
+            left:145%;
+        }
+        .btn-submit:active,.btn-success:active,.btn-warning:active,.btn-danger:active,
+        .btn-excel:active,.btn-back:active,.btn-login-submit:active,
+        .btn-employee-login:active,.btn-employee-signup:active,.modal-btn:active,
+        .admin-tab-btn:active,.action-btn:active,.nav-item:active,
+        .employee-month-trigger:active,.employee-month-nav:active,.employee-month-btn:active{
+            transform:translateY(0) scale(.975);
+        }
+        .nav-item.active{
+            background:linear-gradient(135deg,#6366f1,#4f46e5);
+            box-shadow:0 10px 30px rgba(99,102,241,.28),inset 0 1px 0 rgba(255,255,255,.16);
+        }
+        .badge{
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 12px rgba(99,102,241,.05);
+        }
+        .nav-count{
+            min-width:24px;
+            text-align:center;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+        }
+        #count-approval:not(:empty){
+            animation:approvalCountPulse 2.2s ease-in-out infinite;
+        }
+        @keyframes approvalCountPulse{
+            0%,100%{box-shadow:0 0 0 rgba(56,189,248,0);transform:scale(1)}
+            50%{box-shadow:0 0 15px rgba(56,189,248,.28);transform:scale(1.07)}
+        }
+        .table-responsive{
+            box-shadow:0 18px 45px rgba(0,0,0,.16);
+        }
+        tr{
+            transition:background .18s ease,transform .18s ease;
+        }
+        tr:hover{
+            transform:translateX(1px);
+        }
+        .toast{
+            animation:toastIn .28s ease-out;
+        }
+        @keyframes toastIn{
+            from{opacity:0;transform:translate3d(25px,10px,0) scale(.96)}
+            to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+        }
+        @media (prefers-reduced-motion:reduce){
+            .btn-submit,.btn-success,.btn-warning,.btn-danger,.btn-excel,.btn-back,
+            .btn-login-submit,.btn-employee-login,.btn-employee-signup,.modal-btn,
+            .admin-tab-btn,.action-btn,.nav-item,.employee-month-trigger,
+            .employee-month-nav,.employee-month-btn,.card,.employee-card,.employee-stat,
+            .employee-presence-card,tr{
+                transition:none!important;
+                transform:none!important;
+            }
+            #count-approval:not(:empty),.toast{animation:none!important}
+        }
+
+</style>
 </head>
 <body>
 
@@ -4130,11 +4268,22 @@
             const payload = normalizeCloudPayload(raw);
             if (!payload) return false;
 
-            inventory = payload.inventory;
-            orders = payload.orders;
-            returns = payload.returns;
-            meta = payload.meta;
-            employees = payload.employees;
+            /*
+             * Replace state atomically as one snapshot. Inventory is taken
+             * exactly from the cloud payload; no boot-time reset or cleanup
+             * is performed.
+             */
+            inventory = Array.isArray(payload.inventory) ? payload.inventory : [];
+            orders = Array.isArray(payload.orders) ? payload.orders.map(normalizeOrder) : [];
+            returns = Array.isArray(payload.returns) ? payload.returns : [];
+            meta = payload.meta && typeof payload.meta === 'object'
+                ? payload.meta
+                : { lastUpdated: null, device: '' };
+            employees = Array.isArray(payload.employees)
+                ? payload.employees.map(normalizeEmployee)
+                : [];
+
+            normalizeAllOrdersInMemory();
 
             try {
                 localStorage.setItem(DB_KEY, JSON.stringify(buildPayload()));
@@ -4306,47 +4455,22 @@
                 if (result.hasPayload) {
 
                     /*
-                     * One-time inventory cleanup for this version: the
-                     * inventory must begin empty. This removes the old
-                     * preloaded inventory once, while leaving orders,
-                     * employees, attendance, salary and other cloud data
-                     * untouched. After the flag is saved, future boots use
-                     * the cloud inventory exactly as the Admin left it.
+                     * Cloud is authoritative, but NEVER destructively reset
+                     * inventory on boot. Whatever inventory already exists
+                     * remains exactly where it is. Orders, inventory,
+                     * employees and their histories are hydrated together.
                      */
                     const cloudPayload = result.payload && typeof result.payload === 'object'
                         ? JSON.parse(JSON.stringify(result.payload))
                         : {};
 
-                    if (!cloudPayload.meta || typeof cloudPayload.meta !== 'object') {
-                        cloudPayload.meta = {};
-                    }
-
-                    if (cloudPayload.meta.inventoryEmptyInitialized !== true) {
-                        cloudPayload.inventory = [];
-                        cloudPayload.meta.inventoryEmptyInitialized = true;
-
-                        applyCloudPayload(cloudPayload);
-
-                        cloudReady = true;
-                        cloudLastUpdated = result.updatedAt || null;
-
-                        persistLocalBackup();
-                        await pushCloudState('inventory-initial-empty-reset');
-
-                        return;
-                    }
-
-                    /*
-                     * After the one-time reset, cloud is the only source of
-                     * truth. A deleted item therefore stays deleted across
-                     * refreshes, browsers and devices.
-                     */
                     applyCloudPayload(cloudPayload);
 
                     cloudReady = true;
                     cloudLastUpdated = result.updatedAt || null;
 
                     persistLocalBackup();
+                    renderAllTables();
 
                     return;
                 }
@@ -4395,70 +4519,88 @@
         });
 
         /* ---------------- Boot Script ---------------- */
-        window.onload = async function () {
+        let appBooted = false;
+        let clockTimerStarted = false;
+        let cloudSyncTimerStarted = false;
+
+        async function bootApplication() {
+            if (appBooted) return;
+            appBooted = true;
+
             /*
-             * Load the local safety copy first so the UI has a valid state
-             * immediately, then replace it with the authoritative cloud
-             * state when the API responds.
+             * Load the local safety copy first so the UI is immediately
+             * usable. Cloud hydration then replaces it with the latest
+             * authoritative state without clearing existing inventory.
              */
             loadLocalData();
             loadEmployees();
-
-            await syncCloudOnBoot();
-
-            cleanupExpiredWarningReadStates();
+            normalizeAllOrdersInMemory();
+            persistLocalBackup();
 
             renderAllTables();
             renderEmployeeManagement();
-
             updateClock();
-            setInterval(updateClock, 1000);
-
-            setInterval(() => {
-                if (loggedInEmployeeId) {
-                    const liveClock =
-                        document.getElementById('employeePortalLiveClock');
-
-                    if (liveClock) {
-                        const stamp = makeStamp();
-
-                        liveClock.innerText =
-                            `Live · ${stamp.day}, ${stamp.date} · ${stamp.time}`;
-                    }
-                }
-            }, 1000);
-
-            setInterval(syncAttendanceCalendar, 60000);
-
             applyMonthInputBounds();
 
+            if (!clockTimerStarted) {
+                clockTimerStarted = true;
+                setInterval(updateClock, 1000);
+
+                setInterval(() => {
+                    if (!loggedInEmployeeId) return;
+                    const liveClock = document.getElementById('employeePortalLiveClock');
+                    if (!liveClock) return;
+                    const stamp = makeStamp();
+                    liveClock.innerText =
+                        `Live · ${stamp.day}, ${stamp.date} · ${stamp.time}`;
+                }, 1000);
+            }
+
+            if (!cloudSyncTimerStarted) {
+                cloudSyncTimerStarted = true;
+                setInterval(syncAttendanceCalendar, 60000);
+                setInterval(syncBackendTime, 300000);
+            }
+
+            initEmployeePresence();
+            cleanupExpiredWarningReadStates();
             syncBackendTime();
-            setInterval(syncBackendTime, 300000);
-        };
+
+            /*
+             * IMPORTANT: only one boot hydration is allowed. After it
+             * completes, every section/count is rendered from the same
+             * in-memory state.
+             */
+            await syncCloudOnBoot();
+
+            renderAllTables();
+            renderEmployeeManagement();
+            updateSidebarCounts();
+        }
+
+        window.addEventListener('load', bootApplication);
 
         /*
-         * Reconnect after internet returns.
-         * We do not run a cloud GET while a user save is in progress.
+         * Reconnect after internet returns. Wait for queued writes before
+         * reading cloud state, preventing an older snapshot from replacing
+         * a just-saved order/status.
          */
         window.addEventListener('online', async () => {
             syncBackendTime();
-
-            if (!cloudWriteChain) {
-                await syncCloudOnBoot();
-                return;
-            }
 
             try {
                 await cloudWriteChain;
             } catch (e) {}
 
             await syncCloudOnBoot();
+            renderAllTables();
+            renderEmployeeManagement();
         });
 
         /*
-         * When the tab becomes visible again, refresh from cloud only after
-         * pending writes finish. This prevents an older GET from restoring
-         * deleted inventory.
+         * Refresh when the tab becomes visible again, but only after any
+         * pending save has finished. This keeps order transitions atomic
+         * from the user's point of view.
          */
         document.addEventListener('visibilitychange', async () => {
             if (document.hidden) return;
@@ -4468,81 +4610,60 @@
             } catch (e) {}
 
             await syncCloudOnBoot();
-
             renderAllTables();
             renderEmployeeManagement();
         });
 
-        // Defensive auth wiring: keeps Employee Sign In functional even if the inline form event is interrupted.
-        document.addEventListener('click', function(ev){
-            const loginBtn=ev.target.closest('#employeeLoginSubmitBtn');
-            if(loginBtn){ ev.preventDefault(); submitEmployeeLogin(ev); }
+        /*
+         * Defensive auth wiring: keeps Employee Sign In functional even if
+         * the inline form event is interrupted.
+         */
+        document.addEventListener('click', function(ev) {
+            const loginBtn = ev.target.closest('#employeeLoginSubmitBtn');
+            if (loginBtn) {
+                ev.preventDefault();
+                submitEmployeeLogin(ev);
+            }
         });
 
+        window.addEventListener('pagehide', function() {
+            if (!loggedInEmployeeId) return;
 
-        window.onload = async function () {
-            loadLocalData();
-            loadEmployees();
-            await syncCloudOnBoot();
-            initEmployeePresence();
-            cleanupExpiredWarningReadStates();
-            renderAllTables();
-            renderEmployeeManagement();
-            updateClock();
-            setInterval(updateClock, 1000);
-            setInterval(()=>{
-                if(loggedInEmployeeId){
-                    const liveClock=document.getElementById('employeePortalLiveClock');
-                    if(liveClock){ const stamp=makeStamp(); liveClock.innerText=`Live · ${stamp.day}, ${stamp.date} · ${stamp.time}`; }
-                }
-            },1000);
-            setInterval(syncAttendanceCalendar, 60000);
-            applyMonthInputBounds();
+            const emp = employees.find(e => e.id === Number(loggedInEmployeeId));
+            if (!emp) return;
 
-            syncBackendTime();
-            setInterval(syncBackendTime, 300000);
-        };
+            const p = ensureEmployeePresence(emp);
+            const session = activePresenceSession(emp);
 
-        window.addEventListener('online', () => {
-            syncBackendTime();
-            syncCloudOnBoot();
-        });
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) syncCloudOnBoot();
-        });
+            if (session) {
+                const now = presenceNowIso();
+                session.lastSeenAt = now;
+                session.logoutAt = now;
+                session.logoutReason = 'pagehide';
+                p.status = 'offline';
+                p.lastOfflineAt = now;
+                p.lastSeenAt = now;
+                p.currentSessionId = null;
 
-        // Defensive auth wiring: keeps Employee Sign In functional even if the inline form event is interrupted.
-        document.addEventListener('click', function(ev){
-            const loginBtn=ev.target.closest('#employeeLoginSubmitBtn');
-            if(loginBtn){ ev.preventDefault(); submitEmployeeLogin(ev); }
-        });
+                try {
+                    const payload = buildPayload();
 
+                    fetch('/api/state', {
+                        method: 'PUT',
+                        keepalive: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            payload,
+                            expectedUpdatedAt: cloudLastUpdated,
+                            reason: 'employee-pagehide'
+                        })
+                    }).catch(() => {});
 
-        window.addEventListener('pagehide', function(){
-            if(!loggedInEmployeeId) return;
-            const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
-            if(!emp) return;
-            const p=ensureEmployeePresence(emp);
-            const session=activePresenceSession(emp);
-            if(session){
-                const now=presenceNowIso();
-                session.lastSeenAt=now;
-                session.logoutAt=now;
-                session.logoutReason='pagehide';
-                p.status='offline';
-                p.lastOfflineAt=now;
-                p.lastSeenAt=now;
-                p.currentSessionId=null;
-                try{
-                    const payload=buildPayload();
-                    fetch('/api/state',{
-                        method:'PUT',
-                        keepalive:true,
-                        headers:{'Content-Type':'application/json','Accept':'application/json'},
-                        body:JSON.stringify({payload,expectedUpdatedAt:cloudLastUpdated,reason:'employee-pagehide'})
-                    }).catch(()=>{});
                     persistLocalBackup();
-                }catch(e){}
+                } catch (e) {}
             }
         });
 
@@ -4679,16 +4800,73 @@
             renderEmployeeManagement();
         }
 
+        /*
+         * ONE workflow refresh point.
+         * All order actions should call this after changing an order. It
+         * renders every dependent section and every navigation count from
+         * the same orders[] array.
+         */
+        function syncOrderWorkflowUI() {
+            renderAllTables();
+            updateSidebarCounts();
+        }
+
+        function normalizeAllOrdersInMemory() {
+            if (!Array.isArray(orders)) orders = [];
+            orders = orders.map(normalizeOrder);
+
+            /*
+             * Never create duplicate order IDs accidentally. Existing IDs
+             * are preserved; only truly invalid/missing IDs are reassigned.
+             */
+            const used = new Set();
+            let nextId = Math.max(
+                1000,
+                ...orders.map(o => Number(o.id) || 0)
+            ) + 1;
+
+            orders.forEach(o => {
+                let id = Number(o.id);
+                if (!Number.isInteger(id) || id < 1 || used.has(id)) {
+                    while (used.has(nextId)) nextId++;
+                    o.id = nextId++;
+                }
+                used.add(o.id);
+
+                if (!o._key) o._key = makeOrderRecordKey();
+            });
+        }
+
+
         function updateSidebarCounts() {
-            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-            set('count-orders', orders.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).length);
-            set('count-ofd', orders.filter(o => o.status === STATUS.OFD).length);
-            set('count-delivered', orders.filter(o => o.status === STATUS.DELIVERED).length);
-            set('count-returns', orders.filter(o => o.status === STATUS.RETURNED).length);
-            set('count-cancelled', orders.filter(o => o.status === STATUS.CANCELLED).length);
-            set('count-history', orders.length);
-            set('count-inventory', inventory.length);
-            set('count-approval', orders.filter(o => o.status === STATUS.APPROVAL).length);
+            const set = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = String(val);
+            };
+
+            const safeOrders = Array.isArray(orders) ? orders : [];
+            const safeInventory = Array.isArray(inventory) ? inventory : [];
+
+            const draftCount = safeOrders.filter(o => o.status === STATUS.DRAFT).length;
+            const approvalCount = safeOrders.filter(o => o.status === STATUS.APPROVAL).length;
+            const ofdCount = safeOrders.filter(o => o.status === STATUS.OFD).length;
+            const deliveredCount = safeOrders.filter(o => o.status === STATUS.DELIVERED).length;
+            const returnCount = safeOrders.filter(o => o.status === STATUS.RETURNED).length;
+            const cancelledCount = safeOrders.filter(o => o.status === STATUS.CANCELLED).length;
+
+            /*
+             * Each badge represents exactly one workflow bucket.
+             * This avoids an approval order being counted twice conceptually
+             * and keeps the Admin badge synchronized with the approval table.
+             */
+            set('count-orders', draftCount);
+            set('count-approval', approvalCount);
+            set('count-ofd', ofdCount);
+            set('count-delivered', deliveredCount);
+            set('count-returns', returnCount);
+            set('count-cancelled', cancelledCount);
+            set('count-history', safeOrders.length);
+            set('count-inventory', safeInventory.length);
         }
 
         function populateDropdown() {
@@ -4848,8 +5026,8 @@
                 o.submittedStamp = stamp;
             });
 
-            saveData();
-            renderAllTables();
+            saveData('orders-submitted-for-approval');
+            syncOrderWorkflowUI();
             showToast_(`${drafts.length} order(s) sent to Admin for approval.`, 'ok');
         }
 
@@ -4884,8 +5062,8 @@
             order.status = STATUS.OFD;
             order.isApproved = true;
             order.approvedStamp = makeStamp();
-            saveData();
-            renderAllTables();
+            saveData('order-approved');
+            syncOrderWorkflowUI();
             showToast_(`Order #${id} approved and moved to Out For Delivery.`, 'ok');
         }
 
@@ -4894,8 +5072,8 @@
             if (!list.length) { showToast_('Nothing is waiting for approval.', 'warn'); return; }
             const stamp = makeStamp();
             list.forEach(o => { o.status = STATUS.OFD; o.isApproved = true; o.approvedStamp = stamp; });
-            saveData();
-            renderAllTables();
+            saveData('orders-approved-all');
+            syncOrderWorkflowUI();
             showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok');
         }
 
@@ -4952,8 +5130,8 @@
             order.status = STATUS.DELIVERED;
             order.deliveredStamp = stamp;
             order.deliveryDate = stamp.display;
-            saveData();
-            renderAllTables();
+            saveData('order-delivered');
+            syncOrderWorkflowUI();
             showToast_(`Order #${orderId} delivered on ${stamp.day}, ${stamp.date} at ${stamp.time}.`, 'ok');
         }
 
