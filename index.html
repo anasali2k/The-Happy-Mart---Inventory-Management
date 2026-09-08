@@ -1422,41 +1422,22 @@
             <div class="card">
                 <h3 style="margin-bottom: 16px;" id="orderFormHeading">Create New Order</h3>
                 <form id="orderForm" onsubmit="saveOrder(event)">
-                    <input type="hidden" id="editingOrderId" value="">
+                    <input type="hidden" id="editingOrderKey" value="">
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label>Customer Name</label>
-                            <input type="text" id="custName" required placeholder="Full Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="text" id="custPhone" required placeholder="03XXXXXXXXX">
-                        </div>
-                        <div class="form-group">
-                            <label>Map Location URL</label>
-                            <input type="url" id="custMap" placeholder="Google Maps Link">
-                        </div>
-                        <div class="form-group">
-                            <label>Select Item</label>
-                            <select id="orderItemSelect" onchange="autoFillItemPrice()" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" id="orderQty" min="1" value="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Price (Manual PKR)</label>
-                            <input type="number" id="orderPrice" min="0" required placeholder="Enter Price">
-                        </div>
+                        <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
+                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code"></div>
+                        <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
+                        <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
+                        <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
+                        <div class="form-group" style="grid-column:1/-1"><label>Address (Manual)</label><textarea id="custAddress" rows="2" required placeholder="Enter complete delivery address manually"></textarea></div>
+                        <div class="form-group"><label>Google Maps Link (Optional)</label><input type="url" id="custMap" placeholder="https://maps.google.com/..."></div>
+                        <div class="form-group"><label>COD Amount</label><input type="number" id="codAmount" min="0" step="0.01" required placeholder="Enter COD Amount"></div>
+                        <div class="form-group"><label>Client Order ID</label><input type="text" id="clientOrderId" placeholder="Enter Client Order ID"></div>
+                        <div class="form-group"><label>Country Code</label><input type="text" id="countryCode" value="968" required placeholder="968"></div>
+                        <div class="form-group"><label>Deliver To</label><select id="deliverTo" required><option value="Oman" selected>Oman</option><option value="Pakistan">Pakistan</option><option value="United Arab Emirates">United Arab Emirates</option><option value="Saudi Arabia">Saudi Arabia</option><option value="Qatar">Qatar</option><option value="Bahrain">Bahrain</option><option value="Kuwait">Kuwait</option><option value="Other">Other</option></select></div>
                     </div>
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label>Remarks</label>
-                        <textarea id="orderRemarks" rows="2" placeholder="Special Instructions..."></textarea>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn-submit" id="orderSubmitBtn">Save Order (Draft)</button>
-                        <button type="button" class="btn-back" id="orderCancelEditBtn" style="display:none;" onclick="resetOrderForm()">Cancel Edit</button>
-                    </div>
+                    <div class="form-group" style="margin-bottom:16px"><label>Remarks</label><textarea id="orderRemarks" rows="2" placeholder="Special Instructions..."></textarea></div>
+                    <div style="display:flex;gap:10px"><button type="submit" class="btn-submit" id="orderSubmitBtn">Save Order (Draft)</button><button type="button" class="btn-back" id="orderCancelEditBtn" style="display:none" onclick="resetOrderForm()">Cancel Edit</button></div>
                 </form>
             </div>
 
@@ -1465,13 +1446,15 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
+                            <th>Product Code</th>
+                            <th>Customer Number</th>
                             <th>Customer Name</th>
-                            <th>Phone</th>
-                            <th>Location</th>
-                            <th>Item Name</th>
-                            <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
+                            <th>Quantity</th>
+                            <th>Address</th>
+                            <th>COD Amount</th>
+                            <th>Client Order ID</th>
+                            <th>Country Code</th>
+                            <th>Deliver To</th>
                             <th>Status</th>
                             <th>Created On</th>
                             <th>Remarks</th>
@@ -3926,37 +3909,57 @@
         }
 
         function nextOrderId() {
-            const ids = orders.map(o => Number(o.id) || 0);
+            const ids = orders.map(o => Number(o.id) || 0).filter(Number.isFinite);
             const base = ids.length ? Math.max(...ids) : 1000;
             return Math.max(base, 1000) + 1;
         }
 
-        function nextItemId() {
-            const ids = inventory.map(i => Number(i.id) || 0);
-            const base = ids.length ? Math.max(...ids) : 100;
-            return Math.max(base, 100) + 1;
+        function makeOrderRecordKey() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+            return 'order-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
         }
 
-        function orderTotal(o) { return (Number(o.price) || 0) * (Number(o.qty) || 0); }
+        function getOrderByRef(ref) {
+            const refString = String(ref ?? '');
+            const byKey = orders.find(o => String(o._key || '') === refString);
+            if (byKey) return byKey;
+            const numeric = Number(ref);
+            return orders.find(o => Number(o.id) === numeric) || null;
+        }
+
+        function orderTotal(o) {
+            const cod = Number(o && o.codAmount);
+            if (Number.isFinite(cod)) return cod;
+            return (Number(o && o.price) || 0) * (Number(o && o.qty) || 0);
+        }
 
         /* ---------------- Local Storage Engine ---------------- */
         function normalizeOrder(o) {
             const created = o.createdStamp || { date: o.creationDate || '', time: '', day: '', display: o.creationDate || '' };
-
             let status = o.status;
             if (status === 'Pending') status = o.isSubmitted ? STATUS.APPROVAL : STATUS.DRAFT;
             if (!Object.values(STATUS).includes(status)) status = STATUS.DRAFT;
             if (status === STATUS.DRAFT && o.isSubmitted && !o.isApproved) status = STATUS.APPROVAL;
 
+            const qty = Math.max(0, Number(o.qty) || 0);
+            const codAmount = o.codAmount !== undefined && o.codAmount !== '' ? Number(o.codAmount) || 0 : (Number(o.price) || 0) * qty;
+
             return {
-                id: Number(o.id),
-                customer: o.customer || '',
-                phone: o.phone || '',
-                map: o.map || '',
+                _key: o._key || makeOrderRecordKey(),
+                id: Number(o.id) || 1001,
+                productCode: String(o.productCode || o.sku || o.itemCode || (o.itemId ? String(o.itemId) : '')).trim(),
+                customer: o.customer || o.customerName || '',
+                phone: o.phone || o.customerNumber || '',
+                map: o.map || o.mapLink || '',
+                address: o.address || o.customerAddress || '',
                 itemId: Number(o.itemId) || 0,
                 itemName: o.itemName || '',
-                qty: Number(o.qty) || 0,
-                price: Number(o.price) || 0,
+                qty: qty,
+                price: qty > 0 ? codAmount / qty : (Number(o.price) || 0),
+                codAmount: codAmount,
+                clientOrderId: String(o.clientOrderId || o.clientId || '').trim(),
+                countryCode: String(o.countryCode || '968').trim(),
+                deliverTo: String(o.deliverTo || o.destinationCountry || 'Oman').trim() || 'Oman',
                 status: status,
                 remarks: o.remarks || '',
                 creationDate: o.creationDate || created.date || '',
@@ -4707,149 +4710,130 @@
         /* ---------------- Daily Orders ---------------- */
         function renderOrdersTable() {
             const tbody = document.getElementById('ordersTableBody');
-            const list = orders
-                .filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL)
-                .sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(12, 'No draft or pending orders. Create an order above to start.'); return; }
-
+            const list = orders.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).sort((a,b) => a.id-b.id);
+            if (!list.length) { tbody.innerHTML = emptyRow(14, 'No draft or pending orders. Create an order above to start.'); return; }
             tbody.innerHTML = list.map(o => {
                 const canUserEdit = o.status === STATUS.DRAFT;
-                return `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(o.price)}</td>
-                        <td><b>${money(orderTotal(o))}</b></td>
-                        <td><span class="badge ${badgeClassFor(o.status)}">${canUserEdit ? 'Draft (Editable)' : 'Pending Approval'}</span></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                        <td>${esc(o.remarks) || '-'}</td>
-                        <td>
-                            ${canUserEdit
-                                ? `<button class="action-btn" style="color:var(--accent-warning)" onclick="editOrderDraft(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                                   <button class="action-btn" style="color:var(--accent-danger)" onclick="deleteOrderDraft(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>`
-                                : `<span style="font-size:12px; color:var(--text-muted);"><i class="fa-solid fa-lock"></i> With Admin</span>`}
-                        </td>
-                    </tr>`;
+                const ref = esc(o._key);
+                return `<tr>
+                    <td><b>#${esc(o.id)}</b></td><td>${esc(o.productCode)||'-'}</td><td>${esc(o.phone)}</td><td>${esc(o.customer)}</td><td>${esc(o.qty)}</td>
+                    <td><div style="max-width:280px;white-space:normal;line-height:1.5">${esc(o.address)||'-'}</div>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : ''}</td>
+                    <td><b>${money(o.codAmount)}</b></td><td>${esc(o.clientOrderId)||'-'}</td><td>${esc(o.countryCode)||'968'}</td><td>${esc(o.deliverTo)||'Oman'}</td>
+                    <td><span class="badge ${badgeClassFor(o.status)}">${canUserEdit?'Draft (Editable)':'Pending Approval'}</span></td><td>${stampCell(o.createdStamp,o.creationDate)}</td><td>${esc(o.remarks)||'-'}</td>
+                    <td>${canUserEdit ? `<button class="action-btn" style="color:var(--accent-warning)" onclick="editOrderDraft('${ref}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" style="color:var(--accent-danger)" onclick="deleteOrderDraft('${ref}')"><i class="fa-solid fa-trash"></i> Delete</button>` : `<span style="font-size:12px;color:var(--text-muted)"><i class="fa-solid fa-lock"></i> With Admin</span>`}</td>
+                </tr>`;
             }).join('');
+        }
+
+        function findInventoryItemByProductCode(code) {
+            const value = String(code || '').trim();
+            return inventory.find(i => String(i.id) === value || String(i.code || '').trim() === value || String(i.sku || '').trim() === value || String(i.productCode || '').trim() === value) || null;
         }
 
         function saveOrder(e) {
             e.preventDefault();
-            const editId = document.getElementById('editingOrderId').value;
-            const itemId = parseInt(document.getElementById('orderItemSelect').value, 10);
-            const qty = parseInt(document.getElementById('orderQty').value, 10);
-            const customPrice = parseFloat(document.getElementById('orderPrice').value);
-            const item = inventory.find(i => i.id === itemId);
+            const editingKey = document.getElementById('editingOrderKey').value;
+            const orderId = Number(document.getElementById('orderId').value.trim());
+            const productCode = document.getElementById('productCode').value.trim();
+            const qty = parseInt(document.getElementById('orderQty').value,10);
+            const codAmount = parseFloat(document.getElementById('codAmount').value);
+            const item = findInventoryItemByProductCode(productCode);
 
-            if (!item) { showToast_('Pick an item from the inventory list.', 'warn'); return; }
+            if (!Number.isInteger(orderId) || orderId < 1) { showToast_('Enter a valid Order ID.', 'warn'); return; }
+            if (!productCode) { showToast_('Enter Product Code.', 'warn'); return; }
             if (!qty || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
-            if (isNaN(customPrice) || customPrice < 0) { showToast_('Enter a valid price.', 'warn'); return; }
+            if (!Number.isFinite(codAmount) || codAmount < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
 
-            if (editId) {
-                const order = orders.find(o => o.id == editId);
-                if (!order || order.status !== STATUS.DRAFT) {
-                    showToast_('That order is locked and can no longer be edited.', 'warn');
-                    resetOrderForm();
-                    return;
+            const fields = {
+                customer: document.getElementById('custName').value.trim(),
+                phone: document.getElementById('custPhone').value.trim(),
+                map: document.getElementById('custMap').value.trim(),
+                address: document.getElementById('custAddress').value.trim(),
+                clientOrderId: document.getElementById('clientOrderId').value.trim(),
+                countryCode: document.getElementById('countryCode').value.trim() || '968',
+                deliverTo: document.getElementById('deliverTo').value || 'Oman',
+                remarks: document.getElementById('orderRemarks').value.trim()
+            };
+
+            if (editingKey) {
+                const order = getOrderByRef(editingKey);
+                if (!order || order.status !== STATUS.DRAFT) { showToast_('That order is locked and can no longer be edited.', 'warn'); resetOrderForm(); return; }
+
+                if (item) {
+                    const sameItem = order.itemId === item.id;
+                    if (sameItem) {
+                        const diffQty = qty - order.qty;
+                        if (diffQty > 0 && item.stock < diffQty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                        item.stock -= diffQty;
+                    } else {
+                        if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                        const oldItem = inventory.find(i => i.id === order.itemId);
+                        if (oldItem) oldItem.stock += order.qty;
+                        item.stock -= qty;
+                    }
+                    order.itemId = item.id;
+                    order.itemName = item.name;
                 }
 
-                const sameItem = order.itemId === item.id;
-                if (sameItem) {
-                    const diffQty = qty - order.qty;
-                    if (diffQty > 0 && item.stock < diffQty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                    item.stock -= diffQty;
-                } else {
-                    if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                    const oldItem = inventory.find(i => i.id === order.itemId);
-                    if (oldItem) oldItem.stock += order.qty;
-                    item.stock -= qty;
-                }
-
-                order.customer = document.getElementById('custName').value.trim();
-                order.phone = document.getElementById('custPhone').value.trim();
-                order.map = document.getElementById('custMap').value.trim();
-                order.itemId = item.id;
-                order.itemName = item.name;
+                order.id = orderId;
+                order.productCode = productCode;
+                Object.assign(order, fields);
                 order.qty = qty;
-                order.price = customPrice;
-                order.remarks = document.getElementById('orderRemarks').value.trim();
+                order.codAmount = codAmount;
+                order.price = qty > 0 ? codAmount / qty : 0;
                 showToast_(`Order #${order.id} updated.`, 'ok');
             } else {
-                if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                item.stock -= qty;
+                if (item && item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
+                if (item) item.stock -= qty;
                 const stamp = makeStamp();
-                const newOrder = normalizeOrder({
-                    id: nextOrderId(),
-                    customer: document.getElementById('custName').value.trim(),
-                    phone: document.getElementById('custPhone').value.trim(),
-                    map: document.getElementById('custMap').value.trim(),
-                    itemId: item.id,
-                    itemName: item.name,
-                    qty: qty,
-                    price: customPrice,
-                    status: STATUS.DRAFT,
-                    remarks: document.getElementById('orderRemarks').value.trim(),
-                    creationDate: stamp.date,
-                    createdStamp: stamp,
-                    isSubmitted: false,
-                    isApproved: false
-                });
-                orders.push(newOrder);
-                showToast_(`Order #${newOrder.id} saved as draft.`, 'ok');
+                orders.push(normalizeOrder({...fields,_key:makeOrderRecordKey(),id:orderId,productCode,itemId:item?item.id:0,itemName:item?item.name:'',qty,codAmount,price:qty>0?codAmount/qty:0,status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,isSubmitted:false,isApproved:false}));
+                showToast_(`Order #${orderId} saved as draft.`, 'ok');
             }
-
-            saveData();
-            resetOrderForm();
-            renderAllTables();
+            saveData(); resetOrderForm(); renderAllTables();
         }
 
-        function editOrderDraft(id) {
-            const order = orders.find(o => o.id === id);
+        function editOrderDraft(ref) {
+            const order = getOrderByRef(ref);
             if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be edited.', 'warn'); return; }
-
-            document.getElementById('editingOrderId').value = order.id;
-            document.getElementById('custName').value = order.customer;
+            document.getElementById('editingOrderKey').value = order._key;
+            document.getElementById('orderId').value = order.id;
+            document.getElementById('productCode').value = order.productCode || (order.itemId || '');
             document.getElementById('custPhone').value = order.phone;
-            document.getElementById('custMap').value = order.map;
-            document.getElementById('orderItemSelect').value = order.itemId;
+            document.getElementById('custName').value = order.customer;
             document.getElementById('orderQty').value = order.qty;
-            document.getElementById('orderPrice').value = order.price;
-            document.getElementById('orderRemarks').value = order.remarks;
-
+            document.getElementById('custAddress').value = order.address || '';
+            document.getElementById('custMap').value = order.map || '';
+            document.getElementById('codAmount').value = Number(order.codAmount || orderTotal(order)).toFixed(2);
+            document.getElementById('clientOrderId').value = order.clientOrderId || '';
+            document.getElementById('countryCode').value = order.countryCode || '968';
+            document.getElementById('deliverTo').value = order.deliverTo || 'Oman';
+            document.getElementById('orderRemarks').value = order.remarks || '';
             document.getElementById('orderFormHeading').innerText = `Edit Draft Order #${order.id}`;
-            document.getElementById('orderSubmitBtn').innerText = "Update Order";
-            document.getElementById('orderCancelEditBtn').style.display = "inline-block";
-            window.scrollTo(0, 0);
-            const main = document.querySelector('.main-content');
-            if (main) main.scrollTop = 0;
+            document.getElementById('orderSubmitBtn').innerText = 'Update Order';
+            document.getElementById('orderCancelEditBtn').style.display = 'inline-block';
+            const main = document.querySelector('.main-content'); if (main) main.scrollTop = 0;
         }
 
-        function deleteOrderDraft(id) {
-            const order = orders.find(o => o.id === id);
+        function deleteOrderDraft(ref) {
+            const order = getOrderByRef(ref);
             if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be deleted here.', 'warn'); return; }
-            if (!confirm(`Delete draft order #${id}?`)) return;
-
-            const item = inventory.find(i => i.id === order.itemId);
-            if (item) item.stock += order.qty;
-            orders = orders.filter(o => o.id !== id);
-            saveData();
-            resetOrderForm();
-            renderAllTables();
-            showToast_(`Draft order #${id} deleted. Stock returned.`, 'ok');
+            if (!confirm(`Delete draft order #${order.id}?`)) return;
+            const item = inventory.find(i => i.id === order.itemId); if (item) item.stock += order.qty;
+            orders = orders.filter(o => o._key !== order._key);
+            saveData(); resetOrderForm(); renderAllTables();
+            showToast_(`Draft order #${order.id} deleted. Stock returned.`, 'ok');
         }
 
         function resetOrderForm() {
-            document.getElementById('editingOrderId').value = "";
+            document.getElementById('editingOrderKey').value = '';
             document.getElementById('orderForm').reset();
+            document.getElementById('orderId').value = nextOrderId();
             document.getElementById('orderQty').value = 1;
-            document.getElementById('orderFormHeading').innerText = "Create New Order";
-            document.getElementById('orderSubmitBtn').innerText = "Save Order (Draft)";
-            document.getElementById('orderCancelEditBtn').style.display = "none";
+            document.getElementById('countryCode').value = '968';
+            document.getElementById('deliverTo').value = 'Oman';
+            document.getElementById('orderFormHeading').innerText = 'Create New Order';
+            document.getElementById('orderSubmitBtn').innerText = 'Save Order (Draft)';
+            document.getElementById('orderCancelEditBtn').style.display = 'none';
         }
 
         function finalizeAndSubmitOrders() {
@@ -4895,7 +4879,7 @@
         }
 
         function approveOrder(id) {
-            const order = orders.find(o => o.id === id);
+            const order = getOrderByRef(id);
             if (!order || order.status !== STATUS.APPROVAL) return;
             order.status = STATUS.OFD;
             order.isApproved = true;
@@ -4916,7 +4900,7 @@
         }
 
         function rejectOrder(id) {
-            const order = orders.find(o => o.id === id);
+            const order = getOrderByRef(id);
             if (!order || order.status !== STATUS.APPROVAL) return;
             order.status = STATUS.DRAFT;
             order.isSubmitted = false;
@@ -4962,7 +4946,7 @@
         }
 
         function markDelivered(orderId) {
-            const order = orders.find(o => o.id === orderId);
+            const order = getOrderByRef(orderId);
             if (!order || order.status !== STATUS.OFD) return;
             const stamp = makeStamp();
             order.status = STATUS.DELIVERED;
@@ -4974,7 +4958,7 @@
         }
 
         function processReturn(orderId) {
-            const order = orders.find(o => o.id === orderId);
+            const order = getOrderByRef(orderId);
             if (!order || order.status !== STATUS.OFD) return;
 
             openReasonModal(
@@ -5015,7 +4999,7 @@
         }
 
         function processCancel(orderId) {
-            const order = orders.find(o => o.id === orderId);
+            const order = getOrderByRef(orderId);
             if (!order || order.status !== STATUS.OFD) return;
 
             openReasonModal(
@@ -5498,8 +5482,8 @@
                     <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
                     <td>${stageText[o.status] || '-'}</td>
                     <td style="white-space:nowrap;">
-                        <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                        <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
                     </td>
                 </tr>`).join('');
         }
@@ -5521,8 +5505,8 @@
                         <td>${money(orderTotal(o))}</td>
                         <td>${o.deliveredStamp ? esc(o.deliveredStamp.date) : '-'}</td>
                         <td>
-                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
                         </td>
                     </tr>`).join('');
             }
@@ -5542,8 +5526,8 @@
                         <td>${money(orderTotal(o))}</td>
                         <td>${esc(o.returnReason) || '-'}</td>
                         <td>
-                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
                         </td>
                     </tr>`).join('');
             }
@@ -5563,8 +5547,8 @@
                         <td>${money(orderTotal(o))}</td>
                         <td>${esc(o.cancelReason) || '-'}</td>
                         <td>
-                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
                         </td>
                     </tr>`).join('');
             }
@@ -5583,49 +5567,40 @@
                         <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
                         <td>${o.createdStamp ? esc(o.createdStamp.date) : '-'}</td>
                         <td>
-                            <button class="btn-warning" onclick="adminEditOrder(${o.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder(${o.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
                         </td>
                     </tr>`).join('');
             }
         }
 
-        function adminEditOrder(id) {
-            const order = orders.find(o => o.id === id);
+        function adminEditOrder(ref) {
+            const order = getOrderByRef(ref);
             if (!order) return;
-
-            const newCust = prompt("Update Customer Name:", order.customer);
-            if (newCust === null) return;
-            const newPhone = prompt("Update Phone Number:", order.phone);
-            if (newPhone === null) return;
-            const newPrice = prompt("Update Price (PKR):", order.price);
-            if (newPrice === null) return;
-
-            order.customer = newCust.trim() || order.customer;
-            order.phone = newPhone.trim() || order.phone;
-            const parsed = parseFloat(newPrice);
-            order.price = (!isNaN(parsed) && parsed >= 0) ? parsed : order.price;
-
-            saveData();
-            renderAllTables();
-            showToast_(`Order #${id} updated by Admin.`, 'ok');
+            const newId = prompt('Update Order ID:', order.id);
+            if (newId === null) return;
+            const parsedId = Number(newId);
+            if (!Number.isInteger(parsedId) || parsedId < 1) { showToast_('Order ID must be a positive whole number.', 'warn'); return; }
+            const newCust = prompt('Update Customer Name:', order.customer); if (newCust === null) return;
+            const newPhone = prompt('Update Customer Number:', order.phone); if (newPhone === null) return;
+            const newCode = prompt('Update Product Code:', order.productCode); if (newCode === null) return;
+            const newQty = prompt('Update Quantity:', order.qty); if (newQty === null) return;
+            const parsedQty = Number(newQty); if (!Number.isInteger(parsedQty) || parsedQty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
+            const newCod = prompt('Update COD Amount:', order.codAmount); if (newCod === null) return;
+            const parsedCod = Number(newCod); if (!Number.isFinite(parsedCod) || parsedCod < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
+            order.id=parsedId; order.customer=newCust.trim()||order.customer; order.phone=newPhone.trim()||order.phone; order.productCode=newCode.trim()||order.productCode; order.qty=parsedQty; order.codAmount=parsedCod; order.price=parsedQty?parsedCod/parsedQty:0;
+            saveData(); renderAllTables(); showToast_(`Order #${order.id} updated by Admin.`, 'ok');
         }
 
-        function adminDeleteOrder(id) {
-            const order = orders.find(o => o.id === id);
-            if (!order) return;
-            if (!confirm(`Admin action: permanently delete order #${id}?`)) return;
-
-            if (order.status === STATUS.DRAFT || order.status === STATUS.APPROVAL || order.status === STATUS.OFD) {
-                const item = inventory.find(i => i.id === order.itemId);
-                if (item) item.stock += order.qty;
+        function adminDeleteOrder(ref) {
+            const order = getOrderByRef(ref); if (!order) return;
+            if (!confirm(`Admin action: permanently delete order #${order.id}?`)) return;
+            if (order.status===STATUS.DRAFT || order.status===STATUS.APPROVAL || order.status===STATUS.OFD) {
+                const item=inventory.find(i=>i.id===order.itemId); if(item)item.stock+=order.qty;
             }
-
-            orders = orders.filter(o => o.id !== id);
-            returns = returns.filter(r => r.orderId !== id);
-            saveData();
-            renderAllTables();
-            showToast_(`Order #${id} deleted by Admin.`, 'ok');
+            orders=orders.filter(o=>o._key!==order._key);
+            returns=returns.filter(r=>r.orderId!==order.id);
+            saveData(); renderAllTables(); showToast_(`Order #${order.id} deleted by Admin.`, 'ok');
         }
 
         /* ---------------- Excel Export ---------------- */
@@ -5636,8 +5611,10 @@
             const sheet = (rows, fallback) => XLSX.utils.json_to_sheet(rows.length ? rows : [fallback]);
 
             const daily = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).map(o => ({
-                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
-                "Item": o.itemName, "Qty": o.qty, "Unit Price": o.price, "Total Amount": orderTotal(o),
+                "Order ID": o.id, "Product Code": o.productCode, "Customer Number": o.phone, "Customer Name": o.customer,
+                "Quantity": o.qty, "Address": o.address, "Google Maps Link": o.map, "COD Amount": o.codAmount,
+                "Client Order ID": o.clientOrderId, "Country Code": o.countryCode, "Deliver To": o.deliverTo,
+                "Item": o.itemName, "Unit Price": o.price, "Total Amount": orderTotal(o),
                 "Status": o.status, "Created Date": o.createdStamp ? o.createdStamp.date : o.creationDate,
                 "Created Day": o.createdStamp ? o.createdStamp.day : '', "Created Time": o.createdStamp ? o.createdStamp.time : '',
                 "Remarks": o.remarks
