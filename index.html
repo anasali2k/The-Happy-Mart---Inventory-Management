@@ -661,6 +661,34 @@
         .stamp-main { font-weight: 600; }
         .stamp-sub { font-size: 12px; color: var(--text-muted); }
 
+        /* Professional 3D Order Edit Modal */
+        .order-edit-overlay {
+            position: fixed; inset: 0; background: rgba(2, 6, 23, .78); backdrop-filter: blur(10px);
+            display: none; align-items: center; justify-content: center; z-index: 5000; padding: 20px;
+        }
+        .order-edit-card {
+            width: min(980px, 96vw); max-height: 92vh; overflow: auto;
+            background: linear-gradient(145deg, #111827, #0b1220);
+            border: 1px solid rgba(148,163,184,.22); border-radius: 24px;
+            box-shadow: 0 35px 90px rgba(0,0,0,.65), 0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+            transform: perspective(1200px) rotateX(0deg);
+            animation: orderEditIn .22s ease-out;
+        }
+        @keyframes orderEditIn { from { opacity:0; transform:perspective(1200px) translateY(18px) scale(.97) rotateX(2deg); } to { opacity:1; transform:perspective(1200px) translateY(0) scale(1) rotateX(0); } }
+        .order-edit-head { padding: 20px 24px; display:flex; align-items:center; justify-content:space-between; gap:15px; border-bottom:1px solid rgba(148,163,184,.16); position:sticky; top:0; background:rgba(17,24,39,.96); backdrop-filter:blur(12px); z-index:2; }
+        .order-edit-title-wrap { display:flex; align-items:center; gap:13px; }
+        .order-edit-icon { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(135deg,#6366f1,#8b5cf6); box-shadow:0 10px 24px rgba(99,102,241,.3); }
+        .order-edit-close { width:40px; height:40px; border:1px solid rgba(148,163,184,.22); border-radius:12px; background:rgba(15,23,42,.8); color:#cbd5e1; cursor:pointer; font-size:18px; }
+        .order-edit-body { padding:24px; }
+        .order-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+        .order-edit-grid .full { grid-column:1/-1; }
+        .order-edit-field label { display:block; margin-bottom:7px; font-size:12px; font-weight:700; color:#cbd5e1; }
+        .order-edit-field input, .order-edit-field select, .order-edit-field textarea { width:100%; box-sizing:border-box; padding:12px 13px; border-radius:12px; border:1px solid rgba(148,163,184,.22); background:#0b1220; color:#f8fafc; outline:none; transition:.18s; }
+        .order-edit-field input:focus, .order-edit-field select:focus, .order-edit-field textarea:focus { border-color:#818cf8; box-shadow:0 0 0 3px rgba(99,102,241,.14); }
+        .order-edit-footer { padding:16px 24px 22px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid rgba(148,163,184,.14); position:sticky; bottom:0; background:rgba(17,24,39,.96); backdrop-filter:blur(12px); }
+        .order-edit-status { font-size:12px; color:#94a3b8; margin-top:4px; }
+        @media(max-width:700px){ .order-edit-grid{grid-template-columns:1fr}.order-edit-card{max-height:95vh}.order-edit-body{padding:18px}.order-edit-head,.order-edit-footer{padding-left:18px;padding-right:18px} }
+
         /* Admin Password Modal */
         .modal-overlay {
             position: fixed;
@@ -5086,7 +5114,8 @@
             const productCode = document.getElementById('productCode').value.trim();
             const qty = parseInt(document.getElementById('orderQty').value,10);
             const codAmount = parseFloat(document.getElementById('codAmount').value);
-            const item = findInventoryItemByProductCode(productCode);
+            const selectedItemId = Number(document.getElementById('orderItemName')?.value || 0);
+            const item = inventory.find(i => Number(i.id) === selectedItemId) || findInventoryItemByProductCode(productCode);
 
             if (!Number.isInteger(orderId) || orderId < 1) { showToast_('Enter a valid Order ID.', 'warn'); return; }
             if (!productCode) { showToast_('Enter Product Code.', 'warn'); return; }
@@ -5147,6 +5176,7 @@
             document.getElementById('editingOrderKey').value = order._key;
             document.getElementById('orderId').value = order.id;
             document.getElementById('productCode').value = order.productCode || (order.itemId || '');
+            populateProfessionalItemSelect('orderItemName', order.itemId, order.itemName);
             document.getElementById('custPhone').value = order.phone;
             document.getElementById('custName').value = order.customer;
             document.getElementById('orderQty').value = order.qty;
@@ -5176,6 +5206,7 @@
         function resetOrderForm() {
             document.getElementById('editingOrderKey').value = '';
             document.getElementById('orderForm').reset();
+            populateProfessionalItemSelect('orderItemName', 0, '');
             document.getElementById('orderId').value = nextOrderId();
             document.getElementById('orderQty').value = 1;
             document.getElementById('countryCode').value = '968';
@@ -5221,6 +5252,7 @@
                     <td><b>${money(orderTotal(o))}</b></td>
                     <td>${stampCell(o.submittedStamp, '-')}</td>
                     <td>
+                        <button class="action-btn" style="color:#a78bfa" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button>
                         <button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>
                     </td>
@@ -5289,6 +5321,7 @@
                     <td>${o.qty}</td>
                     <td><b>${money(orderTotal(o))}</b></td>
                     <td style="white-space:nowrap;">
+                        <button class="action-btn" style="color:#a78bfa" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="action-btn" style="color:var(--accent-success)" onclick="markDelivered(${o.id})"><i class="fa-solid fa-circle-check"></i> Delivered</button>
                         <button class="action-btn" style="color:var(--accent-danger)" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
                         <button class="action-btn" style="color:#cbd5e1" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancelled</button>
@@ -5928,22 +5961,126 @@
             }
         }
 
-        function adminEditOrder(ref) {
+        function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            const currentId = Number(currentItemId) || 0;
+            const currentName = String(currentItemName || '').trim();
+            let html = '<option value="">Select Item Name</option>';
+            inventory.forEach(i => {
+                html += `<option value="${Number(i.id)}">${esc(i.name)}${i.stock !== undefined ? ` — Stock: ${Number(i.stock)}` : ''}</option>`;
+            });
+            if (currentName && currentId && !inventory.some(i => Number(i.id) === currentId)) {
+                html += `<option value="${currentId}">${esc(currentName)} — Current Item</option>`;
+            }
+            select.innerHTML = html;
+            if (currentId) select.value = String(currentId);
+        }
+
+        function syncSelectedOrderItem() {
+            const select = document.getElementById('orderItemName');
+            const item = inventory.find(i => Number(i.id) === Number(select.value));
+            if (!item) return;
+            document.getElementById('productCode').value = String(item.id);
+        }
+
+        function syncProfessionalEditItem() {
+            const select = document.getElementById('editItemName');
+            const item = inventory.find(i => Number(i.id) === Number(select.value));
+            if (!item) return;
+            document.getElementById('editProductCode').value = String(item.id);
+        }
+
+        function openProfessionalOrderEdit(ref) {
             const order = getOrderByRef(ref);
-            if (!order) return;
-            const newId = prompt('Update Order ID:', order.id);
-            if (newId === null) return;
-            const parsedId = Number(newId);
-            if (!Number.isInteger(parsedId) || parsedId < 1) { showToast_('Order ID must be a positive whole number.', 'warn'); return; }
-            const newCust = prompt('Update Customer Name:', order.customer); if (newCust === null) return;
-            const newPhone = prompt('Update Customer Number:', order.phone); if (newPhone === null) return;
-            const newCode = prompt('Update Product Code:', order.productCode); if (newCode === null) return;
-            const newQty = prompt('Update Quantity:', order.qty); if (newQty === null) return;
-            const parsedQty = Number(newQty); if (!Number.isInteger(parsedQty) || parsedQty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
-            const newCod = prompt('Update COD Amount:', order.codAmount); if (newCod === null) return;
-            const parsedCod = Number(newCod); if (!Number.isFinite(parsedCod) || parsedCod < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
-            order.id=parsedId; order.customer=newCust.trim()||order.customer; order.phone=newPhone.trim()||order.phone; order.productCode=newCode.trim()||order.productCode; order.qty=parsedQty; order.codAmount=parsedCod; order.price=parsedQty?parsedCod/parsedQty:0;
-            saveData(); renderAllTables(); showToast_(`Order #${order.id} updated by Admin.`, 'ok');
+            if (!order) { showToast_('Order not found.', 'warn'); return; }
+
+            document.getElementById('orderEditKey').value = order._key;
+            document.getElementById('editOrderId').value = order.id;
+            document.getElementById('editProductCode').value = order.productCode || (order.itemId || '');
+            document.getElementById('editCustomer').value = order.customer || '';
+            document.getElementById('editPhone').value = order.phone || '';
+            document.getElementById('editQty').value = order.qty || 1;
+            document.getElementById('editCod').value = Number(order.codAmount || orderTotal(order));
+            document.getElementById('editAddress').value = order.address || order.customerAddress || '';
+            document.getElementById('editMap').value = order.map || order.mapLink || '';
+            document.getElementById('editClientOrderId').value = order.clientOrderId || '';
+            document.getElementById('editCountryCode').value = order.countryCode || '968';
+            document.getElementById('editDeliverTo').value = order.deliverTo || 'Oman';
+            document.getElementById('editRemarks').value = order.remarks || '';
+            document.getElementById('orderEditModalTitle').innerText = `Edit Order #${order.id}`;
+            document.getElementById('orderEditModalStatus').innerText = `Status: ${order.status} • All order details can be updated`;
+            populateProfessionalItemSelect('editItemName', order.itemId, order.itemName);
+            document.getElementById('orderEditModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('editItemName').focus(), 80);
+        }
+
+        function closeOrderEditModal() {
+            const modal = document.getElementById('orderEditModal');
+            if (modal) modal.style.display = 'none';
+            document.getElementById('orderEditKey').value = '';
+        }
+
+        function saveProfessionalOrderEdit() {
+            const key = document.getElementById('orderEditKey').value;
+            const order = getOrderByRef(key);
+            if (!order) { closeOrderEditModal(); showToast_('Order not found.', 'warn'); return; }
+
+            const newId = Number(document.getElementById('editOrderId').value);
+            const newQty = Number(document.getElementById('editQty').value);
+            const newCod = Number(document.getElementById('editCod').value);
+            const selectedId = Number(document.getElementById('editItemName').value);
+            const selectedItem = inventory.find(i => Number(i.id) === selectedId);
+
+            if (!Number.isInteger(newId) || newId < 1) { showToast_('Order ID must be a positive whole number.', 'warn'); return; }
+            if (!Number.isInteger(newQty) || newQty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
+            if (!Number.isFinite(newCod) || newCod < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
+            if (!selectedItem && !order.itemId) { showToast_('Please select an Item Name from Inventory.', 'warn'); return; }
+
+            const activeStockStatus = order.status === STATUS.DRAFT || order.status === STATUS.APPROVAL || order.status === STATUS.OFD;
+            const oldItem = inventory.find(i => Number(i.id) === Number(order.itemId));
+            const targetItem = selectedItem || oldItem;
+
+            if (activeStockStatus && targetItem) {
+                if (oldItem && Number(oldItem.id) === Number(targetItem.id)) {
+                    const diffQty = newQty - Number(order.qty || 0);
+                    if (diffQty > 0 && Number(oldItem.stock) < diffQty) {
+                        showToast_(`Only ${oldItem.stock} left in stock for ${oldItem.name}.`, 'warn'); return;
+                    }
+                    oldItem.stock -= diffQty;
+                } else {
+                    if (Number(targetItem.stock) < newQty) {
+                        showToast_(`Only ${targetItem.stock} left in stock for ${targetItem.name}.`, 'warn'); return;
+                    }
+                    if (oldItem) oldItem.stock += Number(order.qty || 0);
+                    targetItem.stock -= newQty;
+                }
+            }
+
+            order.id = newId;
+            order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
+            order.itemName = targetItem ? targetItem.name : (order.itemName || '');
+            order.productCode = document.getElementById('editProductCode').value.trim() || String(order.itemId || '');
+            order.customer = document.getElementById('editCustomer').value.trim();
+            order.phone = document.getElementById('editPhone').value.trim();
+            order.qty = newQty;
+            order.codAmount = newCod;
+            order.price = newQty > 0 ? newCod / newQty : 0;
+            order.address = document.getElementById('editAddress').value.trim();
+            order.map = document.getElementById('editMap').value.trim();
+            order.clientOrderId = document.getElementById('editClientOrderId').value.trim();
+            order.countryCode = document.getElementById('editCountryCode').value.trim() || '968';
+            order.deliverTo = document.getElementById('editDeliverTo').value || 'Oman';
+            order.remarks = document.getElementById('editRemarks').value.trim();
+
+            saveData('professional-order-edit');
+            closeOrderEditModal();
+            renderAllTables();
+            showToast_(`Order #${order.id} updated successfully.`, 'ok');
+        }
+
+        function adminEditOrder(ref) {
+            openProfessionalOrderEdit(ref);
         }
 
         function adminDeleteOrder(ref) {
@@ -6070,5 +6207,40 @@
             showToast_('Excel file downloaded.', 'ok');
         }
     </script>
+
+    <!-- PROFESSIONAL ORDER EDIT MODAL -->
+    <div id="orderEditModal" class="order-edit-overlay" onclick="if(event.target===this) closeOrderEditModal()">
+        <div class="order-edit-card">
+            <div class="order-edit-head">
+                <div class="order-edit-title-wrap">
+                    <div class="order-edit-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                    <div><div style="font-size:20px;font-weight:800;color:#f8fafc" id="orderEditModalTitle">Edit Order</div><div class="order-edit-status" id="orderEditModalStatus">Update order details professionally</div></div>
+                </div>
+                <button class="order-edit-close" type="button" onclick="closeOrderEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="order-edit-body">
+                <input type="hidden" id="orderEditKey">
+                <div class="order-edit-grid">
+                    <div class="order-edit-field"><label>Order ID</label><input id="editOrderId" type="number" min="1"></div>
+                    <div class="order-edit-field"><label>Product Code</label><input id="editProductCode" type="text"></div>
+                    <div class="order-edit-field full"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="editItemName" onchange="syncProfessionalEditItem()"><option value="">Select Item Name</option></select></div>
+                    <div class="order-edit-field"><label>Customer Name</label><input id="editCustomer" type="text"></div>
+                    <div class="order-edit-field"><label>Customer Number</label><input id="editPhone" type="text"></div>
+                    <div class="order-edit-field"><label>Quantity</label><input id="editQty" type="number" min="1"></div>
+                    <div class="order-edit-field"><label>COD Amount</label><input id="editCod" type="number" min="0" step="0.01"></div>
+                    <div class="order-edit-field full"><label>Address (Manual)</label><textarea id="editAddress" rows="3" placeholder="Enter complete delivery address manually"></textarea></div>
+                    <div class="order-edit-field"><label>Google Maps Link</label><input id="editMap" type="url" placeholder="https://maps.google.com/..."></div>
+                    <div class="order-edit-field"><label>Client Order ID</label><input id="editClientOrderId" type="text"></div>
+                    <div class="order-edit-field"><label>Country Code</label><input id="editCountryCode" type="text"></div>
+                    <div class="order-edit-field"><label>Deliver To</label><select id="editDeliverTo"><option value="Oman">Oman</option></select></div>
+                    <div class="order-edit-field full"><label>Remarks</label><textarea id="editRemarks" rows="3" placeholder="Special instructions..."></textarea></div>
+                </div>
+            </div>
+            <div class="order-edit-footer">
+                <button type="button" class="btn-back" onclick="closeOrderEditModal()">Cancel</button>
+                <button type="button" class="btn-submit" onclick="saveProfessionalOrderEdit()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
