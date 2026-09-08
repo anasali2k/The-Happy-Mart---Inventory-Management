@@ -4189,6 +4189,20 @@
             return (Number(o && o.price) || 0) * (Number(o && o.qty) || 0);
         }
 
+        function renderOrderLocation(o) {
+            const address = String((o && (o.address || o.customerAddress || o.deliveryAddress)) || '').trim();
+            const map = String((o && (o.map || o.mapLink)) || '').trim();
+
+            let html = '';
+            if (address) {
+                html += `<div style="max-width:280px;white-space:normal;line-height:1.5">${esc(address)}</div>`;
+            }
+            if (map) {
+                html += `<a href="${esc(map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>`;
+            }
+            return html || '-';
+        }
+
         /* ---------------- Local Storage Engine ---------------- */
         function normalizeOrder(o) {
             const created = o.createdStamp || { date: o.creationDate || '', time: '', day: '', display: o.creationDate || '' };
@@ -5200,7 +5214,7 @@
                     <td><b>#${o.id}</b></td>
                     <td>${esc(o.customer)}</td>
                     <td>${esc(o.phone)}</td>
-                    <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                    <td>${renderOrderLocation(o)}</td>
                     <td>${esc(o.itemName)}</td>
                     <td>${o.qty}</td>
                     <td>${money(o.price)}</td>
@@ -5270,7 +5284,7 @@
                     <td>${stampCell(o.approvedStamp, o.creationDate)}</td>
                     <td>${esc(o.customer)}</td>
                     <td>${esc(o.phone)}</td>
-                    <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                    <td>${renderOrderLocation(o)}</td>
                     <td>${esc(o.itemName)}</td>
                     <td>${o.qty}</td>
                     <td><b>${money(orderTotal(o))}</b></td>
@@ -5382,7 +5396,7 @@
                             <td><b>#${o.id}</b></td>
                             <td>${esc(o.customer)}</td>
                             <td>${esc(o.phone)}</td>
-                            <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : 'N/A'}</td>
+                            <td>${renderOrderLocation(o)}</td>
                             <td>${esc(o.itemName)}</td>
                             <td>${o.qty}</td>
                             <td>${money(o.price)}</td>
@@ -5689,7 +5703,7 @@
                             <td>${o.qty}</td>
                             <td>${money(o.price)}</td>
                             <td><b>${money(total)}</b></td>
-                            <td>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link">Google Map Location</a>` : 'N/A'}</td>
+                            <td>${renderOrderLocation(o)}</td>
                             <td>${esc(s.date || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
                         </tr>`;
                 }).join('');
@@ -5704,7 +5718,7 @@
             const wb = XLSX.utils.book_new();
             const data = lastFilteredInventorySales.map(o => ({
                 "Order ID": o.id, "Item Name": o.itemName, "Qty": o.qty, "Unit Price": o.price,
-                "Total Amount": orderTotal(o), "Map Link": o.map,
+                "Total Amount": orderTotal(o), "Address": o.address, "Map Link": o.map,
                 "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
                 "Delivery Time": o.deliveredStamp ? o.deliveredStamp.time : ''
             }));
@@ -5962,7 +5976,7 @@
             XLSX.utils.book_append_sheet(wb, sheet(daily, { "Order ID": "No records" }), "Daily Orders");
 
             const ofd = sorted.filter(o => o.status === STATUS.OFD).map(o => ({
-                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address, "Map Link": o.map,
                 "Item": o.itemName, "Qty": o.qty, "Total Amount": orderTotal(o),
                 "Approved Date": o.approvedStamp ? o.approvedStamp.date : '',
                 "Approved Day": o.approvedStamp ? o.approvedStamp.day : '',
@@ -5971,7 +5985,7 @@
             XLSX.utils.book_append_sheet(wb, sheet(ofd, { "Order ID": "No records" }), "Out For Delivery");
 
             const delivered = sorted.filter(o => o.status === STATUS.DELIVERED).map(o => ({
-                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Map Link": o.map,
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address, "Map Link": o.map,
                 "Item": o.itemName, "Qty": o.qty, "Unit Price": o.price, "Total Amount": orderTotal(o),
                 "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
                 "Delivery Day": o.deliveredStamp ? o.deliveredStamp.day : '',
