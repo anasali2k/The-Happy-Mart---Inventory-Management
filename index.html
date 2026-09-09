@@ -1626,6 +1626,28 @@
             }
         }
 
+
+/* ===== FINAL ADMIN / RESPONSIVE VISUAL UPGRADE ===== */
+.admin-wide-card{overflow:hidden}
+.admin-order-scroll{width:100%;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
+.admin-complete-orders-table{min-width:2450px;width:100%}
+.admin-complete-orders-table th{position:sticky;top:0;z-index:2;white-space:nowrap}
+.admin-complete-orders-table td{white-space:nowrap}
+.admin-complete-orders-table td:nth-child(5),.admin-complete-orders-table td:nth-child(6),.admin-complete-orders-table td:nth-child(21),.admin-complete-orders-table td:nth-child(22){white-space:normal}
+.login-card{width:min(560px,92vw);max-width:none;padding:52px 48px;border-radius:30px;box-shadow:0 45px 100px rgba(0,0,0,.65),0 0 70px rgba(99,102,241,.16),inset 0 1px 0 rgba(255,255,255,.12);animation:loginCardFloat 5s ease-in-out infinite}
+.login-icon{width:88px;height:88px;border-radius:25px;font-size:38px;box-shadow:0 15px 35px rgba(99,102,241,.38),inset 0 1px 0 rgba(255,255,255,.28);animation:loginIconPulse 3s ease-in-out infinite}
+.login-title{font-size:31px}
+.login-field input{min-height:54px;padding:15px 18px;border-radius:14px;font-size:15px}
+.btn-login-submit{min-height:56px;border-radius:14px;font-size:16px;position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.btn-login-submit:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 14px 30px rgba(99,102,241,.42)}
+.btn-login-submit:active{transform:translateY(1px) scale(.985)}
+button,.btn-back,.btn-submit,.btn-warning,.btn-danger,.btn-success,.btn-excel,.action-btn,.admin-tab-btn{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,background-color .2s,border-color .2s,filter .2s}
+button:hover,.btn-back:hover,.btn-submit:hover,.btn-warning:hover,.btn-danger:hover,.btn-success:hover,.btn-excel:hover,.action-btn:hover,.admin-tab-btn:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-danger:active,.btn-success:active,.btn-excel:active,.action-btn:active,.admin-tab-btn:active{transform:translateY(1px) scale(.98)}
+@keyframes loginCardFloat{0%,100%{transform:perspective(1400px) translateY(0) rotateX(0deg)}50%{transform:perspective(1400px) translateY(-8px) rotateX(.45deg)}}
+@keyframes loginIconPulse{0%,100%{transform:translateY(0) rotate(0deg) scale(1)}50%{transform:translateY(-4px) rotate(2deg) scale(1.045)}}
+@media(max-width:900px){body{height:auto;min-height:100vh;overflow:auto;display:block}.sidebar{width:100%;height:auto;max-height:none;position:relative;padding:14px 12px;overflow:visible;border-right:0;border-bottom:1px solid var(--border-color)}.brand-header{padding-bottom:12px;margin-bottom:10px}.nav-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.nav-item{padding:11px 10px;font-size:12px;min-height:44px}.main-content{padding:18px 12px;overflow:visible;min-width:0}.top-bar{margin-bottom:18px}.page-title{font-size:21px}.login-card{width:min(94vw,560px);padding:38px 24px}.login-title{font-size:25px}.login-live-ring{width:72vw;height:72vw}}
+@media(max-width:560px){.nav-list{grid-template-columns:1fr 1fr}.top-bar-right{width:100%;justify-content:flex-start;flex-wrap:wrap}.form-grid{grid-template-columns:1fr!important}.login-card{padding:30px 18px;border-radius:24px}.login-icon{width:74px;height:74px;font-size:31px}.login-title{font-size:22px}.toast-stack{right:12px;left:12px;bottom:12px}.toast{max-width:none}.admin-tabs{gap:7px}.admin-tab-btn{padding:10px 11px;font-size:12px}}
 </style>
 </head>
 <body>
@@ -1709,8 +1731,7 @@
                     <input type="hidden" id="editingOrderKey" value="">
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
-                        <div class="form-group"><label>Select Item</label><select id="orderItemName" required onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
-                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code" readonly></div>
+                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code"></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
@@ -1763,7 +1784,6 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
-                            <th>Created On</th>
                             <th>Approved / Dispatched On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
@@ -1786,7 +1806,6 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
-                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Location</th>
@@ -1837,7 +1856,6 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
-                                    <th>Created On</th>
                                     <th>Customer Name</th>
                                     <th>Phone</th>
                                     <th>Item Name</th>
@@ -1863,7 +1881,6 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
-                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Item Name</th>
@@ -1933,7 +1950,6 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
-                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Item Name</th>
@@ -2108,25 +2124,8 @@
             <div id="admin-sub-approvals">
                 <div class="card">
                     <div class="section-heading"><i class="fa-solid fa-clipboard-check"></i> Orders Waiting for Admin Approval</div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Created On</th>
-                                    <th>Customer Name</th>
-                                    <th>Phone</th>
-                                    <th>Location</th>
-                                    <th>Item Name</th>
-                                    <th>Qty</th>
-                                    <th>Unit Price</th>
-                                    <th>Total</th>
-                                    <th>Submitted On</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="approvalTableBody"></tbody>
-                        </table>
+                    <div class="table-responsive admin-order-scroll">
+                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
@@ -2136,18 +2135,17 @@
                 </div>
             </div>
 
-            <!-- SUB TAB: OUT FOR DELIVERY CONTROL -->
+            <!-- SUB TAB OFD: OUT FOR DELIVERY CONTROL -->
             <div id="admin-sub-ofd" style="display:none;">
-                <div class="card">
-                    <div class="section-heading"><i class="fa-solid fa-truck-fast"></i> Out For Delivery — Admin Control</div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Order ID</th><th>Created On</th><th>Approved / OFD On</th><th>Customer Name</th><th>Phone</th><th>Item</th><th>Qty</th><th>Total</th><th>Action</th></tr></thead>
+                <div class="card admin-wide-card">
+                    <div class="section-heading"><i class="fa-solid fa-truck-fast"></i> Admin Control: Out For Delivery Orders</div>
+                    <p class="hint-text" style="margin-bottom:14px;">Complete order information is shown here. Every order remains editable from Admin.</p>
+                    <div class="table-responsive admin-order-scroll">
+                        <table class="admin-complete-orders-table">
+                            <thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-warning" onclick="sendAllOFDBackToApproval()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Approval</button></div>
-                    <p class="hint-text">Send Back moves the selected OFD order back into Admin Approvals. The original creation time remains unchanged and the new submission time is recorded.</p>
                 </div>
             </div>
 
@@ -2198,23 +2196,8 @@
             <div id="admin-sub-orders" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;">System Master Orders Control</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer Name</th>
-                                    <th>Phone</th>
-                                    <th>Item Name</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Status</th>
-                                    <th>Stage</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminOrdersTableBody"></tbody>
-                        </table>
+                    <div class="table-responsive admin-order-scroll">
+                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -2223,23 +2206,7 @@
             <div id="admin-sub-delivered" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-circle-check" style="color:var(--accent-success)"></i> Admin Control: Delivered Orders</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th><th>Created On</th>
-                                    <th>Customer</th>
-                                    <th>Phone</th>
-                                    <th>Item</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                    <th>Delivery Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminDeliveredTableBody"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminDeliveredTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2247,23 +2214,7 @@
             <div id="admin-sub-returns" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th><th>Created On</th>
-                                    <th>Customer</th>
-                                    <th>Phone</th>
-                                    <th>Item</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                    <th>Reason</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminReturnsTableBody"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2271,23 +2222,7 @@
             <div id="admin-sub-cancelled" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th><th>Created On</th>
-                                    <th>Customer</th>
-                                    <th>Phone</th>
-                                    <th>Item</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                    <th>Reason</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminCancelledTableBody"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2295,22 +2230,7 @@
             <div id="admin-sub-history" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-info)"></i> Admin Control: Complete History</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Item</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Created On</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminHistoryTableBody"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminHistoryTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -4130,14 +4050,10 @@
         }
 
         async function syncBackendTime() {
-            /* Authoritative network time is synced periodically; the live clock
-               then ticks every second from the measured offset. Google is used
-               only as a connectivity heartbeat because its browser response does
-               not expose a reliable CORS-readable clock value. */
             const sources = [
-                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time (Asia/Karachi)' },
-                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time (Asia/Karachi)' },
-                { url: 'https://www.google.com/generate_204', read: () => Date.now(), label: 'Google Online · Local Clock' }
+                { url: 'https://worldtimeapi.org/api/ip', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
+                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
+                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time' }
             ];
 
             for (const src of sources) {
@@ -4291,7 +4207,6 @@
                 createdStamp: created,
                 submittedStamp: o.submittedStamp || null,
                 approvedStamp: o.approvedStamp || null,
-                ofdReturnedToApprovalStamp: o.ofdReturnedToApprovalStamp || null,
                 deliveredStamp: o.deliveredStamp || null,
                 returnStamp: o.returnStamp || null,
                 cancelStamp: o.cancelStamp || null,
@@ -4994,7 +4909,6 @@
             renderHistoryTable();
             renderInventoryTable();
             renderApprovalTable();
-            renderAdminOFDTable();
             renderAdminInventoryTable();
             renderAdminOrdersTable();
             renderAdminSectionTables();
@@ -5264,30 +5178,26 @@
         }
 
         /* ---------------- Admin Approvals ---------------- */
+        function adminOrderCells(o, actionHtml='') {
+            const stamp = x => stampCell(x, '-');
+            const reason = o.status === STATUS.RETURNED ? o.returnReason : (o.status === STATUS.CANCELLED ? o.cancelReason : '');
+            const map = o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Open</a>` : '-';
+            return `<td><b>#${esc(o.id)}</b></td>
+                <td>${esc(o.productCode)||'-'}</td><td>${esc(o.customer)||'-'}</td><td>${esc(o.phone)||'-'}</td>
+                <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td><td>${map}</td>
+                <td>${esc(o.clientOrderId)||'-'}</td><td>${esc(o.countryCode)||'-'}</td><td>${esc(o.deliverTo)||'-'}</td>
+                <td><b>${esc(o.itemName)||'-'}</b></td><td>${esc(o.qty)}</td><td>${money(o.price)}</td><td>${money(o.codAmount)}</td><td><b>${money(orderTotal(o))}</b></td>
+                <td>${stamp(o.createdStamp || {date:o.creationDate})}</td><td>${stamp(o.submittedStamp)}</td><td>${stamp(o.approvedStamp)}</td>
+                <td>${stamp(o.deliveredStamp)}</td><td>${stamp(o.returnStamp)}</td><td>${stamp(o.cancelStamp)}</td>
+                <td style="min-width:180px;white-space:normal">${esc(reason)||'-'}</td><td style="min-width:220px;white-space:normal">${esc(o.remarks)||'-'}</td>
+                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td style="white-space:nowrap">${actionHtml || `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`}</td>`;
+        }
+
         function renderApprovalTable() {
             const tbody = document.getElementById('approvalTableBody');
-            const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(10, 'Nothing is waiting for approval right now.'); return; }
-
-            tbody.innerHTML = list.map(o => `
-                <tr>
-                    <td><b>#${o.id}</b></td>
-                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                    <td>${esc(o.customer)}</td>
-                    <td>${esc(o.phone)}</td>
-                    <td>${renderOrderLocation(o)}</td>
-                    <td>${esc(o.itemName)}</td>
-                    <td>${o.qty}</td>
-                    <td>${money(o.price)}</td>
-                    <td><b>${money(orderTotal(o))}</b></td>
-                    <td>${stampCell(o.submittedStamp, '-')}</td>
-                    <td>
-                        <button class="action-btn" style="color:#a78bfa" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button>
-                        <button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>
-                    </td>
-                </tr>`).join('');
+            const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a,b)=>a.id-b.id);
+            if (!list.length) { tbody.innerHTML = emptyRow(24, 'Nothing is waiting for approval right now.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button><button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>`)}</tr>`).join('');
         }
 
         function approveOrder(id) {
@@ -5309,39 +5219,6 @@
             saveData('orders-approved-all');
             syncOrderWorkflowUI();
             showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok');
-        }
-
-        function sendOFDBackToApproval(id) {
-            const order = getOrderByRef(id);
-            if (!order || order.status !== STATUS.OFD) return;
-            const stamp = makeStamp();
-            order.status = STATUS.APPROVAL;
-            order.isApproved = false;
-            order.isSubmitted = true;
-            order.submittedStamp = stamp;
-            order.ofdReturnedToApprovalStamp = stamp;
-            saveData('ofd-sent-back-to-approval');
-            syncOrderWorkflowUI();
-            switchAdminSubTab('approvals');
-            showToast_(`Order #${id} sent back to Admin Approval on ${stamp.day}, ${stamp.date} at ${stamp.time}.`, 'warn');
-        }
-
-        function sendAllOFDBackToApproval() {
-            const list = orders.filter(o => o.status === STATUS.OFD);
-            if (!list.length) { showToast_('There are no Out For Delivery orders to send back.', 'warn'); return; }
-            if (!confirm(`Send all ${list.length} Out For Delivery order(s) back to Admin Approval?`)) return;
-            const stamp = makeStamp();
-            list.forEach(o => {
-                o.status = STATUS.APPROVAL;
-                o.isApproved = false;
-                o.isSubmitted = true;
-                o.submittedStamp = stamp;
-                o.ofdReturnedToApprovalStamp = stamp;
-            });
-            saveData('all-ofd-sent-back-to-approval');
-            syncOrderWorkflowUI();
-            switchAdminSubTab('approvals');
-            showToast_(`${list.length} order(s) sent back to Admin Approval.`, 'warn');
         }
 
         function rejectOrder(id) {
@@ -5370,28 +5247,11 @@
         /* ---------------- Out For Delivery ---------------- */
         function renderOFDTable() {
             const tbody = document.getElementById('ofdTableBody');
-            const list = orders.filter(o => o.status === STATUS.OFD).sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
-
-            tbody.innerHTML = list.map(o => `
-                <tr>
-                    <td><b>#${o.id}</b></td>
-                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                    <td>${stampCell(o.approvedStamp, o.creationDate)}</td>
-                    <td>${esc(o.customer)}</td>
-                    <td>${esc(o.phone)}</td>
-                    <td>${renderOrderLocation(o)}</td>
-                    <td>${esc(o.itemName)}</td>
-                    <td>${o.qty}</td>
-                    <td><b>${money(orderTotal(o))}</b></td>
-                    <td style="white-space:nowrap;">
-                        <button class="action-btn" style="color:#a78bfa" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button class="action-btn" style="color:var(--accent-success)" onclick="markDelivered(${o.id})"><i class="fa-solid fa-circle-check"></i> Delivered</button>
-                        <button class="action-btn" style="color:var(--accent-danger)" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
-                        <button class="action-btn" style="color:#cbd5e1" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancelled</button>
-                    </td>
-                </tr>`).join('');
+            const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id);
+            if (!list.length) { tbody.innerHTML = emptyRow(14, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>
+                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderLocation(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td><td><button class="action-btn" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" onclick="markDelivered(${o.id})">Delivered</button><button class="action-btn" onclick="processReturn(${o.id})">Return</button><button class="action-btn" onclick="processCancel(${o.id})">Cancel</button></td>
+            </tr>`).join('');
         }
 
         function markDelivered(orderId) {
@@ -5492,7 +5352,6 @@
                     return `
                         <tr>
                             <td><b>#${o.id}</b></td>
-                            <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                             <td>${esc(o.customer)}</td>
                             <td>${esc(o.phone)}</td>
                             <td>${renderOrderLocation(o)}</td>
@@ -5523,7 +5382,6 @@
                 return `
                     <tr>
                         <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5607,7 +5465,6 @@
                 return `
                     <tr>
                         <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5912,146 +5769,26 @@
 
         /* ---------------- Admin: Orders Management ---------------- */
         function renderAdminOrdersTable() {
-            const tbody = document.getElementById('adminOrdersTableBody');
-            const list = [...orders].sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No orders in the system yet.'); return; }
-
-            const stageText = {
-                [STATUS.DRAFT]: '<b style="color:var(--text-muted)">Draft</b>',
-                [STATUS.APPROVAL]: '<b style="color:var(--accent-info)">Waiting Approval</b>',
-                [STATUS.OFD]: '<b style="color:var(--accent-primary)">Approved / OFD</b>',
-                [STATUS.DELIVERED]: '<b style="color:var(--accent-success)">Delivered</b>',
-                [STATUS.RETURNED]: '<b style="color:var(--accent-danger)">Returned</b>',
-                [STATUS.CANCELLED]: '<b style="color:#cbd5e1">Cancelled</b>'
-            };
-
-            tbody.innerHTML = list.map(o => `
-                <tr>
-                    <td><b>#${o.id}</b></td>
-                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                    <td>${esc(o.customer)}</td>
-                    <td>${esc(o.phone)}</td>
-                    <td>${esc(o.itemName)}</td>
-                    <td>${o.qty}</td>
-                    <td>${money(o.price)}</td>
-                    <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
-                    <td>${stageText[o.status] || '-'}</td>
-                    <td style="white-space:nowrap;">
-                        <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                        <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                    </td>
-                </tr>`).join('');
+            const tbody=document.getElementById('adminOrdersTableBody');
+            const list=[...orders].sort((a,b)=>a.id-b.id);
+            if(!list.length){tbody.innerHTML=emptyRow(24,'No orders in the system yet.');return;}
+            tbody.innerHTML=list.map(o=>`<tr>${adminOrderCells(o)}</tr>`).join('');
         }
 
-        function renderAdminOFDTable() {
-            const tbody = document.getElementById('adminOFDTableBody');
-            if (!tbody) return;
-            const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b) => a.id-b.id);
-            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No Out For Delivery orders found.'); return; }
-            tbody.innerHTML = list.map(o => `
-                <tr>
-                    <td><b>#${esc(o.id)}</b></td>
-                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                    <td>${stampCell(o.approvedStamp, '-')}</td>
-                    <td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${esc(o.itemName)||'-'}</td><td>${esc(o.qty)}</td><td><b>${money(orderTotal(o))}</b></td>
-                    <td style="white-space:nowrap;">
-                        <button class="btn-warning" onclick="sendOFDBackToApproval(${Number(o.id)})"><i class="fa-solid fa-rotate-left"></i> Send Back to Approval</button>
-                        <button class="btn-success" onclick="markDelivered(${Number(o.id)})"><i class="fa-solid fa-circle-check"></i> Delivered</button>
-                        <button class="btn-danger" onclick="processReturn(${Number(o.id)})"><i class="fa-solid fa-rotate-left"></i> Return</button>
-                        <button class="action-btn" onclick="processCancel(${Number(o.id)})"><i class="fa-solid fa-ban"></i> Cancel</button>
-                    </td>
-                </tr>`).join('');
-        }
-
-        /* ADMIN SPECIFIC 4 SECTIONS RENDER FUNCTION */
+        /* ADMIN COMPLETE ORDER SECTION RENDERER */
         function renderAdminSectionTables() {
-            // 1. Delivered
-            const delBody = document.getElementById('adminDeliveredTableBody');
-            const delList = orders.filter(o => o.status === STATUS.DELIVERED);
-            if (!delList.length) { delBody.innerHTML = emptyRow(9, 'No delivered items found.'); }
-            else {
-                delBody.innerHTML = delList.map(o => `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td>${o.deliveredStamp ? esc(o.deliveredStamp.date) : '-'}</td>
-                        <td>
-                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>`).join('');
-            }
-
-            // 2. Returns
-            const retBody = document.getElementById('adminReturnsTableBody');
-            const retList = orders.filter(o => o.status === STATUS.RETURNED);
-            if (!retList.length) { retBody.innerHTML = emptyRow(9, 'No returned items found.'); }
-            else {
-                retBody.innerHTML = retList.map(o => `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td>${esc(o.returnReason) || '-'}</td>
-                        <td>
-                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>`).join('');
-            }
-
-            // 3. Cancelled
-            const canBody = document.getElementById('adminCancelledTableBody');
-            const canList = orders.filter(o => o.status === STATUS.CANCELLED);
-            if (!canList.length) { canBody.innerHTML = emptyRow(9, 'No cancelled items found.'); }
-            else {
-                canBody.innerHTML = canList.map(o => `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td>${esc(o.cancelReason) || '-'}</td>
-                        <td>
-                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>`).join('');
-            }
-
-            // 4. History
-            const hisBody = document.getElementById('adminHistoryTableBody');
-            const hisList = [...orders];
-            if (!hisList.length) { hisBody.innerHTML = emptyRow(7, 'No history items found.'); }
-            else {
-                hisBody.innerHTML = hisList.map(o => `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>
-                        <td>${o.createdStamp ? esc(o.createdStamp.date) : '-'}</td>
-                        <td>
-                            <button class="btn-warning" onclick="adminEditOrder('${o._key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                            <button class="btn-danger" onclick="adminDeleteOrder('${o._key}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>`).join('');
-            }
+            const sections = [
+                ['adminOFDTableBody', STATUS.OFD, 'No orders are currently Out For Delivery.'],
+                ['adminDeliveredTableBody', STATUS.DELIVERED, 'No delivered orders found.'],
+                ['adminReturnsTableBody', STATUS.RETURNED, 'No returned orders found.'],
+                ['adminCancelledTableBody', STATUS.CANCELLED, 'No cancelled orders found.'],
+                ['adminHistoryTableBody', null, 'No history items found.']
+            ];
+            sections.forEach(([id,status,empty])=>{
+                const body=document.getElementById(id); if(!body)return;
+                const list=(status===null?[...orders]:orders.filter(o=>o.status===status)).sort((a,b)=>a.id-b.id);
+                body.innerHTML=list.length?list.map(o=>`<tr>${adminOrderCells(o)}</tr>`).join(''):emptyRow(24,empty);
+            });
         }
 
         function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) {
@@ -6101,6 +5838,7 @@
             document.getElementById('editCountryCode').value = order.countryCode || '968';
             document.getElementById('editDeliverTo').value = order.deliverTo || 'Oman';
             document.getElementById('editRemarks').value = order.remarks || '';
+            const statusSelect = document.getElementById('editStatus'); if (statusSelect) statusSelect.value = order.status;
             document.getElementById('orderEditModalTitle').innerText = `Edit Order #${order.id}`;
             document.getElementById('orderEditModalStatus').innerText = `Status: ${order.status} • All order details can be updated`;
             populateProfessionalItemSelect('editItemName', order.itemId, order.itemName);
@@ -6115,61 +5853,57 @@
         }
 
         function saveProfessionalOrderEdit() {
-            const key = document.getElementById('orderEditKey').value;
-            const order = getOrderByRef(key);
-            if (!order) { closeOrderEditModal(); showToast_('Order not found.', 'warn'); return; }
-
-            const newId = Number(document.getElementById('editOrderId').value);
-            const newQty = Number(document.getElementById('editQty').value);
-            const newCod = Number(document.getElementById('editCod').value);
-            const selectedId = Number(document.getElementById('editItemName').value);
-            const selectedItem = inventory.find(i => Number(i.id) === selectedId);
-
-            if (!Number.isInteger(newId) || newId < 1) { showToast_('Order ID must be a positive whole number.', 'warn'); return; }
-            if (!Number.isInteger(newQty) || newQty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
-            if (!Number.isFinite(newCod) || newCod < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
-            if (!selectedItem && !order.itemId) { showToast_('Please select an Item Name from Inventory.', 'warn'); return; }
-
-            const activeStockStatus = order.status === STATUS.DRAFT || order.status === STATUS.APPROVAL || order.status === STATUS.OFD;
-            const oldItem = inventory.find(i => Number(i.id) === Number(order.itemId));
-            const targetItem = selectedItem || oldItem;
-
-            if (activeStockStatus && targetItem) {
-                if (oldItem && Number(oldItem.id) === Number(targetItem.id)) {
-                    const diffQty = newQty - Number(order.qty || 0);
-                    if (diffQty > 0 && Number(oldItem.stock) < diffQty) {
-                        showToast_(`Only ${oldItem.stock} left in stock for ${oldItem.name}.`, 'warn'); return;
-                    }
-                    oldItem.stock -= diffQty;
-                } else {
-                    if (Number(targetItem.stock) < newQty) {
-                        showToast_(`Only ${targetItem.stock} left in stock for ${targetItem.name}.`, 'warn'); return;
-                    }
-                    if (oldItem) oldItem.stock += Number(order.qty || 0);
-                    targetItem.stock -= newQty;
-                }
+            const key=document.getElementById('orderEditKey').value;
+            const order=getOrderByRef(key);
+            if(!order){closeOrderEditModal();showToast_('Order not found.','warn');return;}
+            const newId=Number(document.getElementById('editOrderId').value);
+            const newQty=Number(document.getElementById('editQty').value);
+            const newCod=Number(document.getElementById('editCod').value);
+            const selectedId=Number(document.getElementById('editItemName').value);
+            const selectedItem=inventory.find(i=>Number(i.id)===selectedId);
+            const newStatus=document.getElementById('editStatus')?.value || order.status;
+            if(!Number.isInteger(newId)||newId<1){showToast_('Order ID must be a positive whole number.','warn');return;}
+            if(!Number.isInteger(newQty)||newQty<1){showToast_('Quantity must be at least 1.','warn');return;}
+            if(!Number.isFinite(newCod)||newCod<0){showToast_('Enter a valid COD Amount.','warn');return;}
+            if(!Object.values(STATUS).includes(newStatus)){showToast_('Invalid order status.','warn');return;}
+            const oldItem=inventory.find(i=>Number(i.id)===Number(order.itemId));
+            const targetItem=selectedItem||oldItem;
+            const oldActive=[STATUS.DRAFT,STATUS.APPROVAL,STATUS.OFD].includes(order.status);
+            const newActive=[STATUS.DRAFT,STATUS.APPROVAL,STATUS.OFD].includes(newStatus);
+            if(newActive && !targetItem){showToast_('Please select an Item Name from Inventory.','warn');return;}
+            // Reconcile reserved stock exactly once while changing item/quantity/status.
+            if(oldActive && oldItem) oldItem.stock += Number(order.qty||0);
+            if(newActive && targetItem){
+                if(Number(targetItem.stock)<newQty){ if(oldActive&&oldItem) oldItem.stock-=Number(order.qty||0); showToast_(`Only ${targetItem.stock} left in stock for ${targetItem.name}.`,'warn');return; }
+                targetItem.stock-=newQty;
             }
-
-            order.id = newId;
-            order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
-            order.itemName = targetItem ? targetItem.name : (order.itemName || '');
-            order.productCode = document.getElementById('editProductCode').value.trim() || String(order.itemId || '');
-            order.customer = document.getElementById('editCustomer').value.trim();
-            order.phone = document.getElementById('editPhone').value.trim();
-            order.qty = newQty;
-            order.codAmount = newCod;
-            order.price = newQty > 0 ? newCod / newQty : 0;
-            order.address = document.getElementById('editAddress').value.trim();
-            order.map = document.getElementById('editMap').value.trim();
-            order.clientOrderId = document.getElementById('editClientOrderId').value.trim();
-            order.countryCode = document.getElementById('editCountryCode').value.trim() || '968';
-            order.deliverTo = document.getElementById('editDeliverTo').value || 'Oman';
-            order.remarks = document.getElementById('editRemarks').value.trim();
-
-            saveData('professional-order-edit');
-            closeOrderEditModal();
-            renderAllTables();
-            showToast_(`Order #${order.id} updated successfully.`, 'ok');
+            order.id=newId;
+            order.itemId=targetItem?Number(targetItem.id):Number(order.itemId||0);
+            order.itemName=targetItem?targetItem.name:(order.itemName||'');
+            order.productCode=document.getElementById('editProductCode').value.trim() || String(order.itemId||'');
+            order.customer=document.getElementById('editCustomer').value.trim();
+            order.phone=document.getElementById('editPhone').value.trim();
+            order.qty=newQty;
+            order.codAmount=newCod;
+            order.price=newQty>0?newCod/newQty:0;
+            order.address=document.getElementById('editAddress').value.trim();
+            order.map=document.getElementById('editMap').value.trim();
+            order.clientOrderId=document.getElementById('editClientOrderId').value.trim();
+            order.countryCode=document.getElementById('editCountryCode').value.trim()||'968';
+            order.deliverTo=document.getElementById('editDeliverTo').value||'Oman';
+            order.remarks=document.getElementById('editRemarks').value.trim();
+            if(newStatus!==order.status){
+                const stamp=makeStamp();
+                if(newStatus===STATUS.APPROVAL){order.isSubmitted=true;order.isApproved=false;order.submittedStamp=stamp;}
+                if(newStatus===STATUS.OFD){order.isSubmitted=true;order.isApproved=true;order.approvedStamp=stamp;}
+                if(newStatus===STATUS.DELIVERED){order.isSubmitted=true;order.isApproved=true;order.deliveredStamp=stamp;order.deliveryDate=stamp.display;}
+                if(newStatus===STATUS.RETURNED){order.isSubmitted=true;order.isApproved=true;order.returnStamp=stamp;order.returnDate=stamp.display;}
+                if(newStatus===STATUS.CANCELLED){order.isSubmitted=true;order.isApproved=true;order.cancelStamp=stamp;order.cancelDate=stamp.display;}
+                if(newStatus===STATUS.DRAFT){order.isSubmitted=false;order.isApproved=false;}
+                order.status=newStatus;
+            }
+            saveData('admin-complete-order-edit');
+            closeOrderEditModal(); renderAllTables(); showToast_(`Order #${order.id} updated successfully by Admin.`,'ok');
         }
 
         function adminEditOrder(ref) {
@@ -6327,6 +6061,7 @@
                     <div class="order-edit-field"><label>Country Code</label><input id="editCountryCode" type="text"></div>
                     <div class="order-edit-field"><label>Deliver To</label><select id="editDeliverTo"><option value="Oman">Oman</option></select></div>
                     <div class="order-edit-field full"><label>Remarks</label><textarea id="editRemarks" rows="3" placeholder="Special instructions..."></textarea></div>
+                    <div class="order-edit-field"><label>Admin Status</label><select id="editStatus"><option value="Draft">Draft</option><option value="Pending Approval">Pending Approval</option><option value="OFD">Out For Delivery</option><option value="Delivered">Delivered</option><option value="Returned">Returned</option><option value="Cancelled">Cancelled</option></select></div>
                 </div>
             </div>
             <div class="order-edit-footer">
