@@ -1864,19 +1864,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         <section id="view-ofd" class="view-section">
             <div class="table-responsive">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Approved / Dispatched On</th>
-                            <th>Customer Name</th>
-                            <th>Phone</th>
-                            <th>Location</th>
-                            <th>Item</th>
-                            <th>Qty</th>
-                            <th>Total Amount</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+                    <thead><tr>
+<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th>
+</tr></thead>
                     <tbody id="ofdTableBody"></tbody>
                 </table>
             </div>
@@ -1886,22 +1876,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         <section id="view-delivered" class="view-section">
             <div class="table-responsive">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer Name</th>
-                            <th>Phone</th>
-                            <th>Location</th>
-                            <th>Item</th>
-                            <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th>Total Amount</th>
-                            <th>Delivery Date</th>
-                            <th>Time</th>
-                            <th>Day</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
+                    <thead><tr>
+<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th>
+</tr></thead>
                     <tbody id="deliveredTableBody"></tbody>
                 </table>
             </div>
@@ -1936,18 +1913,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
                     <div class="table-responsive">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer Name</th>
-                                    <th>Phone</th>
-                                    <th>Item Name</th>
-                                    <th>Returned Qty</th>
-                                    <th>Total Amount</th>
-                                    <th>Reason / Remarks</th>
-                                    <th>Return Date & Time</th>
-                                </tr>
-                            </thead>
+                            <thead><tr>
+<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th>
+</tr></thead>
                             <tbody id="returnsReportTableBody"></tbody>
                         </table>
                     </div>
@@ -2005,18 +1973,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
                     <div class="table-responsive">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer Name</th>
-                                    <th>Phone</th>
-                                    <th>Item Name</th>
-                                    <th>Qty</th>
-                                    <th>Amount</th>
-                                    <th>Cancellation Reason</th>
-                                    <th>Cancel Date & Time</th>
-                                </tr>
-                            </thead>
+                            <thead><tr>
+<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th>
+</tr></thead>
                             <tbody id="cancelledReportTableBody"></tbody>
                         </table>
                     </div>
@@ -4277,6 +4236,33 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return address ? `<div style="max-width:280px;white-space:normal;line-height:1.5">${esc(address)}</div>` : '-';
         }
 
+        function fullOrderDataCells(o, reasonOverride) {
+            const reason = reasonOverride || o.returnReason || o.cancelReason || '';
+            return `
+                <td><b>#${esc(o.id)}</b></td>
+                <td>${esc(o.productCode || 'VIGA 50000')}</td>
+                <td>${esc(o.customer) || '-'}</td>
+                <td>${esc(o.phone) || '-'}</td>
+                <td style="min-width:240px;white-space:normal;line-height:1.45">${esc(o.address) || '-'}</td>
+                <td>${esc(o.clientOrderId) || '-'}</td>
+                <td>${esc(o.countryCode) || '968'}</td>
+                <td>${esc(o.deliverTo) || 'Oman'}</td>
+                <td><b>${esc(o.itemName) || '-'}</b></td>
+                <td>${esc(o.qty)}</td>
+                <td>${money(o.price)}</td>
+                <td>${money(o.codAmount)}</td>
+                <td><b>${money(orderTotal(o))}</b></td>
+                <td>${stampCell(o.createdStamp, o.creationDate)}</td>
+                <td>${stampCell(o.submittedStamp, '-')}</td>
+                <td>${stampCell(o.approvedStamp, '-')}</td>
+                <td>${stampCell(o.deliveredStamp, '-')}</td>
+                <td>${stampCell(o.returnStamp, '-')}</td>
+                <td>${stampCell(o.cancelStamp, '-')}</td>
+                <td style="min-width:180px;white-space:normal">${esc(reason) || '-'}</td>
+                <td style="min-width:220px;white-space:normal">${esc(o.remarks) || '-'}</td>
+                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>`;
+        }
+
         /* ---------------- Local Storage Engine ---------------- */
         function normalizeOrder(o) {
             const created = o.createdStamp || { date: o.creationDate || '', time: '', day: '', display: o.creationDate || '' };
@@ -4291,7 +4277,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return {
                 _key: o._key || makeOrderRecordKey(),
                 id: Number(o.id) || 1001,
-                productCode: String(o.productCode || o.sku || o.itemCode || (o.itemId ? String(o.itemId) : '')).trim(),
+                productCode: 'VIGA 50000',
                 customer: o.customer || o.customerName || '',
                 phone: o.phone || o.customerNumber || '',
                 address: o.address || o.customerAddress || '',
@@ -5144,7 +5130,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 const canUserEdit = o.status === STATUS.DRAFT;
                 const ref = esc(o._key);
                 return `<tr>
-                    <td><b>#${esc(o.id)}</b></td><td>${esc(o.productCode)||'-'}</td><td>${esc(o.phone)}</td><td>${esc(o.customer)}</td><td>${esc(o.qty)}</td>
+                    <td><b>#${esc(o.id)}</b></td><td>${esc(o.productCode || 'VIGA 50000')||'-'}</td><td>${esc(o.itemName)||'-'}</td><td>${esc(o.phone)}</td><td>${esc(o.customer)}</td><td>${esc(o.qty)}</td>
                     <td>${renderOrderAddress(o)}</td>
                     <td><b>${money(o.codAmount)}</b></td><td>${esc(o.clientOrderId)||'-'}</td><td>${esc(o.countryCode)||'968'}</td><td>${esc(o.deliverTo)||'Oman'}</td>
                     <td><span class="badge ${badgeClassFor(o.status)}">${canUserEdit?'Draft (Editable)':'Pending Approval'}</span></td><td>${stampCell(o.createdStamp,o.creationDate)}</td><td>${esc(o.remarks)||'-'}</td>
@@ -5438,8 +5424,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const tbody = document.getElementById('ofdTableBody');
             const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id);
             if (!list.length) { tbody.innerHTML = emptyRow(14, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
-            tbody.innerHTML = list.map(o => `<tr>
-                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderAddress(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td>
+            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o)}
                 <td><div class="ofd-actions">
                     <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                     <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
@@ -5537,31 +5522,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const tbody = document.getElementById('deliveredTableBody');
             const list = orders.filter(o => o.status === STATUS.DELIVERED).sort((a, b) => a.id - b.id);
             let total = 0;
-
             if (!list.length) {
-                tbody.innerHTML = emptyRow(12, 'No delivered orders yet. Mark an order delivered in Out For Delivery.');
+                tbody.innerHTML = emptyRow(22, 'No delivered orders yet. Mark an order delivered in Out For Delivery.');
             } else {
                 tbody.innerHTML = list.map(o => {
                     total += orderTotal(o);
-                    const s = o.deliveredStamp || {};
-                    return `
-                        <tr>
-                            <td><b>#${o.id}</b></td>
-                            <td>${esc(o.customer)}</td>
-                            <td>${esc(o.phone)}</td>
-                            <td>${renderOrderAddress(o)}</td>
-                            <td>${esc(o.itemName)}</td>
-                            <td>${o.qty}</td>
-                            <td>${money(o.price)}</td>
-                            <td><b>${money(orderTotal(o))}</b></td>
-                            <td>${esc(s.date || '-')}</td>
-                            <td>${esc(s.time || '-')}</td>
-                            <td>${esc(s.day || '-')}</td>
-                            <td>${esc(o.remarks) || '-'}</td>
-                        </tr>`;
+                    return `<tr>${fullOrderDataCells(o)}</tr>`;
                 }).join('');
             }
-
             document.getElementById('deliveredTotalVal').innerText = money(total);
         }
 
@@ -5569,25 +5537,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderReturnsTable() {
             const tbody = document.getElementById('returnsTableBody');
             const list = orders.filter(o => o.status === STATUS.RETURNED).sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(10, 'No returned orders yet.'); return; }
-
-            tbody.innerHTML = list.map(o => {
-                const s = o.returnStamp || {};
-                return `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td>${esc(o.returnReason) || '-'}</td>
-                        <td>${esc(s.date || '-')}</td>
-                        <td>${esc(s.time || '-')}</td>
-                        <td>${esc(s.day || '-')}</td>
-                    </tr>`;
-            }).join('');
+            if (!list.length) { tbody.innerHTML = emptyRow(22, 'No returned orders yet.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o, o.returnReason)}</tr>`).join('');
         }
 
         /* NEW ADDITION: SECTION 1 REPORT GENERATION (RETURNS) */
@@ -5652,25 +5603,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderCancelledTable() {
             const tbody = document.getElementById('cancelledTableBody');
             const list = orders.filter(o => o.status === STATUS.CANCELLED).sort((a, b) => a.id - b.id);
-
-            if (!list.length) { tbody.innerHTML = emptyRow(10, 'No cancelled orders yet.'); return; }
-
-            tbody.innerHTML = list.map(o => {
-                const s = o.cancelStamp || {};
-                return `
-                    <tr>
-                        <td><b>#${o.id}</b></td>
-                        <td>${esc(o.customer)}</td>
-                        <td>${esc(o.phone)}</td>
-                        <td>${esc(o.itemName)}</td>
-                        <td>${o.qty}</td>
-                        <td>${money(orderTotal(o))}</td>
-                        <td>${esc(o.cancelReason) || '-'}</td>
-                        <td>${esc(s.date || '-')}</td>
-                        <td>${esc(s.time || '-')}</td>
-                        <td>${esc(s.day || '-')}</td>
-                    </tr>`;
-            }).join('');
+            if (!list.length) { tbody.innerHTML = emptyRow(22, 'No cancelled orders yet.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o, o.cancelReason)}</tr>`).join('');
         }
 
         /* NEW ADDITION: SECTION 2 REPORT GENERATION (CANCELLED) */
