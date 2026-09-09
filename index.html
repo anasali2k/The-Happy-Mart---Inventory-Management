@@ -5015,7 +5015,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             renderAdminOrdersTable();
             renderAdminSectionTables();
             renderAdminEmployeeManagement();
-            populateDropdown();
+            /* Keep Daily Orders Item Name directly synced with Admin Inventory.
+             * The old dropdown used a legacy element id (orderItemSelect), while
+             * the actual Daily Orders field is orderItemName. */
+            populateProfessionalItemSelect('orderItemName', 0, '');
             updateSidebarCounts();
             requestAnimationFrame(() => updateSidebarCounts());
             renderEmployeeManagement();
