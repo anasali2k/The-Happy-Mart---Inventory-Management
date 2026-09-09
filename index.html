@@ -650,6 +650,31 @@
             background: var(--border-color);
         }
 
+        /* ===== OFD ACTION BUTTONS — premium boxed + subtle animation ===== */
+        .ofd-actions{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex-wrap:wrap;min-width:310px}
+        .ofd-action{
+            position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+            min-height:34px;padding:8px 11px;border:1px solid transparent;border-radius:9px;color:#fff!important;
+            font-size:12px;font-weight:800;line-height:1;cursor:pointer;text-decoration:none;
+            box-shadow:0 5px 14px rgba(0,0,0,.22);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+        }
+        .ofd-action::after{
+            content:"";position:absolute;inset:0;left:-120%;width:70%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent);
+            transform:skewX(-18deg);animation:ofdButtonShine 3.8s ease-in-out infinite;
+            pointer-events:none;
+        }
+        .ofd-action:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 8px 20px rgba(0,0,0,.30)}
+        .ofd-action:active{transform:translateY(0) scale(.98)}
+        .ofd-edit{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:rgba(129,140,248,.55)}
+        .ofd-delivered{background:linear-gradient(135deg,#059669,#10b981);border-color:rgba(52,211,153,.55)}
+        .ofd-return{background:linear-gradient(135deg,#dc2626,#ef4444);border-color:rgba(248,113,113,.55)}
+        .ofd-cancel{background:linear-gradient(135deg,#475569,#64748b);border-color:rgba(148,163,184,.45)}
+        .ofd-sendback{background:linear-gradient(135deg,#d97706,#f59e0b);border-color:rgba(251,191,36,.55);color:#111827!important}
+        @keyframes ofdButtonShine{0%,58%{left:-120%;opacity:0}70%{opacity:1}100%{left:140%;opacity:0}}
+        @media(max-width:900px){.ofd-actions{min-width:250px}.ofd-action{padding:8px 9px;font-size:11px}}
+        @media(prefers-reduced-motion:reduce){.ofd-action::after{animation:none!important}}
+
         .map-link {
             color: #38bdf8;
             text-decoration: none;
@@ -5313,6 +5338,15 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminOrderCells(o, actionHtml='') {
             const stamp = x => stampCell(x, '-');
             const reason = o.status === STATUS.RETURNED ? o.returnReason : (o.status === STATUS.CANCELLED ? o.cancelReason : '');
+            const defaultActions = o.status === STATUS.OFD
+                ? `<div class="ofd-actions">
+                    <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                    <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button>
+                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
+                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
+                    <button class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button>
+                   </div>`
+                : `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`;
             return `<td><b>#${esc(o.id)}</b></td>
                 <td>${esc(o.productCode)||'-'}</td><td>${esc(o.customer)||'-'}</td><td>${esc(o.phone)||'-'}</td>
                 <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td>
@@ -5321,7 +5355,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <td>${stamp(o.createdStamp || {date:o.creationDate})}</td><td>${stamp(o.submittedStamp)}</td><td>${stamp(o.approvedStamp)}</td>
                 <td>${stamp(o.deliveredStamp)}</td><td>${stamp(o.returnStamp)}</td><td>${stamp(o.cancelStamp)}</td>
                 <td style="min-width:180px;white-space:normal">${esc(reason)||'-'}</td><td style="min-width:220px;white-space:normal">${esc(o.remarks)||'-'}</td>
-                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td style="white-space:nowrap">${actionHtml || `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`}</td>`;
+                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td style="white-space:nowrap">${actionHtml || defaultActions}</td>`;
         }
 
         function renderApprovalTable() {
@@ -5375,13 +5409,36 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             showToast_(`${list.length} order(s) sent back to Daily Orders.`, 'warn');
         }
 
+        function sendBackOFDToApproval(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.OFD) {
+                showToast_('Only Out For Delivery orders can be sent back to approval.', 'warn');
+                return;
+            }
+            if (!confirm(`Send order #${order.id} back to Admin Approval?`)) return;
+            order.status = STATUS.APPROVAL;
+            order.isApproved = false;
+            order.isSubmitted = true;
+            order.approvedStamp = null;
+            saveData('ofd-order-sent-back-to-approval');
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} sent back to Admin Approval.`, 'warn');
+        }
+
         /* ---------------- Out For Delivery ---------------- */
         function renderOFDTable() {
             const tbody = document.getElementById('ofdTableBody');
             const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id);
             if (!list.length) { tbody.innerHTML = emptyRow(14, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
             tbody.innerHTML = list.map(o => `<tr>
-                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderAddress(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td><td><button class="action-btn" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" onclick="markDelivered(${o.id})">Delivered</button><button class="action-btn" onclick="processReturn(${o.id})">Return</button><button class="action-btn" onclick="processCancel(${o.id})">Cancel</button></td>
+                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderAddress(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td>
+                <td><div class="ofd-actions">
+                    <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
+                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
+                    <button class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button>
+                </div></td>
             </tr>`).join('');
         }
 
