@@ -1814,7 +1814,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <input type="hidden" id="editingOrderKey" value="">
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
-                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Auto-filled from Inventory"></div>
+                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required value="" placeholder="Auto-filled from Inventory" readonly style="opacity:.8;cursor:not-allowed;"></div>
                         <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="orderItemName" required onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
@@ -5019,6 +5019,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
              * The old dropdown used a legacy element id (orderItemSelect), while
              * the actual Daily Orders field is orderItemName. */
             populateProfessionalItemSelect('orderItemName', 0, '');
+            const productCodeField = document.getElementById('productCode');
+            if (productCodeField) productCodeField.readOnly = true;
             updateSidebarCounts();
             requestAnimationFrame(() => updateSidebarCounts());
             renderEmployeeManagement();
@@ -5232,7 +5234,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!result.ok) { showToast_(result.message, 'warn'); return; }
 
                 order.id = orderId;
-                order.productCode = String(item.id);
+                order.productCode = 'VIGA 50000';
                 order.itemId = Number(item.id);
                 order.itemName = item.name;
                 Object.assign(order, fields);
@@ -5254,7 +5256,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     ...fields,
                     _key: makeOrderRecordKey(),
                     id: orderId,
-                    productCode: String(item.id),
+                    productCode: 'VIGA 50000',
                     itemId: Number(item.id),
                     itemName: item.name,
                     qty,
@@ -5280,7 +5282,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be edited.', 'warn'); return; }
             document.getElementById('editingOrderKey').value = order._key;
             document.getElementById('orderId').value = order.id;
-            document.getElementById('productCode').value = order.productCode || (order.itemId || '');
+            document.getElementById('productCode').value = 'VIGA 50000';
             populateProfessionalItemSelect('orderItemName', order.itemId, order.itemName);
             document.getElementById('custPhone').value = order.phone;
             document.getElementById('custName').value = order.customer;
@@ -5311,6 +5313,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             document.getElementById('editingOrderKey').value = '';
             document.getElementById('orderForm').reset();
             populateProfessionalItemSelect('orderItemName', 0, '');
+            document.getElementById('productCode').value = '';
+            document.getElementById('productCode').readOnly = true;
             document.getElementById('orderId').value = nextOrderId();
             document.getElementById('orderQty').value = 1;
             document.getElementById('countryCode').value = '968';
@@ -6000,16 +6004,20 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         function syncSelectedOrderItem() {
             const select = document.getElementById('orderItemName');
-            const item = inventory.find(i => Number(i.id) === Number(select.value));
-            if (!item) return;
-            document.getElementById('productCode').value = String(item.id);
+            const field = document.getElementById('productCode');
+            const item = inventory.find(i => Number(i.id) === Number(select?.value));
+            if (!field) return;
+            field.value = item ? 'VIGA 50000' : '';
+            field.readOnly = true;
+            field.setAttribute('readonly', 'readonly');
         }
 
         function syncProfessionalEditItem() {
             const select = document.getElementById('editItemName');
             const item = inventory.find(i => Number(i.id) === Number(select.value));
             if (!item) return;
-            document.getElementById('editProductCode').value = String(item.id);
+            document.getElementById('editProductCode').value = 'VIGA 50000';
+            document.getElementById('editProductCode').readOnly = true;
         }
 
         function openProfessionalOrderEdit(ref) {
@@ -6018,7 +6026,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             document.getElementById('orderEditKey').value = order._key;
             document.getElementById('editOrderId').value = order.id;
-            document.getElementById('editProductCode').value = order.productCode || (order.itemId || '');
+            document.getElementById('editProductCode').value = 'VIGA 50000';
+            document.getElementById('editProductCode').readOnly = true;
             document.getElementById('editCustomer').value = order.customer || '';
             document.getElementById('editPhone').value = order.phone || '';
             document.getElementById('editQty').value = order.qty || 1;
@@ -6063,7 +6072,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             order.id=newId;
             order.itemId=targetItem?Number(targetItem.id):Number(order.itemId||0);
             order.itemName=targetItem?targetItem.name:(order.itemName||'');
-            order.productCode=document.getElementById('editProductCode').value.trim() || String(order.itemId||'');
+            order.productCode='VIGA 50000';
             order.customer=document.getElementById('editCustomer').value.trim();
             order.phone=document.getElementById('editPhone').value.trim();
             order.qty=newQty;
