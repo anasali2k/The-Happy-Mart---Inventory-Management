@@ -1649,6 +1649,64 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 @media(max-width:900px){body{height:auto;min-height:100vh;overflow:auto;display:block}.sidebar{width:100%;height:auto;max-height:none;position:relative;padding:14px 12px;overflow:visible;border-right:0;border-bottom:1px solid var(--border-color)}.brand-header{padding-bottom:12px;margin-bottom:10px}.nav-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.nav-item{padding:11px 10px;font-size:12px;min-height:44px}.main-content{padding:18px 12px;overflow:visible;min-width:0}.top-bar{margin-bottom:18px}.page-title{font-size:21px}.login-card{width:min(94vw,560px);padding:38px 24px}.login-title{font-size:25px}.login-live-ring{width:72vw;height:72vw}}
 @media(max-width:560px){.nav-list{grid-template-columns:1fr 1fr}.top-bar-right{width:100%;justify-content:flex-start;flex-wrap:wrap}.form-grid{grid-template-columns:1fr!important}.login-card{padding:30px 18px;border-radius:24px}.login-icon{width:74px;height:74px;font-size:31px}.login-title{font-size:22px}.toast-stack{right:12px;left:12px;bottom:12px}.toast{max-width:none}.admin-tabs{gap:7px}.admin-tab-btn{padding:10px 11px;font-size:12px}}
 </style>
+
+<style id="final-modern-theme">
+/* ===== FINAL MODERN THEME OVERRIDE ===== */
+:root{
+ --bg-dark:#07111f; --card-bg:rgba(15,31,51,.78); --accent-primary:#00d4ff; --accent-hover:#00a9cc;
+ --accent-success:#2ee6a6; --accent-warning:#ffc857; --accent-danger:#ff5c7a; --accent-info:#8b7cff;
+ --text-main:#f4f8ff; --text-muted:#8fa6bf; --border-color:rgba(133,180,214,.18); --sidebar-width:290px;
+ --surface:#0c1a2b; --surface2:#10243a; --glow:rgba(0,212,255,.24);
+}
+html{background:#07111f} body{background:#07111f;letter-spacing:.01em}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9998;background:radial-gradient(circle at 10% 0%,rgba(0,212,255,.08),transparent 28%),radial-gradient(circle at 100% 100%,rgba(139,124,255,.08),transparent 32%)}
+/* Gateway */
+.login-gateway{background:radial-gradient(circle at 15% 15%,#123f5a 0,transparent 32%),radial-gradient(circle at 85% 20%,#34245f 0,transparent 30%),linear-gradient(135deg,#030914,#071827 55%,#0b1025);}
+.login-live-bg{background:radial-gradient(circle at 20% 20%,rgba(0,212,255,.18),transparent 28%),radial-gradient(circle at 80% 25%,rgba(139,124,255,.16),transparent 25%),linear-gradient(135deg,#020710,#081a2d 60%,#0b1025)!important}
+.login-card{max-width:560px;padding:56px 58px;border-radius:34px;background:linear-gradient(145deg,rgba(18,42,64,.9),rgba(7,18,33,.78));border:1px solid rgba(130,220,255,.24);box-shadow:25px 25px 70px rgba(0,0,0,.55),-12px -12px 35px rgba(0,212,255,.06),inset 0 1px 0 rgba(255,255,255,.1);transform:perspective(1200px) rotateX(1deg);animation:loginFloat 5s ease-in-out infinite}
+.login-icon{width:94px;height:94px;border-radius:28px;background:linear-gradient(145deg,#00d4ff,#6c63ff);box-shadow:0 18px 45px rgba(0,212,255,.28),inset 0 2px 0 rgba(255,255,255,.4);font-size:40px;animation:iconPulse 3s ease-in-out infinite}
+.login-title{font-size:34px;letter-spacing:-.04em;background:linear-gradient(90deg,#fff,#7ce9ff 45%,#b9a8ff);-webkit-background-clip:text}
+.login-subtitle{font-size:14px;line-height:1.7}
+.login-field input{padding:17px 18px;border-radius:16px;background:rgba(2,11,21,.72);border:1px solid rgba(120,200,230,.2);box-shadow:inset 0 2px 10px rgba(0,0,0,.22);font-size:15px}
+.btn-login-submit{padding:18px;border-radius:16px;background:linear-gradient(135deg,#00cfff,#625cff);box-shadow:0 14px 30px rgba(0,180,255,.22);font-size:16px;transition:transform .25s,box-shadow .25s,filter .25s}
+.btn-login-submit:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 20px 45px rgba(0,180,255,.3);filter:saturate(1.15)}
+@keyframes loginFloat{0%,100%{transform:perspective(1200px) rotateX(1deg) translateY(0)}50%{transform:perspective(1200px) rotateX(1deg) translateY(-7px)}}
+@keyframes iconPulse{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+/* App shell */
+.sidebar{background:linear-gradient(180deg,#081827,#07111f 70%,#0b1324);border-right:1px solid rgba(104,201,238,.15);box-shadow:16px 0 50px rgba(0,0,0,.18)}
+.brand-header{padding:28px 22px;border-bottom:1px solid rgba(104,201,238,.12)}
+.brand-icon{background:linear-gradient(145deg,#00d4ff,#665cff)!important;box-shadow:0 12px 30px rgba(0,212,255,.22)!important;border-radius:18px!important}
+.brand-title{letter-spacing:.08em}
+.nav-item{margin:7px 12px;padding:15px 16px;border-radius:16px;transition:transform .22s,background .22s,box-shadow .22s,color .22s}
+.nav-item:hover{transform:translateX(5px);background:rgba(0,212,255,.07);box-shadow:0 8px 25px rgba(0,0,0,.18)}
+.nav-item.active{background:linear-gradient(100deg,rgba(0,212,255,.16),rgba(102,92,255,.1));border:1px solid rgba(0,212,255,.18);box-shadow:0 10px 28px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.05);color:#eafcff}
+.main-content{background:#07111f}
+.dashboard-live-bg{background:radial-gradient(circle at 10% 20%,rgba(0,212,255,.08),transparent 30%),radial-gradient(circle at 90% 10%,rgba(139,124,255,.08),transparent 25%),linear-gradient(135deg,#07111f,#091a2a 58%,#0b1020)!important}
+.top-bar{padding:24px 30px;border-bottom:1px solid rgba(120,200,230,.12);background:rgba(7,17,31,.72);backdrop-filter:blur(16px)}
+.page-title{font-size:30px;letter-spacing:-.04em}
+.clock-chip{padding:12px 17px!important;border-radius:16px!important;background:linear-gradient(145deg,rgba(14,39,58,.9),rgba(9,22,37,.9))!important;border:1px solid rgba(0,212,255,.2)!important;box-shadow:0 8px 28px rgba(0,0,0,.2)!important}
+.clock-time{color:#c9f7ff!important}
+.card,.table-card,.report-card,.employee-card,.admin-panel{background:linear-gradient(145deg,rgba(15,35,55,.88),rgba(8,22,37,.88))!important;border:1px solid rgba(125,193,220,.15)!important;border-radius:24px!important;box-shadow:0 18px 55px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.035)!important}
+.card{padding:28px!important}
+input,select,textarea{border-radius:14px!important;background:rgba(3,13,24,.7)!important;border-color:rgba(125,193,220,.18)!important;padding:13px 15px!important;min-height:48px;transition:border-color .2s,box-shadow .2s,transform .2s}
+input:focus,select:focus,textarea:focus{border-color:rgba(0,212,255,.55)!important;box-shadow:0 0 0 4px rgba(0,212,255,.08),0 8px 25px rgba(0,0,0,.12)!important;transform:translateY(-1px)}
+button,.action-btn,.btn-submit,.btn-back,.btn-excel,.btn-warning,.btn-danger,.admin-tab-btn{border-radius:14px!important;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease!important}
+button:hover,.action-btn:hover,.btn-submit:hover,.btn-back:hover,.btn-excel:hover,.btn-warning:hover,.btn-danger:hover,.admin-tab-btn:hover{transform:translateY(-2px);filter:saturate(1.12);box-shadow:0 10px 24px rgba(0,0,0,.2)}
+button:active,.action-btn:active{transform:translateY(0) scale(.98)}
+table{border-collapse:separate!important;border-spacing:0 7px!important}
+thead th{background:#0b2032!important;color:#9eddf0!important;border:0!important;padding:15px!important}
+tbody tr{background:rgba(12,29,46,.8)!important;transition:transform .18s,background .18s,box-shadow .18s}
+tbody tr:hover{background:rgba(17,43,65,.95)!important;transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,0,0,.16)}
+td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid rgba(125,193,220,.07)!important;padding:14px!important}
+.section-heading{background:linear-gradient(90deg,rgba(0,212,255,.09),rgba(102,92,255,.04));border:1px solid rgba(0,212,255,.12);border-radius:16px;padding:15px 18px}
+.badge{border-radius:999px!important;padding:7px 11px!important}
+/* Larger workspace controls */
+.form-grid{gap:18px!important}.form-group label{font-size:12px!important;letter-spacing:.04em}
+.btn-submit,.btn-excel,.btn-back{min-height:48px!important;padding:13px 18px!important}
+/* mobile */
+@media(max-width:900px){body{overflow:auto}.sidebar{position:relative;width:100%;height:auto;min-height:0}.nav-list{display:flex;overflow-x:auto;padding:8px}.nav-item{min-width:max-content;margin:4px;padding:12px 14px}.main-content{min-height:calc(100vh - 150px)}.top-bar{padding:18px;flex-wrap:wrap}.page-title{font-size:23px}.login-card{width:calc(100% - 28px);padding:34px 24px;border-radius:26px}.login-title{font-size:27px}.card{padding:20px!important}.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.admin-complete-orders-table{min-width:2200px}.form-grid{grid-template-columns:1fr!important}.form-group[style*="grid-column"]{grid-column:auto!important}.top-bar-right{width:100%;justify-content:flex-start;flex-wrap:wrap}.clock-chip{flex:1;min-width:230px}}
+@media(max-width:520px){.brand-header{padding:18px}.brand-title{font-size:17px}.login-card{padding:30px 20px}.login-icon{width:78px;height:78px;font-size:32px}.top-bar{gap:12px}.page-title-group{width:100%}.btn-back{min-height:44px}.top-bar-right>*{width:100%}}
+</style>
 </head>
 <body>
 
@@ -1717,7 +1775,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             <div class="top-bar-right">
                 <div class="clock-chip">
                     <span class="clock-time" id="liveClock">--</span>
-                    <span class="clock-status"><span class="dot" id="timeDot"></span><span id="timeStatusText">Syncing time…</span></span>
+                    <span class="clock-status"><span class="dot" id="timeDot"></span><span id="timeStatusText">Syncing Oman time…</span></span>
                 </div>
                 <button class="btn-excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Export All to Excel</button>
             </div>
@@ -1737,7 +1795,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
                         <div class="form-group" style="grid-column:1/-1"><label>Address (Manual)</label><textarea id="custAddress" rows="2" required placeholder="Enter complete delivery address manually"></textarea></div>
                         <div class="form-group"><label>Google Maps Link (Optional)</label><input type="url" id="custMap" placeholder="https://maps.google.com/..."></div>
-                        <div class="form-group"><label>COD Amount</label><input type="number" id="codAmount" min="0" step="0.01" required placeholder="Enter COD Amount"></div>
+                        <div class="form-group"><label>COD Amount (OMR)</label><input type="number" id="codAmount" min="0" step="0.01" required placeholder="Enter COD Amount (OMR)"></div>
                         <div class="form-group"><label>Client Order ID</label><input type="text" id="clientOrderId" placeholder="Enter Client Order ID"></div>
                         <div class="form-group"><label>Country Code</label><input type="text" id="countryCode" value="968" required placeholder="968"></div>
                         <div class="form-group"><label>Deliver To</label><select id="deliverTo" required><option value="Oman" selected>Oman</option></select></div>
@@ -1757,7 +1815,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                             <th>Customer Name</th>
                             <th>Quantity</th>
                             <th>Address</th>
-                            <th>COD Amount</th>
+                            <th>COD Amount (OMR)</th>
                             <th>Client Order ID</th>
                             <th>Country Code</th>
                             <th>Deliver To</th>
@@ -1824,7 +1882,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             </div>
             <div class="report-summary-box">
                 <span class="report-summary-title">Total Delivered Revenue:</span>
-                <span class="report-summary-val" id="deliveredTotalVal">PKR 0</span>
+                <span class="report-summary-val" id="deliveredTotalVal">OMR 0</span>
             </div>
         </section>
 
@@ -1870,7 +1928,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                     </div>
                     <div class="report-summary-box">
                         <span class="report-summary-title">Total Returned Amount:</span>
-                        <span class="report-summary-val" id="returnsReportTotalVal" style="color: var(--accent-danger);">PKR 0</span>
+                        <span class="report-summary-val" id="returnsReportTotalVal" style="color: var(--accent-danger);">OMR 0</span>
                     </div>
                 </div>
             </div>
@@ -1939,7 +1997,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                     </div>
                     <div class="report-summary-box">
                         <span class="report-summary-title">Total Cancelled Value:</span>
-                        <span class="report-summary-val" id="cancelledReportTotalVal" style="color: var(--accent-warning);">PKR 0</span>
+                        <span class="report-summary-val" id="cancelledReportTotalVal" style="color: var(--accent-warning);">OMR 0</span>
                     </div>
                 </div>
             </div>
@@ -2008,7 +2066,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                     </div>
                     <div class="report-summary-box">
                         <span class="report-summary-title">Total Orders Log Value:</span>
-                        <span class="report-summary-val" id="historyReportTotalVal" style="color: var(--accent-info);">PKR 0</span>
+                        <span class="report-summary-val" id="historyReportTotalVal" style="color: var(--accent-info);">OMR 0</span>
                     </div>
                 </div>
             </div>
@@ -2078,7 +2136,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                     </div>
                     <div class="report-summary-box">
                         <span class="report-summary-title">Total Sales Revenue / Budget:</span>
-                        <span class="report-summary-val" id="reportTotalBudget">PKR 0</span>
+                        <span class="report-summary-val" id="reportTotalBudget">OMR 0</span>
                     </div>
                 </div>
             </div>
@@ -2161,7 +2219,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                                 <input type="text" id="adminItemName" required placeholder="e.g. Wireless Headphones">
                             </div>
                             <div class="form-group">
-                                <label>Default Price (PKR)</label>
+                                <label>Default Price (OMR)</label>
                                 <input type="number" id="adminItemPrice" min="0" required placeholder="0">
                             </div>
                             <div class="form-group">
@@ -2396,6 +2454,17 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             }
         }
 
+
+        /* ===== SYSTEM SETTINGS: single source of truth ===== */
+        const SYSTEM_SETTINGS_KEY = 'happy_mart_system_settings_v1';
+        const SYSTEM_SETTINGS_DEFAULTS = Object.freeze({ currency: 'OMR', country: 'Oman', countryCode: '968', timeZone: 'Asia/Muscat' });
+        let systemSettings = (() => {
+            try { return {...SYSTEM_SETTINGS_DEFAULTS, ...(JSON.parse(localStorage.getItem(SYSTEM_SETTINGS_KEY)) || {})}; }
+            catch(e) { return {...SYSTEM_SETTINGS_DEFAULTS}; }
+        })();
+        function saveSystemSettings(){ try{localStorage.setItem(SYSTEM_SETTINGS_KEY,JSON.stringify(systemSettings));}catch(e){} }
+        function getCurrency(){ return systemSettings.currency || SYSTEM_SETTINGS_DEFAULTS.currency; }
+        function updateSystemSettings(patch){ systemSettings={...systemSettings,...(patch||{})}; saveSystemSettings(); updateClock(); renderAllTables(); }
         const STATUS = {
             DRAFT: 'Draft',
             APPROVAL: 'Pending Approval',
@@ -3662,7 +3731,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
         }
 
         function formatMoney2(n) {
-            return 'PKR ' + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+            return getCurrency() + ' ' + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
         }
 
         function defaultDailySalary(monthlySalary) { return Number(monthlySalary)/30; }
@@ -4026,7 +4095,22 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
         }
 
         function makeStamp(d) {
-            const dt = d || nowDate();
+            if (!d) {
+                const base = new Date(Date.now() + timeOffsetMs);
+                try {
+                    const parts = new Intl.DateTimeFormat('en-US', {
+                        timeZone: systemSettings.timeZone || 'Asia/Muscat',
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, weekday: 'long'
+                    }).formatToParts(base);
+                    const get = type => (parts.find(x => x.type === type) || {}).value || '';
+                    const date = `${get('year')}-${get('month')}-${get('day')}`;
+                    const time = `${get('hour')}:${get('minute')} ${get('dayPeriod')}`;
+                    const day = get('weekday');
+                    return { date, time, day, display: `${date} (${day}) ${time}` };
+                } catch(e) {}
+            }
+            const dt = d || new Date();
             const date = `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
             let h = dt.getHours();
             const ampm = h >= 12 ? 'PM' : 'AM';
@@ -4051,9 +4135,9 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 
         async function syncBackendTime() {
             const sources = [
-                { url: 'https://worldtimeapi.org/api/ip', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
-                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
-                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time' }
+                { url: 'https://worldtimeapi.org/api/timezone/Asia/Muscat', read: d => new Date(d.datetime).getTime(), label: 'Oman Network Time' },
+                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Muscat', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Oman Network Time' },
+                { url: 'https://worldtimeapi.org/api/ip', read: d => new Date(d.datetime).getTime(), label: 'Network Time' }
             ];
 
             for (const src of sources) {
@@ -4088,6 +4172,11 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             if (txt) txt.innerText = timeSourceLabel + (timeIsOnline ? ' (Synced)' : ' (Local)');
         }
 
+
+        // Always tick the visible clock every second; network sync only corrects the offset.
+        if (!window.__happyMartClockTicker) {
+            window.__happyMartClockTicker = setInterval(updateClock, 1000);
+        }
         /* ---------------- Helpers ---------------- */
         function esc(str) {
             if (str === null || str === undefined) return '';
@@ -4101,7 +4190,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 
         function money(n) {
             const v = Number(n) || 0;
-            return 'PKR ' + v.toLocaleString();
+            return getCurrency() + ' ' + v.toLocaleString();
         }
 
         function badgeClassFor(status) {
@@ -5064,7 +5153,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             if (!Number.isInteger(orderId) || orderId < 1) { showToast_('Enter a valid Order ID.', 'warn'); return; }
             if (!productCode) { showToast_('Enter Product Code.', 'warn'); return; }
             if (!qty || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
-            if (!Number.isFinite(codAmount) || codAmount < 0) { showToast_('Enter a valid COD Amount.', 'warn'); return; }
+            if (!Number.isFinite(codAmount) || codAmount < 0) { showToast_('Enter a valid COD Amount (OMR).', 'warn'); return; }
 
             const fields = {
                 customer: document.getElementById('custName').value.trim(),
@@ -5864,7 +5953,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
             const newStatus=document.getElementById('editStatus')?.value || order.status;
             if(!Number.isInteger(newId)||newId<1){showToast_('Order ID must be a positive whole number.','warn');return;}
             if(!Number.isInteger(newQty)||newQty<1){showToast_('Quantity must be at least 1.','warn');return;}
-            if(!Number.isFinite(newCod)||newCod<0){showToast_('Enter a valid COD Amount.','warn');return;}
+            if(!Number.isFinite(newCod)||newCod<0){showToast_('Enter a valid COD Amount (OMR).','warn');return;}
             if(!Object.values(STATUS).includes(newStatus)){showToast_('Invalid order status.','warn');return;}
             const oldItem=inventory.find(i=>Number(i.id)===Number(order.itemId));
             const targetItem=selectedItem||oldItem;
@@ -5930,7 +6019,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 
             const daily = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).map(o => ({
                 "Order ID": o.id, "Product Code": o.productCode, "Customer Number": o.phone, "Customer Name": o.customer,
-                "Quantity": o.qty, "Address": o.address, "Google Maps Link": o.map, "COD Amount": o.codAmount,
+                "Quantity": o.qty, "Address": o.address, "Google Maps Link": o.map, "COD Amount (OMR)": o.codAmount,
                 "Client Order ID": o.clientOrderId, "Country Code": o.countryCode, "Deliver To": o.deliverTo,
                 "Item": o.itemName, "Unit Price": o.price, "Total Amount": orderTotal(o),
                 "Status": o.status, "Created Date": o.createdStamp ? o.createdStamp.date : o.creationDate,
@@ -6054,7 +6143,7 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
                     <div class="order-edit-field"><label>Customer Name</label><input id="editCustomer" type="text"></div>
                     <div class="order-edit-field"><label>Customer Number</label><input id="editPhone" type="text"></div>
                     <div class="order-edit-field"><label>Quantity</label><input id="editQty" type="number" min="1"></div>
-                    <div class="order-edit-field"><label>COD Amount</label><input id="editCod" type="number" min="0" step="0.01"></div>
+                    <div class="order-edit-field"><label>COD Amount (OMR)</label><input id="editCod" type="number" min="0" step="0.01"></div>
                     <div class="order-edit-field full"><label>Address (Manual)</label><textarea id="editAddress" rows="3" placeholder="Enter complete delivery address manually"></textarea></div>
                     <div class="order-edit-field"><label>Google Maps Link</label><input id="editMap" type="url" placeholder="https://maps.google.com/..."></div>
                     <div class="order-edit-field"><label>Client Order ID</label><input id="editClientOrderId" type="text"></div>
