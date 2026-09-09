@@ -1789,12 +1789,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <input type="hidden" id="editingOrderKey" value="">
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
-                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code"></div>
+                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Auto-filled from Inventory"></div>
+                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="orderItemName" required onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
                         <div class="form-group" style="grid-column:1/-1"><label>Address (Manual)</label><textarea id="custAddress" rows="2" required placeholder="Enter complete delivery address manually"></textarea></div>
-                        <div class="form-group"><label>Google Maps Link (Optional)</label><input type="url" id="custMap" placeholder="https://maps.google.com/..."></div>
                         <div class="form-group"><label>COD Amount (OMR)</label><input type="number" id="codAmount" min="0" step="0.01" required placeholder="Enter COD Amount (OMR)"></div>
                         <div class="form-group"><label>Client Order ID</label><input type="text" id="clientOrderId" placeholder="Enter Client Order ID"></div>
                         <div class="form-group"><label>Country Code</label><input type="text" id="countryCode" value="968" required placeholder="968"></div>
@@ -2127,8 +2127,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                                     <th>Qty</th>
                                     <th>Unit Price</th>
                                     <th>Total Price</th>
-                                    <th>Google Maps Location</th>
-                                    <th>Delivery Date & Time</th>
+                                                                        <th>Delivery Date & Time</th>
                                 </tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
@@ -2183,7 +2182,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <div class="section-heading"><i class="fa-solid fa-clipboard-check"></i> Orders Waiting for Admin Approval</div>
                     <div class="table-responsive admin-order-scroll">
-                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
+                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
@@ -2200,7 +2199,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <p class="hint-text" style="margin-bottom:14px;">Complete order information is shown here. Every order remains editable from Admin.</p>
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table">
-                            <thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
@@ -2255,7 +2254,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;">System Master Orders Control</h3>
                     <div class="table-responsive admin-order-scroll">
-                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
+                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -2264,7 +2263,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div id="admin-sub-delivered" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-circle-check" style="color:var(--accent-success)"></i> Admin Control: Delivered Orders</h3>
-                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminDeliveredTableBody"></tbody></table></div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminDeliveredTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2272,7 +2271,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div id="admin-sub-returns" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
-                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2280,7 +2279,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div id="admin-sub-cancelled" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
-                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2288,7 +2287,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div id="admin-sub-history" style="display: none;">
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-info)"></i> Admin Control: Complete History</h3>
-                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Google Maps</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminHistoryTableBody"></tbody></table></div>
+                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminHistoryTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -2483,7 +2482,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 id: 1001,
                 customer: "Ali Khan",
                 phone: "03001234567",
-                map: "https://maps.google.com",
                 itemId: 101,
                 itemName: "THE HAPPY MART T-Shirt",
                 qty: 2,
@@ -4249,18 +4247,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return (Number(o && o.price) || 0) * (Number(o && o.qty) || 0);
         }
 
-        function renderOrderLocation(o) {
+        function renderOrderAddress(o) {
             const address = String((o && (o.address || o.customerAddress || o.deliveryAddress)) || '').trim();
-            const map = String((o && (o.map || o.mapLink)) || '').trim();
-
-            let html = '';
-            if (address) {
-                html += `<div style="max-width:280px;white-space:normal;line-height:1.5">${esc(address)}</div>`;
-            }
-            if (map) {
-                html += `<a href="${esc(map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>`;
-            }
-            return html || '-';
+            return address ? `<div style="max-width:280px;white-space:normal;line-height:1.5">${esc(address)}</div>` : '-';
         }
 
         /* ---------------- Local Storage Engine ---------------- */
@@ -4280,7 +4269,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 productCode: String(o.productCode || o.sku || o.itemCode || (o.itemId ? String(o.itemId) : '')).trim(),
                 customer: o.customer || o.customerName || '',
                 phone: o.phone || o.customerNumber || '',
-                map: o.map || o.mapLink || '',
                 address: o.address || o.customerAddress || '',
                 itemId: Number(o.itemId) || 0,
                 itemName: o.itemName || '',
@@ -5127,7 +5115,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 const ref = esc(o._key);
                 return `<tr>
                     <td><b>#${esc(o.id)}</b></td><td>${esc(o.productCode)||'-'}</td><td>${esc(o.phone)}</td><td>${esc(o.customer)}</td><td>${esc(o.qty)}</td>
-                    <td><div style="max-width:280px;white-space:normal;line-height:1.5">${esc(o.address)||'-'}</div>${o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Map Link</a>` : ''}</td>
+                    <td>${renderOrderAddress(o)}</td>
                     <td><b>${money(o.codAmount)}</b></td><td>${esc(o.clientOrderId)||'-'}</td><td>${esc(o.countryCode)||'968'}</td><td>${esc(o.deliverTo)||'Oman'}</td>
                     <td><span class="badge ${badgeClassFor(o.status)}">${canUserEdit?'Draft (Editable)':'Pending Approval'}</span></td><td>${stampCell(o.createdStamp,o.creationDate)}</td><td>${esc(o.remarks)||'-'}</td>
                     <td>${canUserEdit ? `<button class="action-btn" style="color:var(--accent-warning)" onclick="editOrderDraft('${ref}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" style="color:var(--accent-danger)" onclick="deleteOrderDraft('${ref}')"><i class="fa-solid fa-trash"></i> Delete</button>` : `<span style="font-size:12px;color:var(--text-muted)"><i class="fa-solid fa-lock"></i> With Admin</span>`}</td>
@@ -5140,25 +5128,63 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return inventory.find(i => String(i.id) === value || String(i.code || '').trim() === value || String(i.sku || '').trim() === value || String(i.productCode || '').trim() === value) || null;
         }
 
+        function stockDeductedStatus(status) {
+            return [STATUS.DRAFT, STATUS.APPROVAL, STATUS.OFD, STATUS.DELIVERED].includes(status);
+        }
+
+        /*
+         * Stock rules:
+         * Draft / Pending Approval / OFD / Delivered = qty is deducted from available stock.
+         * Returned / Cancelled = qty is restored to available stock.
+         * This keeps inventory synchronized when an order's item, quantity, or status changes.
+         */
+        function reconcileOrderStockChange(order, newItem, newQty, newStatus) {
+            const oldItem = inventory.find(i => Number(i.id) === Number(order.itemId));
+            const oldQty = Number(order.qty) || 0;
+            const oldDeducted = stockDeductedStatus(order.status);
+            const newDeducted = stockDeductedStatus(newStatus);
+            const targetItem = newItem || oldItem;
+
+            if (newDeducted && !targetItem) {
+                return { ok:false, message:'Please select an Item Name from Inventory.' };
+            }
+
+            if (oldDeducted && oldItem && oldQty > 0) {
+                oldItem.stock = Number(oldItem.stock || 0) + oldQty;
+            }
+
+            if (newDeducted && targetItem) {
+                const available = Number(targetItem.stock || 0);
+                if (available < newQty) {
+                    if (oldDeducted && oldItem && oldQty > 0) {
+                        oldItem.stock = Math.max(0, Number(oldItem.stock || 0) - oldQty);
+                    }
+                    return { ok:false, message:`Only ${available} left in stock for ${targetItem.name}.` };
+                }
+                targetItem.stock = available - newQty;
+            }
+
+            return { ok:true };
+        }
+
         function saveOrder(e) {
             e.preventDefault();
+
             const editingKey = document.getElementById('editingOrderKey').value;
-            const orderId = Number(document.getElementById('orderId').value.trim());
-            const productCode = document.getElementById('productCode').value.trim();
-            const qty = parseInt(document.getElementById('orderQty').value,10);
-            const codAmount = parseFloat(document.getElementById('codAmount').value);
+            const orderId = Number(document.getElementById('orderId').value);
             const selectedItemId = Number(document.getElementById('orderItemName')?.value || 0);
-            const item = inventory.find(i => Number(i.id) === selectedItemId) || findInventoryItemByProductCode(productCode);
+            const item = inventory.find(i => Number(i.id) === selectedItemId) || null;
+            const qty = parseInt(document.getElementById('orderQty').value, 10);
+            const codAmount = parseFloat(document.getElementById('codAmount').value);
 
             if (!Number.isInteger(orderId) || orderId < 1) { showToast_('Enter a valid Order ID.', 'warn'); return; }
-            if (!productCode) { showToast_('Enter Product Code.', 'warn'); return; }
-            if (!qty || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
+            if (!item) { showToast_('Please select an Item Name from Inventory.', 'warn'); return; }
+            if (!Number.isInteger(qty) || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; }
             if (!Number.isFinite(codAmount) || codAmount < 0) { showToast_('Enter a valid COD Amount (OMR).', 'warn'); return; }
 
             const fields = {
                 customer: document.getElementById('custName').value.trim(),
                 phone: document.getElementById('custPhone').value.trim(),
-                map: document.getElementById('custMap').value.trim(),
                 address: document.getElementById('custAddress').value.trim(),
                 clientOrderId: document.getElementById('clientOrderId').value.trim(),
                 countryCode: document.getElementById('countryCode').value.trim() || '968',
@@ -5168,39 +5194,57 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             if (editingKey) {
                 const order = getOrderByRef(editingKey);
-                if (!order || order.status !== STATUS.DRAFT) { showToast_('That order is locked and can no longer be edited.', 'warn'); resetOrderForm(); return; }
-
-                if (item) {
-                    const sameItem = order.itemId === item.id;
-                    if (sameItem) {
-                        const diffQty = qty - order.qty;
-                        if (diffQty > 0 && item.stock < diffQty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                        item.stock -= diffQty;
-                    } else {
-                        if (item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                        const oldItem = inventory.find(i => i.id === order.itemId);
-                        if (oldItem) oldItem.stock += order.qty;
-                        item.stock -= qty;
-                    }
-                    order.itemId = item.id;
-                    order.itemName = item.name;
+                if (!order || order.status !== STATUS.DRAFT) {
+                    showToast_('That order is locked and can no longer be edited.', 'warn');
+                    resetOrderForm();
+                    return;
                 }
 
+                const result = reconcileOrderStockChange(order, item, qty, STATUS.DRAFT);
+                if (!result.ok) { showToast_(result.message, 'warn'); return; }
+
                 order.id = orderId;
-                order.productCode = productCode;
+                order.productCode = String(item.id);
+                order.itemId = Number(item.id);
+                order.itemName = item.name;
                 Object.assign(order, fields);
                 order.qty = qty;
                 order.codAmount = codAmount;
                 order.price = qty > 0 ? codAmount / qty : 0;
-                showToast_(`Order #${order.id} updated.`, 'ok');
+
+                showToast_(`Order #${order.id} updated. Stock synchronized.`, 'ok');
             } else {
-                if (item && item.stock < qty) { showToast_(`Only ${item.stock} left in stock for ${item.name}.`, 'warn'); return; }
-                if (item) item.stock -= qty;
+                if (Number(item.stock || 0) < qty) {
+                    showToast_(`Only ${Number(item.stock || 0)} left in stock for ${item.name}.`, 'warn');
+                    return;
+                }
+
+                item.stock = Number(item.stock || 0) - qty;
                 const stamp = makeStamp();
-                orders.push(normalizeOrder({...fields,_key:makeOrderRecordKey(),id:orderId,productCode,itemId:item?item.id:0,itemName:item?item.name:'',qty,codAmount,price:qty>0?codAmount/qty:0,status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,isSubmitted:false,isApproved:false}));
-                showToast_(`Order #${orderId} saved as draft.`, 'ok');
+
+                orders.push(normalizeOrder({
+                    ...fields,
+                    _key: makeOrderRecordKey(),
+                    id: orderId,
+                    productCode: String(item.id),
+                    itemId: Number(item.id),
+                    itemName: item.name,
+                    qty,
+                    codAmount,
+                    price: qty > 0 ? codAmount / qty : 0,
+                    status: STATUS.DRAFT,
+                    creationDate: stamp.date,
+                    createdStamp: stamp,
+                    isSubmitted: false,
+                    isApproved: false
+                }));
+
+                showToast_(`Order #${orderId} saved as draft. ${qty} stock unit(s) reserved.`, 'ok');
             }
-            saveData(); resetOrderForm(); renderAllTables();
+
+            saveData('order-stock-synchronized');
+            resetOrderForm();
+            renderAllTables();
         }
 
         function editOrderDraft(ref) {
@@ -5214,7 +5258,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             document.getElementById('custName').value = order.customer;
             document.getElementById('orderQty').value = order.qty;
             document.getElementById('custAddress').value = order.address || '';
-            document.getElementById('custMap').value = order.map || '';
             document.getElementById('codAmount').value = Number(order.codAmount || orderTotal(order)).toFixed(2);
             document.getElementById('clientOrderId').value = order.clientOrderId || '';
             document.getElementById('countryCode').value = order.countryCode || '968';
@@ -5270,10 +5313,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminOrderCells(o, actionHtml='') {
             const stamp = x => stampCell(x, '-');
             const reason = o.status === STATUS.RETURNED ? o.returnReason : (o.status === STATUS.CANCELLED ? o.cancelReason : '');
-            const map = o.map ? `<a href="${esc(o.map)}" target="_blank" rel="noopener" class="map-link"><i class="fa-solid fa-location-dot"></i> Open</a>` : '-';
             return `<td><b>#${esc(o.id)}</b></td>
                 <td>${esc(o.productCode)||'-'}</td><td>${esc(o.customer)||'-'}</td><td>${esc(o.phone)||'-'}</td>
-                <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td><td>${map}</td>
+                <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td>
                 <td>${esc(o.clientOrderId)||'-'}</td><td>${esc(o.countryCode)||'-'}</td><td>${esc(o.deliverTo)||'-'}</td>
                 <td><b>${esc(o.itemName)||'-'}</b></td><td>${esc(o.qty)}</td><td>${money(o.price)}</td><td>${money(o.codAmount)}</td><td><b>${money(orderTotal(o))}</b></td>
                 <td>${stamp(o.createdStamp || {date:o.creationDate})}</td><td>${stamp(o.submittedStamp)}</td><td>${stamp(o.approvedStamp)}</td>
@@ -5285,7 +5327,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderApprovalTable() {
             const tbody = document.getElementById('approvalTableBody');
             const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a,b)=>a.id-b.id);
-            if (!list.length) { tbody.innerHTML = emptyRow(24, 'Nothing is waiting for approval right now.'); return; }
+            if (!list.length) { tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.'); return; }
             tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button><button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>`)}</tr>`).join('');
         }
 
@@ -5339,7 +5381,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id);
             if (!list.length) { tbody.innerHTML = emptyRow(14, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
             tbody.innerHTML = list.map(o => `<tr>
-                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderLocation(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td><td><button class="action-btn" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" onclick="markDelivered(${o.id})">Delivered</button><button class="action-btn" onclick="processReturn(${o.id})">Return</button><button class="action-btn" onclick="processCancel(${o.id})">Cancel</button></td>
+                <td><b>#${o.id}</b></td><td>${stampCell(o.approvedStamp,o.creationDate)}</td><td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${renderOrderAddress(o)}</td><td>${esc(o.itemName)}</td><td>${o.qty}</td><td>${money(orderTotal(o))}</td><td>${esc(o.remarks)||'-'}</td><td><button class="action-btn" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="action-btn" onclick="markDelivered(${o.id})">Delivered</button><button class="action-btn" onclick="processReturn(${o.id})">Return</button><button class="action-btn" onclick="processCancel(${o.id})">Cancel</button></td>
             </tr>`).join('');
         }
 
@@ -5443,7 +5485,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <td><b>#${o.id}</b></td>
                             <td>${esc(o.customer)}</td>
                             <td>${esc(o.phone)}</td>
-                            <td>${renderOrderLocation(o)}</td>
+                            <td>${renderOrderAddress(o)}</td>
                             <td>${esc(o.itemName)}</td>
                             <td>${o.qty}</td>
                             <td>${money(o.price)}</td>
@@ -5737,7 +5779,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             let grandTotal = 0;
 
             if (!lastFilteredInventorySales.length) {
-                tbody.innerHTML = emptyRow(7, 'No deliveries found in this date range.');
+                tbody.innerHTML = emptyRow(6, 'No deliveries found in this date range.');
             } else {
                 tbody.innerHTML = lastFilteredInventorySales.map(o => {
                     const total = orderTotal(o);
@@ -5750,7 +5792,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <td>${o.qty}</td>
                             <td>${money(o.price)}</td>
                             <td><b>${money(total)}</b></td>
-                            <td>${renderOrderLocation(o)}</td>
+                            <td>${renderOrderAddress(o)}</td>
                             <td>${esc(s.date || '')} ${esc(s.day ? '(' + s.day + ')' : '')} ${esc(s.time || '')}</td>
                         </tr>`;
                 }).join('');
@@ -5765,7 +5807,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const wb = XLSX.utils.book_new();
             const data = lastFilteredInventorySales.map(o => ({
                 "Order ID": o.id, "Item Name": o.itemName, "Qty": o.qty, "Unit Price": o.price,
-                "Total Amount": orderTotal(o), "Address": o.address, "Map Link": o.map,
+                "Total Amount": orderTotal(o), "Address": o.address,
                 "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
                 "Delivery Time": o.deliveredStamp ? o.deliveredStamp.time : ''
             }));
@@ -5860,7 +5902,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderAdminOrdersTable() {
             const tbody=document.getElementById('adminOrdersTableBody');
             const list=[...orders].sort((a,b)=>a.id-b.id);
-            if(!list.length){tbody.innerHTML=emptyRow(24,'No orders in the system yet.');return;}
+            if(!list.length){tbody.innerHTML=emptyRow(23,'No orders in the system yet.');return;}
             tbody.innerHTML=list.map(o=>`<tr>${adminOrderCells(o)}</tr>`).join('');
         }
 
@@ -5876,7 +5918,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             sections.forEach(([id,status,empty])=>{
                 const body=document.getElementById(id); if(!body)return;
                 const list=(status===null?[...orders]:orders.filter(o=>o.status===status)).sort((a,b)=>a.id-b.id);
-                body.innerHTML=list.length?list.map(o=>`<tr>${adminOrderCells(o)}</tr>`).join(''):emptyRow(24,empty);
+                body.innerHTML=list.length?list.map(o=>`<tr>${adminOrderCells(o)}</tr>`).join(''):emptyRow(23,empty);
             });
         }
 
@@ -5922,7 +5964,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             document.getElementById('editQty').value = order.qty || 1;
             document.getElementById('editCod').value = Number(order.codAmount || orderTotal(order));
             document.getElementById('editAddress').value = order.address || order.customerAddress || '';
-            document.getElementById('editMap').value = order.map || order.mapLink || '';
             document.getElementById('editClientOrderId').value = order.clientOrderId || '';
             document.getElementById('editCountryCode').value = order.countryCode || '968';
             document.getElementById('editDeliverTo').value = order.deliverTo || 'Oman';
@@ -5957,15 +5998,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!Object.values(STATUS).includes(newStatus)){showToast_('Invalid order status.','warn');return;}
             const oldItem=inventory.find(i=>Number(i.id)===Number(order.itemId));
             const targetItem=selectedItem||oldItem;
-            const oldActive=[STATUS.DRAFT,STATUS.APPROVAL,STATUS.OFD].includes(order.status);
-            const newActive=[STATUS.DRAFT,STATUS.APPROVAL,STATUS.OFD].includes(newStatus);
-            if(newActive && !targetItem){showToast_('Please select an Item Name from Inventory.','warn');return;}
-            // Reconcile reserved stock exactly once while changing item/quantity/status.
-            if(oldActive && oldItem) oldItem.stock += Number(order.qty||0);
-            if(newActive && targetItem){
-                if(Number(targetItem.stock)<newQty){ if(oldActive&&oldItem) oldItem.stock-=Number(order.qty||0); showToast_(`Only ${targetItem.stock} left in stock for ${targetItem.name}.`,'warn');return; }
-                targetItem.stock-=newQty;
-            }
+            const stockResult=reconcileOrderStockChange(order,targetItem,newQty,newStatus);
+            if(!stockResult.ok){showToast_(stockResult.message,'warn');return;}
             order.id=newId;
             order.itemId=targetItem?Number(targetItem.id):Number(order.itemId||0);
             order.itemName=targetItem?targetItem.name:(order.itemName||'');
@@ -5976,7 +6010,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             order.codAmount=newCod;
             order.price=newQty>0?newCod/newQty:0;
             order.address=document.getElementById('editAddress').value.trim();
-            order.map=document.getElementById('editMap').value.trim();
             order.clientOrderId=document.getElementById('editClientOrderId').value.trim();
             order.countryCode=document.getElementById('editCountryCode').value.trim()||'968';
             order.deliverTo=document.getElementById('editDeliverTo').value||'Oman';
@@ -6002,8 +6035,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminDeleteOrder(ref) {
             const order = getOrderByRef(ref); if (!order) return;
             if (!confirm(`Admin action: permanently delete order #${order.id}?`)) return;
-            if (order.status===STATUS.DRAFT || order.status===STATUS.APPROVAL || order.status===STATUS.OFD) {
-                const item=inventory.find(i=>i.id===order.itemId); if(item)item.stock+=order.qty;
+            if (stockDeductedStatus(order.status)) {
+                const item=inventory.find(i=>Number(i.id)===Number(order.itemId));
+                if(item)item.stock += Number(order.qty || 0);
             }
             orders=orders.filter(o=>o._key!==order._key);
             returns=returns.filter(r=>r.orderId!==order.id);
@@ -6019,7 +6053,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             const daily = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL).map(o => ({
                 "Order ID": o.id, "Product Code": o.productCode, "Customer Number": o.phone, "Customer Name": o.customer,
-                "Quantity": o.qty, "Address": o.address, "Google Maps Link": o.map, "COD Amount (OMR)": o.codAmount,
+                "Quantity": o.qty, "Address": o.address, "COD Amount (OMR)": o.codAmount,
                 "Client Order ID": o.clientOrderId, "Country Code": o.countryCode, "Deliver To": o.deliverTo,
                 "Item": o.itemName, "Unit Price": o.price, "Total Amount": orderTotal(o),
                 "Status": o.status, "Created Date": o.createdStamp ? o.createdStamp.date : o.creationDate,
@@ -6029,7 +6063,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             XLSX.utils.book_append_sheet(wb, sheet(daily, { "Order ID": "No records" }), "Daily Orders");
 
             const ofd = sorted.filter(o => o.status === STATUS.OFD).map(o => ({
-                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address, "Map Link": o.map,
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address,
                 "Item": o.itemName, "Qty": o.qty, "Total Amount": orderTotal(o),
                 "Approved Date": o.approvedStamp ? o.approvedStamp.date : '',
                 "Approved Day": o.approvedStamp ? o.approvedStamp.day : '',
@@ -6038,7 +6072,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             XLSX.utils.book_append_sheet(wb, sheet(ofd, { "Order ID": "No records" }), "Out For Delivery");
 
             const delivered = sorted.filter(o => o.status === STATUS.DELIVERED).map(o => ({
-                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address, "Map Link": o.map,
+                "Order ID": o.id, "Customer": o.customer, "Phone": o.phone, "Address": o.address,
                 "Item": o.itemName, "Qty": o.qty, "Unit Price": o.price, "Total Amount": orderTotal(o),
                 "Delivery Date": o.deliveredStamp ? o.deliveredStamp.date : '',
                 "Delivery Day": o.deliveredStamp ? o.deliveredStamp.day : '',
@@ -6145,7 +6179,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="order-edit-field"><label>Quantity</label><input id="editQty" type="number" min="1"></div>
                     <div class="order-edit-field"><label>COD Amount (OMR)</label><input id="editCod" type="number" min="0" step="0.01"></div>
                     <div class="order-edit-field full"><label>Address (Manual)</label><textarea id="editAddress" rows="3" placeholder="Enter complete delivery address manually"></textarea></div>
-                    <div class="order-edit-field"><label>Google Maps Link</label><input id="editMap" type="url" placeholder="https://maps.google.com/..."></div>
                     <div class="order-edit-field"><label>Client Order ID</label><input id="editClientOrderId" type="text"></div>
                     <div class="order-edit-field"><label>Country Code</label><input id="editCountryCode" type="text"></div>
                     <div class="order-edit-field"><label>Deliver To</label><select id="editDeliverTo"><option value="Oman">Oman</option></select></div>
