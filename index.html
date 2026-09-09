@@ -1709,7 +1709,8 @@
                     <input type="hidden" id="editingOrderKey" value="">
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
-                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code"></div>
+                        <div class="form-group"><label>Select Item</label><select id="orderItemName" required onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
+                        <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required placeholder="Enter Product Code" readonly></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
@@ -1762,6 +1763,7 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
+                            <th>Created On</th>
                             <th>Approved / Dispatched On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
@@ -1784,6 +1786,7 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
+                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Location</th>
@@ -1834,6 +1837,7 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
+                                    <th>Created On</th>
                                     <th>Customer Name</th>
                                     <th>Phone</th>
                                     <th>Item Name</th>
@@ -1859,6 +1863,7 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
+                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Item Name</th>
@@ -1928,6 +1933,7 @@
                     <thead>
                         <tr>
                             <th>Order ID</th>
+                            <th>Created On</th>
                             <th>Customer Name</th>
                             <th>Phone</th>
                             <th>Item Name</th>
@@ -2088,6 +2094,7 @@
         <section id="view-admin" class="view-section">
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" id="tab-btn-appr" onclick="switchAdminSubTab('approvals')"><i class="fa-solid fa-clipboard-check"></i> Approvals</button>
+                <button class="admin-tab-btn" id="tab-btn-ofd" onclick="switchAdminSubTab('ofd')"><i class="fa-solid fa-truck-fast"></i> Out For Delivery</button>
                 <button class="admin-tab-btn" id="tab-btn-inv" onclick="switchAdminSubTab('inventory')"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</button>
                 <button class="admin-tab-btn" id="tab-btn-ord" onclick="switchAdminSubTab('orders')"><i class="fa-solid fa-list-check"></i> Master Control</button>
                 <button class="admin-tab-btn" id="tab-btn-del" onclick="switchAdminSubTab('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Control</button>
@@ -2106,6 +2113,7 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
+                                    <th>Created On</th>
                                     <th>Customer Name</th>
                                     <th>Phone</th>
                                     <th>Location</th>
@@ -2125,6 +2133,21 @@
                         <button class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
                     </div>
                     <p class="hint-text">Approved orders move straight into Out For Delivery. Rejected orders go back to Daily Orders as editable drafts.</p>
+                </div>
+            </div>
+
+            <!-- SUB TAB: OUT FOR DELIVERY CONTROL -->
+            <div id="admin-sub-ofd" style="display:none;">
+                <div class="card">
+                    <div class="section-heading"><i class="fa-solid fa-truck-fast"></i> Out For Delivery — Admin Control</div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Order ID</th><th>Created On</th><th>Approved / OFD On</th><th>Customer Name</th><th>Phone</th><th>Item</th><th>Qty</th><th>Total</th><th>Action</th></tr></thead>
+                            <tbody id="adminOFDTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-warning" onclick="sendAllOFDBackToApproval()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Approval</button></div>
+                    <p class="hint-text">Send Back moves the selected OFD order back into Admin Approvals. The original creation time remains unchanged and the new submission time is recorded.</p>
                 </div>
             </div>
 
@@ -2204,7 +2227,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>Order ID</th><th>Created On</th>
                                     <th>Customer</th>
                                     <th>Phone</th>
                                     <th>Item</th>
@@ -2228,7 +2251,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>Order ID</th><th>Created On</th>
                                     <th>Customer</th>
                                     <th>Phone</th>
                                     <th>Item</th>
@@ -2252,7 +2275,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>Order ID</th><th>Created On</th>
                                     <th>Customer</th>
                                     <th>Phone</th>
                                     <th>Item</th>
@@ -4107,10 +4130,14 @@
         }
 
         async function syncBackendTime() {
+            /* Authoritative network time is synced periodically; the live clock
+               then ticks every second from the measured offset. Google is used
+               only as a connectivity heartbeat because its browser response does
+               not expose a reliable CORS-readable clock value. */
             const sources = [
-                { url: 'https://worldtimeapi.org/api/ip', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
-                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time' },
-                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time' }
+                { url: 'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Karachi', read: d => new Date(d.year, d.month - 1, d.day, d.hour, d.minute, d.seconds || 0).getTime(), label: 'Network Time (Asia/Karachi)' },
+                { url: 'https://worldtimeapi.org/api/timezone/Asia/Karachi', read: d => new Date(d.datetime).getTime(), label: 'Network Time (Asia/Karachi)' },
+                { url: 'https://www.google.com/generate_204', read: () => Date.now(), label: 'Google Online · Local Clock' }
             ];
 
             for (const src of sources) {
@@ -4264,6 +4291,7 @@
                 createdStamp: created,
                 submittedStamp: o.submittedStamp || null,
                 approvedStamp: o.approvedStamp || null,
+                ofdReturnedToApprovalStamp: o.ofdReturnedToApprovalStamp || null,
                 deliveredStamp: o.deliveredStamp || null,
                 returnStamp: o.returnStamp || null,
                 cancelStamp: o.cancelStamp || null,
@@ -4730,7 +4758,7 @@
             if (!cloudSyncTimerStarted) {
                 cloudSyncTimerStarted = true;
                 setInterval(syncAttendanceCalendar, 60000);
-                setInterval(syncBackendTime, 300000);
+                setInterval(syncBackendTime, 60000);
             }
 
             initEmployeePresence();
@@ -4938,6 +4966,7 @@
             refreshWorkflowUI();
             const map = {
                 approvals: ['admin-sub-approvals', 'tab-btn-appr'],
+                ofd: ['admin-sub-ofd', 'tab-btn-ofd'],
                 inventory: ['admin-sub-inventory', 'tab-btn-inv'],
                 orders: ['admin-sub-orders', 'tab-btn-ord'],
                 delivered: ['admin-sub-delivered', 'tab-btn-del'],
@@ -4965,6 +4994,7 @@
             renderHistoryTable();
             renderInventoryTable();
             renderApprovalTable();
+            renderAdminOFDTable();
             renderAdminInventoryTable();
             renderAdminOrdersTable();
             renderAdminSectionTables();
@@ -5243,6 +5273,7 @@
             tbody.innerHTML = list.map(o => `
                 <tr>
                     <td><b>#${o.id}</b></td>
+                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                     <td>${esc(o.customer)}</td>
                     <td>${esc(o.phone)}</td>
                     <td>${renderOrderLocation(o)}</td>
@@ -5280,6 +5311,39 @@
             showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok');
         }
 
+        function sendOFDBackToApproval(id) {
+            const order = getOrderByRef(id);
+            if (!order || order.status !== STATUS.OFD) return;
+            const stamp = makeStamp();
+            order.status = STATUS.APPROVAL;
+            order.isApproved = false;
+            order.isSubmitted = true;
+            order.submittedStamp = stamp;
+            order.ofdReturnedToApprovalStamp = stamp;
+            saveData('ofd-sent-back-to-approval');
+            syncOrderWorkflowUI();
+            switchAdminSubTab('approvals');
+            showToast_(`Order #${id} sent back to Admin Approval on ${stamp.day}, ${stamp.date} at ${stamp.time}.`, 'warn');
+        }
+
+        function sendAllOFDBackToApproval() {
+            const list = orders.filter(o => o.status === STATUS.OFD);
+            if (!list.length) { showToast_('There are no Out For Delivery orders to send back.', 'warn'); return; }
+            if (!confirm(`Send all ${list.length} Out For Delivery order(s) back to Admin Approval?`)) return;
+            const stamp = makeStamp();
+            list.forEach(o => {
+                o.status = STATUS.APPROVAL;
+                o.isApproved = false;
+                o.isSubmitted = true;
+                o.submittedStamp = stamp;
+                o.ofdReturnedToApprovalStamp = stamp;
+            });
+            saveData('all-ofd-sent-back-to-approval');
+            syncOrderWorkflowUI();
+            switchAdminSubTab('approvals');
+            showToast_(`${list.length} order(s) sent back to Admin Approval.`, 'warn');
+        }
+
         function rejectOrder(id) {
             const order = getOrderByRef(id);
             if (!order || order.status !== STATUS.APPROVAL) return;
@@ -5313,6 +5377,7 @@
             tbody.innerHTML = list.map(o => `
                 <tr>
                     <td><b>#${o.id}</b></td>
+                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                     <td>${stampCell(o.approvedStamp, o.creationDate)}</td>
                     <td>${esc(o.customer)}</td>
                     <td>${esc(o.phone)}</td>
@@ -5427,6 +5492,7 @@
                     return `
                         <tr>
                             <td><b>#${o.id}</b></td>
+                            <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                             <td>${esc(o.customer)}</td>
                             <td>${esc(o.phone)}</td>
                             <td>${renderOrderLocation(o)}</td>
@@ -5457,6 +5523,7 @@
                 return `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5540,6 +5607,7 @@
                 return `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5861,6 +5929,7 @@
             tbody.innerHTML = list.map(o => `
                 <tr>
                     <td><b>#${o.id}</b></td>
+                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                     <td>${esc(o.customer)}</td>
                     <td>${esc(o.phone)}</td>
                     <td>${esc(o.itemName)}</td>
@@ -5875,16 +5944,37 @@
                 </tr>`).join('');
         }
 
+        function renderAdminOFDTable() {
+            const tbody = document.getElementById('adminOFDTableBody');
+            if (!tbody) return;
+            const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b) => a.id-b.id);
+            if (!list.length) { tbody.innerHTML = emptyRow(9, 'No Out For Delivery orders found.'); return; }
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><b>#${esc(o.id)}</b></td>
+                    <td>${stampCell(o.createdStamp, o.creationDate)}</td>
+                    <td>${stampCell(o.approvedStamp, '-')}</td>
+                    <td>${esc(o.customer)}</td><td>${esc(o.phone)}</td><td>${esc(o.itemName)||'-'}</td><td>${esc(o.qty)}</td><td><b>${money(orderTotal(o))}</b></td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn-warning" onclick="sendOFDBackToApproval(${Number(o.id)})"><i class="fa-solid fa-rotate-left"></i> Send Back to Approval</button>
+                        <button class="btn-success" onclick="markDelivered(${Number(o.id)})"><i class="fa-solid fa-circle-check"></i> Delivered</button>
+                        <button class="btn-danger" onclick="processReturn(${Number(o.id)})"><i class="fa-solid fa-rotate-left"></i> Return</button>
+                        <button class="action-btn" onclick="processCancel(${Number(o.id)})"><i class="fa-solid fa-ban"></i> Cancel</button>
+                    </td>
+                </tr>`).join('');
+        }
+
         /* ADMIN SPECIFIC 4 SECTIONS RENDER FUNCTION */
         function renderAdminSectionTables() {
             // 1. Delivered
             const delBody = document.getElementById('adminDeliveredTableBody');
             const delList = orders.filter(o => o.status === STATUS.DELIVERED);
-            if (!delList.length) { delBody.innerHTML = emptyRow(8, 'No delivered items found.'); }
+            if (!delList.length) { delBody.innerHTML = emptyRow(9, 'No delivered items found.'); }
             else {
                 delBody.innerHTML = delList.map(o => `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5901,11 +5991,12 @@
             // 2. Returns
             const retBody = document.getElementById('adminReturnsTableBody');
             const retList = orders.filter(o => o.status === STATUS.RETURNED);
-            if (!retList.length) { retBody.innerHTML = emptyRow(8, 'No returned items found.'); }
+            if (!retList.length) { retBody.innerHTML = emptyRow(9, 'No returned items found.'); }
             else {
                 retBody.innerHTML = retList.map(o => `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5922,11 +6013,12 @@
             // 3. Cancelled
             const canBody = document.getElementById('adminCancelledTableBody');
             const canList = orders.filter(o => o.status === STATUS.CANCELLED);
-            if (!canList.length) { canBody.innerHTML = emptyRow(8, 'No cancelled items found.'); }
+            if (!canList.length) { canBody.innerHTML = emptyRow(9, 'No cancelled items found.'); }
             else {
                 canBody.innerHTML = canList.map(o => `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.phone)}</td>
                         <td>${esc(o.itemName)}</td>
@@ -5948,6 +6040,7 @@
                 hisBody.innerHTML = hisList.map(o => `
                     <tr>
                         <td><b>#${o.id}</b></td>
+                        <td>${stampCell(o.createdStamp, o.creationDate)}</td>
                         <td>${esc(o.customer)}</td>
                         <td>${esc(o.itemName)}</td>
                         <td>${money(orderTotal(o))}</td>
