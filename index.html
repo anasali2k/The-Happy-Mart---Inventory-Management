@@ -1865,7 +1865,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div class="table-responsive">
                 <table>
                     <thead><tr>
-<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th>
+<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Status</th><th>Actions</th>
 </tr></thead>
                     <tbody id="ofdTableBody"></tbody>
                 </table>
@@ -4236,6 +4236,27 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return address ? `<div style="max-width:280px;white-space:normal;line-height:1.5">${esc(address)}</div>` : '-';
         }
 
+        function ofdOrderDataCells(o) {
+            return `
+                <td><b>#${esc(o.id)}</b></td>
+                <td>${esc(o.productCode || 'VIGA 50000')}</td>
+                <td>${esc(o.customer) || '-'}</td>
+                <td>${esc(o.phone) || '-'}</td>
+                <td style="min-width:240px;white-space:normal;line-height:1.45">${esc(o.address) || '-'}</td>
+                <td>${esc(o.clientOrderId) || '-'}</td>
+                <td>${esc(o.countryCode) || '968'}</td>
+                <td>${esc(o.deliverTo) || 'Oman'}</td>
+                <td><b>${esc(o.itemName) || '-'}</b></td>
+                <td>${esc(o.qty)}</td>
+                <td>${money(o.price)}</td>
+                <td>${money(o.codAmount)}</td>
+                <td><b>${money(orderTotal(o))}</b></td>
+                <td>${stampCell(o.createdStamp, o.creationDate)}</td>
+                <td>${stampCell(o.submittedStamp, '-')}</td>
+                <td>${stampCell(o.approvedStamp, '-')}</td>
+                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td>`;
+        }
+
         function fullOrderDataCells(o, reasonOverride) {
             const reason = reasonOverride || o.returnReason || o.cancelReason || '';
             return `
@@ -5423,8 +5444,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderOFDTable() {
             const tbody = document.getElementById('ofdTableBody');
             const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id);
-            if (!list.length) { tbody.innerHTML = emptyRow(14, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
-            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o)}
+            if (!list.length) { tbody.innerHTML = emptyRow(18, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>${ofdOrderDataCells(o)}
                 <td><div class="ofd-actions">
                     <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                     <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
