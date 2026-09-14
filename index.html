@@ -1915,7 +1915,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="order-direct-search-hint">Order Number ya Customer Number enter karein</div>
                 </div>
                 <div class="order-direct-search-row">
-                    <input type="search" id="directOrderSearchInput" name="orderSearchField" class="order-direct-search-input" autocomplete="new-password" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
+                    <input type="search" id="directOrderSearchInput" class="order-direct-search-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" inputmode="text" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
                     <button type="button" class="order-direct-search-btn" onclick="searchOrderDirectly()"><i class="fa-solid fa-search"></i> Search Order</button>
                     <button type="button" class="order-direct-search-clear" onclick="clearDirectOrderSearch()"><i class="fa-solid fa-xmark"></i> Clear</button>
                 </div>
@@ -6774,6 +6774,34 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     if(o.status==='DRAFT' || o.status==='Draft') return 'Draft';
     return statusText(o);
   }
+  // Keep Search Order completely blank on first load and prevent browser autofill/history from pre-filling it.
+  (function preventSearchAutofill(){
+    const clearOnLoad=()=>{
+      const input=document.getElementById('directOrderSearchInput');
+      if(!input) return;
+      if(!input.dataset.userTyped) input.value='';
+    };
+    document.addEventListener('DOMContentLoaded', clearOnLoad, {once:true});
+    window.addEventListener('pageshow', clearOnLoad);
+    window.addEventListener('load', ()=>{
+      clearOnLoad();
+      setTimeout(clearOnLoad, 50);
+      setTimeout(clearOnLoad, 300);
+      setTimeout(clearOnLoad, 1000);
+    }, {once:true});
+    const bind=()=>{
+      const input=document.getElementById('directOrderSearchInput');
+      if(!input || input.dataset.autofillGuard==='1') return;
+      input.dataset.autofillGuard='1';
+      input.addEventListener('input', ()=>{ input.dataset.userTyped='1'; });
+      input.addEventListener('focus', ()=>{
+        if(!input.dataset.userTyped && input.value) input.value='';
+      });
+    };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+    else bind();
+  })();
+
   window.searchOrderDirectly=async function(){
     const input=document.getElementById('directOrderSearchInput');
     const box=document.getElementById('directOrderSearchResults');
