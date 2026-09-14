@@ -1804,6 +1804,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 .meta-expense-form{position:relative;display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}.meta-expense-field{display:flex;flex-direction:column;gap:6px}.meta-expense-field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#91a4b9;font-weight:1000}.meta-expense-field input{min-height:50px;width:100%;box-sizing:border-box;border-radius:13px;border:1px solid rgba(148,163,184,.18);background:#03101c;color:#fff;padding:12px 14px;font-size:14px;font-weight:900;outline:none}.meta-expense-field input:focus{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.08)}.meta-expense-submit{min-height:50px;border:0;border-radius:13px;padding:0 18px;background:linear-gradient(135deg,#06b6d4,#4f46e5);color:#fff;font-weight:1000;cursor:pointer;transition:.2s;box-shadow:0 10px 25px rgba(30,64,175,.25)}.meta-expense-submit:hover{transform:translateY(-2px);filter:brightness(1.08)}
 .meta-expense-selected{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:11px 13px;border-radius:13px;background:rgba(34,211,238,.045);border:1px solid rgba(34,211,238,.11);font-size:11px}.meta-expense-selected strong{color:#e0fbff}.meta-expense-selected span{color:#8fa6bf}.meta-expense-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.meta-expense-actions button{border:1px solid rgba(148,163,184,.16);background:#102033;color:#dffaff;border-radius:10px;padding:8px 11px;font-weight:900;cursor:pointer}.meta-expense-actions button:hover{filter:brightness(1.1)}
 @media(max-width:760px){.meta-expense-form{grid-template-columns:1fr}.meta-expense-submit{width:100%}}
+/* Official Dalilee Track Order box */
+.dalilee-track-box{position:relative;margin:0 0 14px;padding:16px;border:1px solid rgba(34,211,238,.20);border-radius:18px;background:linear-gradient(135deg,rgba(4,25,42,.98),rgba(19,27,55,.96));box-shadow:0 14px 34px rgba(0,0,0,.18);overflow:hidden}
+.dalilee-track-box:after{content:"";position:absolute;right:-70px;top:-90px;width:210px;height:210px;border-radius:50%;background:rgba(34,211,238,.08);filter:blur(3px);pointer-events:none}
+.dalilee-track-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px;flex-wrap:wrap}
+.dalilee-track-brand{display:flex;align-items:center;gap:11px;min-width:0}.dalilee-track-icon{width:43px;height:43px;display:grid;place-items:center;flex:0 0 43px;border-radius:13px;background:linear-gradient(135deg,#06b6d4,#4f46e5);color:#fff;box-shadow:0 9px 24px rgba(30,64,175,.25)}
+.dalilee-track-title{font-size:14px;font-weight:1000;color:#f8fbff}.dalilee-track-subtitle{font-size:9px;color:#8194aa;margin-top:3px;line-height:1.5}.dalilee-track-link{font-size:9px;font-weight:1000;color:#a5f3fc;padding:7px 10px;border-radius:999px;border:1px solid rgba(34,211,238,.16);background:rgba(34,211,238,.05);white-space:nowrap}.dalilee-track-row{position:relative;z-index:1;display:flex;gap:8px;align-items:stretch}.dalilee-track-input-wrap{flex:1;min-width:0;height:46px;display:flex;align-items:center;gap:9px;border:1px solid rgba(148,163,184,.18);border-radius:12px;background:#03101c;padding:0 13px;transition:.18s}.dalilee-track-input-wrap:focus-within{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.07)}.dalilee-track-input-wrap i{color:#67e8f9;font-size:12px}.dalilee-track-input-wrap input{width:100%;height:100%;border:0!important;outline:0!important;background:transparent!important;color:#fff!important;font-size:12px;font-weight:800;box-shadow:none!important}.dalilee-track-btn{min-width:145px;border:0;border-radius:12px;background:linear-gradient(135deg,#0891b2,#4f46e5);color:#fff;font-weight:1000;cursor:pointer;box-shadow:0 9px 22px rgba(30,64,175,.22);transition:.18s}.dalilee-track-btn:hover{transform:translateY(-1px);filter:brightness(1.08)}.dalilee-track-btn:active{transform:translateY(0) scale(.99)}.dalilee-track-note{position:relative;z-index:1;margin-top:8px;color:#71859b;font-size:8px;line-height:1.5}.dalilee-track-note i{color:#67e8f9;margin-right:4px}@media(max-width:560px){.dalilee-track-row{flex-wrap:wrap}.dalilee-track-input-wrap{flex-basis:100%}.dalilee-track-btn{width:100%;height:43px}.dalilee-track-link{display:none}}
 .order-direct-search{position:relative;margin:0 0 14px;padding:14px;border-radius:17px;border:1px solid rgba(34,211,238,.18);background:linear-gradient(135deg,rgba(7,24,39,.96),rgba(18,25,50,.94));box-shadow:0 12px 30px rgba(0,0,0,.16)}
 .order-direct-search-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.order-direct-search-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:1000}.order-direct-search-title i{color:#67e8f9}.order-direct-search-hint{font-size:9px;color:#8194aa}.order-direct-search-row{display:flex;gap:8px;align-items:stretch}.order-direct-search-input{flex:1;min-width:0;height:46px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:#03101c;color:#fff;padding:0 13px;font-weight:800;outline:none}.order-direct-search-input:focus{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.07)}.order-direct-search-btn{min-width:112px;border:0;border-radius:12px;background:linear-gradient(135deg,#0891b2,#4f46e5);color:#fff;font-weight:1000;cursor:pointer}.order-direct-search-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.order-direct-search-clear{border:1px solid rgba(148,163,184,.16);border-radius:12px;background:#102033;color:#dcecff;padding:0 13px;font-weight:900;cursor:pointer}.order-search-results{display:none;margin-top:10px}.order-search-card{padding:14px;border-radius:15px;border:1px solid rgba(34,211,238,.14);background:rgba(3,16,28,.82)}.order-search-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.order-search-item{padding:9px 10px;border-radius:10px;background:rgba(148,163,184,.055);border:1px solid rgba(148,163,184,.08)}.order-search-item small{display:block;color:#71859b;font-size:8px;text-transform:uppercase;font-weight:1000;margin-bottom:3px}.order-search-item b{font-size:11px;color:#eef8ff;word-break:break-word}.order-search-address{margin-top:8px;padding:10px;border-radius:10px;background:rgba(34,211,238,.04);color:#c5d6e7;font-size:10px;line-height:1.5}.order-search-status{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:9px;font-weight:1000}.order-search-error{padding:12px;border-radius:11px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);color:#fca5a5;font-size:10px;font-weight:800}.order-search-actions{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}.order-search-actions button{border:1px solid rgba(148,163,184,.15);border-radius:9px;background:#112238;color:#dffaff;padding:7px 10px;font-weight:900;cursor:pointer}@media(max-width:900px){.order-search-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.order-direct-search-row{flex-wrap:wrap}.order-direct-search-input{flex-basis:100%}.order-direct-search-btn,.order-direct-search-clear{height:42px}.order-search-grid{grid-template-columns:1fr}}
 
@@ -1819,7 +1825,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 .meta-expense-kicker{font-size:9px;letter-spacing:.14em;font-weight:1000;color:#67e8f9;margin-bottom:4px}.meta-expense-action-title{font-size:17px;font-weight:1000;color:#f8fbff}.meta-expense-action-title i{margin-right:7px;color:#a78bfa}.meta-expense-action-note{font-size:10px;color:#8295aa;margin-top:4px;line-height:1.5}.meta-expense-badge{padding:7px 10px;border-radius:999px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18);color:#86efac;font-size:9px;font-weight:1000;white-space:nowrap}.meta-money-input{display:flex;align-items:center;min-height:50px;border:1px solid rgba(148,163,184,.18);border-radius:13px;background:#03101c;overflow:hidden}.meta-money-input:focus-within{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.08)}.meta-money-input span{padding:0 12px;color:#67e8f9;font-size:10px;font-weight:1000;border-right:1px solid rgba(148,163,184,.12)}.meta-money-input input{border:0!important;box-shadow:none!important;background:transparent!important;min-height:48px!important}.meta-expense-selected{margin-top:14px!important;background:linear-gradient(90deg,rgba(34,211,238,.06),rgba(139,92,246,.05))!important}.meta-expense-selected small{display:block;color:#70859a;font-size:8px;letter-spacing:.1em;font-weight:1000;margin-bottom:3px}.meta-expense-selected strong{display:block;font-size:15px}.meta-selected-day{font-size:10px;font-weight:900;color:#b8c9db!important}.meta-expense-shell>.card{margin:0 24px 24px!important}
 #admin-sub-meta-ads .hk-table-wrap{border-color:rgba(125,211,252,.12);background:rgba(2,10,20,.45)}#admin-sub-meta-ads .hk-table th{background:#0b1829;color:#8ea6bc}#admin-sub-meta-ads .hk-table td{padding:13px 12px}.meta-edit-btn{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(167,139,250,.28);background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(139,92,246,.1));color:#ddd6fe;border-radius:10px;padding:8px 11px;font-size:10px;font-weight:1000;cursor:pointer;transition:.18s}.meta-edit-btn:hover{transform:translateY(-1px);border-color:rgba(167,139,250,.65);background:linear-gradient(135deg,rgba(99,102,241,.28),rgba(139,92,246,.18));box-shadow:0 7px 18px rgba(99,102,241,.16)}
 @media(max-width:760px){#admin-sub-meta-ads .meta-expense-top,#admin-sub-meta-ads .meta-expense-editor{margin-left:12px;margin-right:12px;padding:16px}#admin-sub-meta-ads .meta-expense-top{padding:18px 12px}#admin-sub-meta-ads>.meta-expense-shell>.card{margin-left:12px!important;margin-right:12px!important}.meta-expense-editor-head{flex-direction:column}.meta-expense-badge{align-self:flex-start}}
-</style>
 </style>
 </head>
 <body>
@@ -1897,6 +1902,27 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 1: DAILY ORDERS -->
         <section id="view-orders" class="view-section active">
+            <div class="dalilee-track-box" id="dalileeTrackBox">
+                <div class="dalilee-track-head">
+                    <div class="dalilee-track-brand">
+                        <div class="dalilee-track-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                        <div>
+                            <div class="dalilee-track-title">Track Order</div>
+                            <div class="dalilee-track-subtitle">Enter your Dalilee tracking / order number to track the shipment.</div>
+                        </div>
+                    </div>
+                    <div class="dalilee-track-link"><i class="fa-solid fa-shield-check"></i> Dalilee Tracking</div>
+                </div>
+                <div class="dalilee-track-row">
+                    <div class="dalilee-track-input-wrap">
+                        <i class="fa-solid fa-barcode"></i>
+                        <input type="text" id="dalileeTrackingNumber" placeholder="Enter Order / Tracking Number" autocomplete="off" inputmode="numeric" onkeydown="if(event.key==='Enter'){event.preventDefault();trackOrderDirectly();}">
+                    </div>
+                    <button type="button" class="dalilee-track-btn" onclick="trackOrderDirectly()"><i class="fa-solid fa-location-arrow"></i> Track Order</button>
+                </div>
+                <div class="dalilee-track-note"><i class="fa-solid fa-circle-info"></i> Track Order opens the official Dalilee tracking page with the number ready for tracking.</div>
+            </div>
+
             <div class="order-direct-search">
                 <div class="order-direct-search-head">
                     <div class="order-direct-search-title"><i class="fa-solid fa-magnifying-glass"></i> Direct Order Search</div>
@@ -6723,8 +6749,28 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
   });
 })(); 
 </script>
-
-\n<script id="direct-order-search-engine">
+<script id="dalilee-track-engine">
+(function(){
+  const TRACK_URL='https://dalilee.om/tracking.html';
+  window.trackOrderDirectly=function(){
+    const input=document.getElementById('dalileeTrackingNumber');
+    if(!input)return;
+    const number=String(input.value||'').trim();
+    if(!number){
+      if(typeof showToast_==='function') showToast_('Enter an Order / Tracking Number first.','warn');
+      input.focus();
+      return;
+    }
+    // Open the official Dalilee tracking page and pass the number in the URL.
+    // If Dalilee ignores the query parameter, the number is also copied so it can be pasted instantly.
+    const url=TRACK_URL+'?trackingNumber='+encodeURIComponent(number);
+    const tab=window.open(url,'_blank','noopener,noreferrer');
+    try{navigator.clipboard?.writeText(number);}catch(e){}
+    if(!tab){window.location.href=url;}
+  };
+})();
+</script>
+<script id="direct-order-search-engine">
 (function(){
   function safe(v){
     if(typeof esc==='function') return esc(v);
@@ -6783,7 +6829,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     if(box){box.innerHTML='';box.style.display='none';}
   };
 })();
-</script>\n
+</script>
+
     <!-- Excel Order Import Preview -->
     <div class="excel-import-overlay" id="excelImportOverlay" onclick="if(event.target===this)closeExcelImport()">
         <div class="excel-import-card">
