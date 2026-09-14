@@ -1931,18 +1931,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div id="dalileeTrackingResult" class="live-track-result" style="display:none"></div>
             </div>
 
-            <div class="order-direct-search">
-                <div class="order-direct-search-head">
-                    <div class="order-direct-search-title"><i class="fa-solid fa-magnifying-glass"></i> Direct Order Search</div>
-                    <div class="order-direct-search-hint">Order Number ya Customer Number enter karein</div>
-                </div>
-                <div class="order-direct-search-row">
-                    <input type="search" id="directOrderSearchInput" name="orderSearchField" class="order-direct-search-input" placeholder="Order Number / Customer Number..." autocomplete="new-password" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
-                    <button type="button" class="order-direct-search-btn" onclick="searchOrderDirectly()"><i class="fa-solid fa-search"></i> Search Order</button>
-                    <button type="button" class="order-direct-search-clear" onclick="clearDirectOrderSearch()"><i class="fa-solid fa-xmark"></i> Clear</button>
-                </div>
-                <div id="directOrderSearchResults" class="order-search-results"></div>
-            </div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;" id="orderFormHeading">Create New Order</h3>
                 <form id="orderForm" onsubmit="saveOrder(event)">
@@ -4486,9 +4474,24 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         /* ---------------- Local Storage Engine ---------------- */ 
         function normalizeOrder(o) { 
             const created = o.createdStamp || { date: o.creationDate || '', time: '', day: '', display: o.creationDate || '' }; 
-            let status = o.status; 
-            if (status === 'Pending') status = o.isSubmitted ? STATUS.APPROVAL : STATUS.DRAFT; 
-            if (!Object.values(STATUS).includes(status)) status = STATUS.DRAFT; 
+            let rawStatus = String(o.status ?? '').trim();
+            const statusKey = rawStatus.toLowerCase().replace(/[\s_-]+/g,'');
+            const statusMap = {
+                'draft': STATUS.DRAFT,
+                'pending': STATUS.APPROVAL,
+                'pendingapproval': STATUS.APPROVAL,
+                'approval': STATUS.APPROVAL,
+                'ofd': STATUS.OFD,
+                'outfordelivery': STATUS.OFD,
+                'outfordeliveryorder': STATUS.OFD,
+                'delivered': STATUS.DELIVERED,
+                'returned': STATUS.RETURNED,
+                'return': STATUS.RETURNED,
+                'cancelled': STATUS.CANCELLED,
+                'canceled': STATUS.CANCELLED
+            };
+            let status = statusMap[statusKey] || '';
+            if (!status) status = o.isSubmitted ? STATUS.APPROVAL : STATUS.DRAFT;
             if (status === STATUS.DRAFT && o.isSubmitted && !o.isApproved) status = STATUS.APPROVAL; 
  
             const qty = Math.max(0, Number(o.qty) || 0); 
@@ -6771,14 +6774,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     return String(fallback||'-');
   }
   function currentStatusLabel(o){
-    const m={Draft:'Draft', 'Pending Approval':'Pending Approval', OFD:'Out For Delivery', Delivered:'Delivered', Returned:'Returned', Cancelled:'Cancelled'};
-    return m[o?.status] || String(o?.status||'Unknown');
+    if(!o) return 'Unknown';
+    // Workflow stamps are authoritative fallbacks, so tracking shows the real
+    // latest stage even if an older record has a stale/missing status string.
+    if(o.cancelStamp || o.cancelDate) return 'Cancelled';
+    if(o.returnStamp || o.returnDate) return 'Returned';
+    if(o.deliveredStamp || o.deliveryDate) return 'Delivered';
+    if(o.status === 'OFD' || String(o.status||'').toLowerCase()==='out for delivery') return 'Out For Delivery';
+    if(o.status === 'Pending Approval' || String(o.status||'').toLowerCase()==='approval') return 'Pending Approval';
+    if(o.status === 'Draft') return 'Draft';
+    return String(o.status||'Pending Approval');
   }
   function statusTone(status){
     if(status==='Delivered') return 'delivered';
     if(status==='Returned') return 'returned';
     if(status==='Cancelled') return 'cancelled';
-    if(status==='OFD') return 'active';
+    if(status==='OFD' || status==='Out For Delivery') return 'active';
     if(status==='Pending Approval') return 'pending';
     return 'draft';
   }
@@ -6826,24 +6837,42 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     return null;
   }
   async function findOrderWithCloudRetry(number){
+    // Always give the boot process a chance to finish before declaring an order missing.
+    // If cloud hydration is active, wait for it rather than searching an incomplete array.
+    try{
+      if(typeof cloudHydrating !== 'undefined'){
+        const deadline=Date.now()+10000;
+        while(cloudHydrating && Date.now()<deadline){
+          await new Promise(resolve=>setTimeout(resolve,200));
+        }
+      }
+    }catch(e){}
+
     let found=findOrder(number);
     if(found) return found;
-    // The cloud state can finish hydrating a moment after the page is visible.
-    // Wait briefly and retry so a valid order is never reported as missing
-    // merely because the initial cloud load has not completed yet.
-    for(let i=0;i<12 && !found;i++){
-      await new Promise(resolve=>setTimeout(resolve,250));
-      found=findOrder(number);
-    }
-    if(found) return found;
+
+    // Force one fresh authoritative cloud read. This is important when the page
+    // opened before the newest order/status reached the browser.
     try{
-      if(typeof syncCloudOnBoot==='function' && !cloudHydrating){
-        await syncCloudOnBoot();
-        found=findOrder(number);
+      if(typeof fetchLatestCloudState==='function'){
+        const latest=await fetchLatestCloudState();
+        if(latest && latest.hasPayload){
+          if(typeof applyCloudPayload==='function') applyCloudPayload(latest.payload);
+          found=findOrder(number);
+          if(found) return found;
+        }
       }
     }catch(e){ console.warn('Tracking cloud refresh failed:',e); }
-    return found || null;
+
+    // Final short retry for a concurrent save/sync.
+    for(let i=0;i<20;i++){
+      await new Promise(resolve=>setTimeout(resolve,200));
+      found=findOrder(number);
+      if(found) return found;
+    }
+    return null;
   }
+
   function step(label,stamp,done,active,icon){
     const cls=done?'done':(active?'active':'');
     return '<div class="live-track-step '+cls+'">'+
@@ -6865,16 +6894,16 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     const delivered=!!order.deliveredStamp || status==='Delivered';
     const returned=!!order.returnStamp || status==='Returned';
     const cancelled=!!order.cancelStamp || status==='Cancelled';
-    const approved=!!order.approvedStamp || status==='OFD' || delivered || returned || cancelled;
+    const approved=!!order.approvedStamp || status==='OFD' || status==='Out For Delivery' || delivered || returned || cancelled;
     const submitted=!!order.submittedStamp || approved;
     let steps='';
     steps+=step('Order Created',order.createdStamp||null,true,false,'fa-file-circle-plus');
     steps+=step('Submitted for Approval',order.submittedStamp||null,submitted,status==='Pending Approval'&&!submitted,'fa-paper-plane');
     steps+=step('Approved / Processing',order.approvedStamp||null,approved,status==='Pending Approval'&&!approved,'fa-circle-check');
-    steps+=step('Out For Delivery',status==='OFD'?({display:'Current status'}):null,status==='OFD'||delivered,'fa-truck-fast');
+    steps+=step('Out For Delivery',(status==='OFD'||status==='Out For Delivery')?({display:'Current status'}):null,(status==='OFD'||status==='Out For Delivery')||delivered,'fa-truck-fast');
     if(returned){ steps+=step('Returned',order.returnStamp||null,true,false,'fa-rotate-left'); }
     else if(cancelled){ steps+=step('Cancelled',order.cancelStamp||null,true,false,'fa-ban'); }
-    else { steps+=step('Delivered',order.deliveredStamp||null,delivered,status==='OFD'&&!delivered,'fa-house-circle-check'); }
+    else { steps+=step('Delivered',order.deliveredStamp||null,delivered,(status==='OFD'||status==='Out For Delivery')&&!delivered,'fa-house-circle-check'); }
 
     box.innerHTML='<div class="live-track-result-head">'+
       '<div class="live-track-result-title"><div class="live-track-result-icon"><i class="fa-solid fa-location-dot"></i></div><div><div class="live-track-kicker">LIVE ORDER TRACKING</div><h3>Order #'+safe(order.id)+'</h3><div class="live-track-muted">'+safe(order.clientOrderId||'Internal Order')+'</div></div></div>'+
