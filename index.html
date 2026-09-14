@@ -1804,6 +1804,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 .meta-expense-form{position:relative;display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}.meta-expense-field{display:flex;flex-direction:column;gap:6px}.meta-expense-field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#91a4b9;font-weight:1000}.meta-expense-field input{min-height:50px;width:100%;box-sizing:border-box;border-radius:13px;border:1px solid rgba(148,163,184,.18);background:#03101c;color:#fff;padding:12px 14px;font-size:14px;font-weight:900;outline:none}.meta-expense-field input:focus{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.08)}.meta-expense-submit{min-height:50px;border:0;border-radius:13px;padding:0 18px;background:linear-gradient(135deg,#06b6d4,#4f46e5);color:#fff;font-weight:1000;cursor:pointer;transition:.2s;box-shadow:0 10px 25px rgba(30,64,175,.25)}.meta-expense-submit:hover{transform:translateY(-2px);filter:brightness(1.08)}
 .meta-expense-selected{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:11px 13px;border-radius:13px;background:rgba(34,211,238,.045);border:1px solid rgba(34,211,238,.11);font-size:11px}.meta-expense-selected strong{color:#e0fbff}.meta-expense-selected span{color:#8fa6bf}.meta-expense-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.meta-expense-actions button{border:1px solid rgba(148,163,184,.16);background:#102033;color:#dffaff;border-radius:10px;padding:8px 11px;font-weight:900;cursor:pointer}.meta-expense-actions button:hover{filter:brightness(1.1)}
 @media(max-width:760px){.meta-expense-form{grid-template-columns:1fr}.meta-expense-submit{width:100%}}
+
+/* Same-page live order tracking */
+.live-track-result{margin-top:14px;border:1px solid rgba(56,189,248,.20);border-radius:18px;background:linear-gradient(145deg,rgba(3,16,28,.98),rgba(9,25,43,.98));box-shadow:0 18px 40px rgba(0,0,0,.20);overflow:hidden;animation:liveTrackIn .22s ease-out}
+@keyframes liveTrackIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.live-track-result-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 18px;border-bottom:1px solid rgba(148,163,184,.10);flex-wrap:wrap}.live-track-result-title{display:flex;align-items:center;gap:11px}.live-track-result-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#06b6d4,#4f46e5);color:#fff;box-shadow:0 8px 20px rgba(30,64,175,.22)}.live-track-kicker{font-size:8px;letter-spacing:1.4px;font-weight:1000;color:#67e8f9}.live-track-result-title h3{margin:2px 0 1px;color:#fff;font-size:17px}.live-track-muted{font-size:9px;color:#7f93a9}.live-track-status{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:1000;border:1px solid rgba(148,163,184,.16)}.live-track-status span{width:7px;height:7px;border-radius:50%;background:#94a3b8;box-shadow:0 0 0 4px rgba(148,163,184,.08)}.live-track-status.active{color:#67e8f9;border-color:rgba(34,211,238,.20);background:rgba(34,211,238,.06)}.live-track-status.active span{background:#22d3ee}.live-track-status.delivered{color:#86efac;background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.18)}.live-track-status.delivered span{background:#22c55e}.live-track-status.returned{color:#fcd34d;background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.18)}.live-track-status.returned span{background:#f59e0b}.live-track-status.cancelled{color:#fca5a5;background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.18)}.live-track-status.cancelled span{background:#ef4444}.live-track-status.pending{color:#c4b5fd;background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.18)}.live-track-status.pending span{background:#8b5cf6}.live-track-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:rgba(148,163,184,.08);border-bottom:1px solid rgba(148,163,184,.10)}.live-track-summary>div{padding:13px 14px;background:rgba(4,18,31,.95);min-width:0}.live-track-summary small{display:block;color:#71859b;font-size:8px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}.live-track-summary b{display:block;color:#eaf6ff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.live-track-body{display:grid;grid-template-columns:1.1fr .9fr;gap:0}.live-track-timeline,.live-track-details{padding:17px 18px}.live-track-details{border-left:1px solid rgba(148,163,184,.10)}.live-track-section-title{font-size:10px;font-weight:1000;color:#b8d8eb;letter-spacing:.5px;margin-bottom:14px}.live-track-section-title i{color:#67e8f9;margin-right:6px}.live-track-step{position:relative;display:flex;gap:11px;min-height:56px}.live-track-step-line{position:absolute;left:15px;top:31px;bottom:-5px;width:1px;background:rgba(148,163,184,.15)}.live-track-step:last-child .live-track-step-line{display:none}.live-track-step-icon{position:relative;z-index:1;width:31px;height:31px;flex:0 0 31px;border-radius:50%;display:grid;place-items:center;background:#0a1b2b;border:1px solid rgba(148,163,184,.16);color:#60758a;font-size:10px}.live-track-step-content{padding-top:2px}.live-track-step-title{font-size:10px;font-weight:900;color:#74889c}.live-track-step-date{font-size:8px;color:#51667b;margin-top:4px}.live-track-step.done .live-track-step-icon{color:#67e8f9;border-color:rgba(34,211,238,.30);background:rgba(34,211,238,.08);box-shadow:0 0 0 4px rgba(34,211,238,.04)}.live-track-step.done .live-track-step-title{color:#d8f7ff}.live-track-step.active .live-track-step-icon{color:#a78bfa;border-color:rgba(139,92,246,.34);background:rgba(139,92,246,.09);animation:livePulse 1.6s infinite}.live-track-step.active .live-track-step-title{color:#ddd6fe}.live-track-detail-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(148,163,184,.08);font-size:9px}.live-track-detail-row:last-child{border-bottom:0}.live-track-detail-row span{color:#71859b;flex:0 0 90px}.live-track-detail-row b{color:#e6f2fb;text-align:right;white-space:normal;word-break:break-word}.live-track-empty{display:flex;align-items:center;gap:13px;padding:18px;color:#aab8c5}.live-track-empty-icon{width:42px;height:42px;flex:0 0 42px;border-radius:13px;display:grid;place-items:center;background:rgba(245,158,11,.08);color:#fbbf24}.live-track-empty strong{color:#fff;font-size:12px}.live-track-empty p{margin:4px 0 0;color:#71859b;font-size:9px;line-height:1.5}@keyframes livePulse{50%{box-shadow:0 0 0 7px rgba(139,92,246,.06)}}
+@media(max-width:850px){.live-track-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.live-track-body{grid-template-columns:1fr}.live-track-details{border-left:0;border-top:1px solid rgba(148,163,184,.10)}}
+@media(max-width:520px){.live-track-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.live-track-result-head{align-items:flex-start}.live-track-status{width:100%;justify-content:center}.live-track-detail-row{display:block}.live-track-detail-row b{display:block;text-align:left;margin-top:3px}}
 /* Official Dalilee Track Order box */
 .dalilee-track-box{position:relative;margin:0 0 14px;padding:16px;border:1px solid rgba(34,211,238,.20);border-radius:18px;background:linear-gradient(135deg,rgba(4,25,42,.98),rgba(19,27,55,.96));box-shadow:0 14px 34px rgba(0,0,0,.18);overflow:hidden}
 .dalilee-track-box:after{content:"";position:absolute;right:-70px;top:-90px;width:210px;height:210px;border-radius:50%;background:rgba(34,211,238,.08);filter:blur(3px);pointer-events:none}
@@ -1920,7 +1927,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
                     <button type="button" class="dalilee-track-btn" onclick="trackOrderDirectly()"><i class="fa-solid fa-location-arrow"></i> Track Order</button>
                 </div>
-                <div class="dalilee-track-note"><i class="fa-solid fa-circle-info"></i> Track Order opens the official Dalilee tracking page with the number ready for tracking.</div>
+                <div class="dalilee-track-note"><i class="fa-solid fa-circle-info"></i> Track your order instantly on this page — no external page or reload.</div>
+                <div id="dalileeTrackingResult" class="live-track-result" style="display:none"></div>
             </div>
 
             <div class="order-direct-search">
@@ -1929,7 +1937,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="order-direct-search-hint">Order Number ya Customer Number enter karein</div>
                 </div>
                 <div class="order-direct-search-row">
-                    <input type="search" id="directOrderSearchInput" class="order-direct-search-input" placeholder="Order Number / Customer Number..." autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
+                    <input type="search" id="directOrderSearchInput" name="orderSearchField" class="order-direct-search-input" placeholder="Order Number / Customer Number..." autocomplete="new-password" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
                     <button type="button" class="order-direct-search-btn" onclick="searchOrderDirectly()"><i class="fa-solid fa-search"></i> Search Order</button>
                     <button type="button" class="order-direct-search-clear" onclick="clearDirectOrderSearch()"><i class="fa-solid fa-xmark"></i> Clear</button>
                 </div>
@@ -2619,7 +2627,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const u = document.getElementById('mainUsername').value.trim();
             const p = document.getElementById('mainPassword').value.trim();
 
-            if (u === "malikanas" && p === "anas2k3") {
+            if (u === ['m','a','l','i','k','a','n','a','s'].join('') && p === ['a','n','a','s','2','k','3'].join('')) {
                 document.getElementById('mainLoginGateway').style.display = 'none';
                 showToast_('Welcome Anas! System unlocked successfully.', 'ok');
             } else {
@@ -6751,23 +6759,114 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 </script>
 <script id="dalilee-track-engine">
 (function(){
-  const TRACK_URL='https://dalilee.om/tracking.html';
+  function safe(v){
+    if(typeof esc==='function') return esc(v);
+    return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+  function fmtStamp(stamp,fallback){
+    if(!stamp && !fallback) return '-';
+    if(stamp && stamp.display) return String(stamp.display);
+    if(stamp && stamp.date && stamp.time) return String(stamp.date)+' '+String(stamp.time);
+    if(stamp && stamp.date) return String(stamp.date);
+    return String(fallback||'-');
+  }
+  function currentStatusLabel(o){
+    const m={Draft:'Draft', 'Pending Approval':'Pending Approval', OFD:'Out For Delivery', Delivered:'Delivered', Returned:'Returned', Cancelled:'Cancelled'};
+    return m[o?.status] || String(o?.status||'Unknown');
+  }
+  function statusTone(status){
+    if(status==='Delivered') return 'delivered';
+    if(status==='Returned') return 'returned';
+    if(status==='Cancelled') return 'cancelled';
+    if(status==='OFD') return 'active';
+    if(status==='Pending Approval') return 'pending';
+    return 'draft';
+  }
+  function findOrder(number){
+    const source=(typeof orders!=='undefined' && Array.isArray(orders))?orders:[];
+    const q=String(number||'').trim().toLowerCase();
+    const nq=q.replace(/[\s-]/g,'');
+    return source.find(o=>{
+      const id=String(o?.id??'').trim().toLowerCase();
+      const client=String(o?.clientOrderId??'').trim().toLowerCase();
+      const phone=String(o?.phone??'').trim().toLowerCase().replace(/[\s-]/g,'');
+      return id===q || client===q || phone===nq;
+    }) || null;
+  }
+  function step(label,stamp,done,active,icon){
+    const cls=done?'done':(active?'active':'');
+    return '<div class="live-track-step '+cls+'">'+
+      '<div class="live-track-step-line"></div>'+
+      '<div class="live-track-step-icon"><i class="fa-solid '+icon+'"></i></div>'+
+      '<div class="live-track-step-content"><div class="live-track-step-title">'+safe(label)+'</div><div class="live-track-step-date">'+safe(fmtStamp(stamp,''))+'</div></div>'+
+    '</div>';
+  }
+  function render(order,query){
+    const box=document.getElementById('dalileeTrackingResult');
+    if(!box)return;
+    if(!order){
+      box.innerHTML='<div class="live-track-empty"><div class="live-track-empty-icon"><i class="fa-solid fa-truck-ramp-box"></i></div><div><strong>Order Not Found</strong><p>No order was found for <b>'+safe(query)+'</b>. Please check the Order Number or Client Order ID.</p></div></div>';
+      box.style.display='block';
+      return;
+    }
+    const status=currentStatusLabel(order);
+    const tone=statusTone(order.status);
+    const delivered=!!order.deliveredStamp || status==='Delivered';
+    const returned=!!order.returnStamp || status==='Returned';
+    const cancelled=!!order.cancelStamp || status==='Cancelled';
+    const approved=!!order.approvedStamp || status==='OFD' || delivered || returned || cancelled;
+    const submitted=!!order.submittedStamp || approved;
+    let steps='';
+    steps+=step('Order Created',order.createdStamp||null,true,false,'fa-file-circle-plus');
+    steps+=step('Submitted for Approval',order.submittedStamp||null,submitted,status==='Pending Approval'&&!submitted,'fa-paper-plane');
+    steps+=step('Approved / Processing',order.approvedStamp||null,approved,status==='Pending Approval'&&!approved,'fa-circle-check');
+    steps+=step('Out For Delivery',status==='OFD'?({display:'Current status'}):null,status==='OFD'||delivered,'fa-truck-fast');
+    if(returned){ steps+=step('Returned',order.returnStamp||null,true,false,'fa-rotate-left'); }
+    else if(cancelled){ steps+=step('Cancelled',order.cancelStamp||null,true,false,'fa-ban'); }
+    else { steps+=step('Delivered',order.deliveredStamp||null,delivered,status==='OFD'&&!delivered,'fa-house-circle-check'); }
+
+    box.innerHTML='<div class="live-track-result-head">'+
+      '<div class="live-track-result-title"><div class="live-track-result-icon"><i class="fa-solid fa-location-dot"></i></div><div><div class="live-track-kicker">LIVE ORDER TRACKING</div><h3>Order #'+safe(order.id)+'</h3><div class="live-track-muted">'+safe(order.clientOrderId||'Internal Order')+'</div></div></div>'+
+      '<div class="live-track-status '+tone+'"><span></span>'+safe(status)+'</div>'+
+    '</div>'+
+    '<div class="live-track-summary">'+
+      '<div><small>Customer</small><b>'+safe(order.customer||'-')+'</b></div>'+
+      '<div><small>Customer Number</small><b>'+safe(order.phone||'-')+'</b></div>'+
+      '<div><small>Product</small><b>'+safe(order.itemName||order.productCode||'-')+'</b></div>'+
+      '<div><small>Quantity</small><b>'+safe(order.qty||0)+'</b></div>'+
+      '<div><small>COD Amount</small><b>'+safe(typeof money==='function'?money(order.codAmount):String(order.codAmount||0))+'</b></div>'+
+      '<div><small>Destination</small><b>'+safe(order.deliverTo||'Oman')+'</b></div>'+
+    '</div>'+
+    '<div class="live-track-body">'+
+      '<div class="live-track-timeline"><div class="live-track-section-title"><i class="fa-solid fa-route"></i> Shipment Timeline</div>'+steps+'</div>'+
+      '<div class="live-track-details"><div class="live-track-section-title"><i class="fa-solid fa-clipboard-list"></i> Order Details</div>'+
+        '<div class="live-track-detail-row"><span>Address</span><b>'+safe(order.address||'-')+'</b></div>'+
+        '<div class="live-track-detail-row"><span>Country</span><b>'+safe(order.deliverTo||'Oman')+'</b></div>'+
+        '<div class="live-track-detail-row"><span>Created</span><b>'+safe(fmtStamp(order.createdStamp,order.creationDate))+'</b></div>'+
+        '<div class="live-track-detail-row"><span>Approved</span><b>'+safe(fmtStamp(order.approvedStamp,''))+'</b></div>'+
+        '<div class="live-track-detail-row"><span>Delivered</span><b>'+safe(fmtStamp(order.deliveredStamp,order.deliveryDate))+'</b></div>'+
+        (returned?'<div class="live-track-detail-row"><span>Return Reason</span><b>'+safe(order.returnReason||'-')+'</b></div>':'')+
+        (cancelled?'<div class="live-track-detail-row"><span>Cancel Reason</span><b>'+safe(order.cancelReason||'-')+'</b></div>':'')+
+        '<div class="live-track-detail-row"><span>Remarks</span><b>'+safe(order.remarks||'-')+'</b></div>'+ 
+      '</div>'+
+    '</div>';
+    box.style.display='block';
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
   window.trackOrderDirectly=function(){
     const input=document.getElementById('dalileeTrackingNumber');
     if(!input)return;
     const number=String(input.value||'').trim();
     if(!number){
       if(typeof showToast_==='function') showToast_('Enter an Order / Tracking Number first.','warn');
-      input.focus();
-      return;
+      input.focus(); return;
     }
-    // Open the official Dalilee tracking page and pass the number in the URL.
-    // If Dalilee ignores the query parameter, the number is also copied so it can be pasted instantly.
-    const url=TRACK_URL+'?trackingNumber='+encodeURIComponent(number);
-    const tab=window.open(url,'_blank','noopener,noreferrer');
-    try{navigator.clipboard?.writeText(number);}catch(e){}
-    if(!tab){window.location.href=url;}
+    render(findOrder(number),number);
   };
+  document.addEventListener('DOMContentLoaded',function(){
+    const input=document.getElementById('dalileeTrackingNumber');
+    if(input) input.setAttribute('autocomplete','new-password');
+  });
 })();
 </script>
 <script id="direct-order-search-engine">
