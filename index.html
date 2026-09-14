@@ -1781,6 +1781,19 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 @media(max-width:760px){.hk-overlay{padding:7px}.hk-shell{border-radius:18px;min-height:calc(100vh - 14px)}.hk-body{padding:11px}.hk-head{padding:13px}.hk-form-grid,.hk-result-grid{grid-template-columns:1fr}.hk-field.full{grid-column:auto}.hk-stats{grid-template-columns:1fr 1fr}.hk-day-total-box{grid-template-columns:1fr 1fr}.hk-brand-title{font-size:17px}.hk-brand-sub{font-size:9px}.hk-head-actions{width:100%}.hk-head-actions .hk-btn{flex:1}.hk-card{padding:14px}.hk-hero h1{font-size:22px}.hk-actions-row .hk-btn{min-width:120px}}
 @media(max-width:480px){.hk-stats{grid-template-columns:1fr}.hk-day-total-box{grid-template-columns:1fr 1fr}.hk-search{flex-direction:column}.hk-search button{width:100%}}
 </style>
+
+<style id="meta-ads-expense-admin-theme">
+        /* ===== META ADS EXPENSE — ADMIN PANEL ===== */
+        #admin-sub-meta-ads .hk-form-grid{margin-bottom:16px}
+        #admin-sub-meta-ads .hk-table-wrap{overflow:auto;border:1px solid rgba(148,163,184,.14);border-radius:14px}
+        #admin-sub-meta-ads .hk-table{min-width:720px}
+        #admin-sub-meta-ads .hk-table th{position:sticky;top:0;z-index:1}
+        #admin-sub-meta-ads .hk-table td{vertical-align:middle}
+        #admin-sub-meta-ads .hk-card-title{font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px}
+        #admin-sub-meta-ads .hk-card-sub{font-size:12px;color:var(--text-muted);line-height:1.6;margin:6px 0 16px}
+        #admin-sub-meta-ads .hk-date-banner{margin:12px 0;padding:12px 14px;border:1px solid rgba(56,189,248,.18);border-radius:12px;background:rgba(56,189,248,.035);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+        @media(max-width:760px){#admin-sub-meta-ads .hk-table{min-width:650px}}
+</style>
 </head>
 <body>
 
@@ -2214,6 +2227,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <button class="admin-tab-btn" id="tab-btn-can" onclick="switchAdminSubTab('cancelled')"><i class="fa-solid fa-ban"></i> Cancelled Control</button>
                 <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
                 <button class="admin-tab-btn" id="tab-btn-emp" onclick="switchAdminSubTab('employees')"><i class="fa-solid fa-users"></i> Employee Management</button>
+                <button class="admin-tab-btn" id="tab-btn-meta-ads" onclick="switchAdminSubTab('metaAds'); hkInit()"><i class="fa-solid fa-bullhorn"></i> Meta Ads Expense</button>
             </div>
 
             <!-- SUB TAB 0: ORDER APPROVALS -->
@@ -2375,6 +2389,76 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
                 </div>
                 <div id="adminEmployeePortal"></div>
+            </div>
+
+            <!-- SUB TAB: META ADS EXPENSE -->
+            <div id="admin-sub-meta-ads" style="display:none;">
+                <div class="card admin-wide-card">
+                    <div class="section-heading"><i class="fa-solid fa-bullhorn"></i> Meta Ads Expense</div>
+                    <p class="hint-text" style="margin-bottom:14px;">
+                        Select the required date, enter the Meta Ads amount, and press Submit. Previous dates and saved amounts remain available.
+                    </p>
+
+                    <div class="card" style="margin:0 0 20px 0;background:rgba(7,17,31,.55);">
+                        <div class="hk-card-title"><i class="fa-solid fa-calendar-days"></i> Add / Update Meta Ads Amount</div>
+                        <div class="hk-card-sub">You can enter today's amount or update any previous date. Existing saved dates are not deleted.</div>
+
+                        <div class="hk-form-grid">
+                            <div class="hk-field">
+                                <label>Expense Date</label>
+                                <input id="hkDate" type="date" min="2000-01-01" max="3000-12-31" onchange="hkSelectDate(this.value)">
+                            </div>
+                            <div class="hk-field">
+                                <label>Meta Ads Amount (OMR)</label>
+                                <input id="hkAdsAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 15.00">
+                            </div>
+                        </div>
+
+                        <div class="hk-date-banner">
+                            <strong><i class="fa-solid fa-calendar-check"></i> Selected: <span id="hkSelectedDateLabel">—</span></strong>
+                            <span id="hkSelectedDayLabel">—</span>
+                        </div>
+
+                        <div class="hk-actions-row">
+                            <button type="button" class="hk-btn primary large" onclick="hkSaveDay()">
+                                <i class="fa-solid fa-floppy-disk"></i> Submit Meta Ads
+                            </button>
+                            <button type="button" class="hk-btn neutral" onclick="hkSetToday()">
+                                <i class="fa-solid fa-calendar-day"></i> Today
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hk-stats" style="margin-bottom:20px;">
+                        <div class="hk-stat">
+                            <div class="hk-stat-label">Selected Month Meta Ads</div>
+                            <div class="hk-stat-value cyan" id="hkMonthAds">OMR 0.00</div>
+                        </div>
+                        <div class="hk-stat">
+                            <div class="hk-stat-label">Saved Expense Days</div>
+                            <div class="hk-stat-value purple" id="hkSavedDays">0</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin:0;background:rgba(7,17,31,.55);">
+                        <div class="hk-card-title"><i class="fa-solid fa-table-list"></i> Saved Meta Ads Expenses</div>
+                        <div class="hk-card-sub">All saved dates are retained. Selecting a date above loads its existing amount for editing.</div>
+                        <div class="hk-table-wrap">
+                            <table class="hk-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Day</th>
+                                        <th>Meta Ads Amount</th>
+                                        <th>Last Updated</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hkAdsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </section>
@@ -5052,7 +5136,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 returns: ['admin-sub-returns', 'tab-btn-ret'], 
                 cancelled: ['admin-sub-cancelled', 'tab-btn-can'], 
                 history: ['admin-sub-history', 'tab-btn-his'], 
-                employees: ['admin-sub-employees', 'tab-btn-emp'] 
+                employees: ['admin-sub-employees', 'tab-btn-emp'],
+                metaAds: ['admin-sub-meta-ads', 'tab-btn-meta-ads'] 
             }; 
             Object.keys(map).forEach(k => { 
                 const item = map[k]; 
@@ -6358,111 +6443,244 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             showToast_('Excel file downloaded.', 'ok'); 
         } 
      
-/* ============================================================ 
-   HISSAB KITTAB ENGINE — professional daily ledger 
-   ============================================================ */ 
-(function(){ 
-  const HK_KEY='happyMart_hissab_kittab_v1'; 
-  const HK_PASS='anas2k3'; 
-  let hkDB={days:{},orders:[]}; 
-  let hkEditId=null; 
-  const pad=n=>String(n).padStart(2,'0'); 
-  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); 
-  const money=v=>'OMR '+Number(v||0).toFixed(2); 
-  function nowParts(){const d=new Date();const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Muscat',year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).formatToParts(d);const g=k=>p.find(x=>x.type===k)?.value||'';return{date:`${g('year')}-${g('month')}-${g('day')}`,day:g('weekday'),time:`${g('hour')}:${g('minute')}:${g('second')} ${g('dayPeriod')}`};} 
-  function stampForDate(date){const n=nowParts();let day='';try{day=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Muscat',weekday:'long'}).format(new Date(date+'T12:00:00'));}catch(e){day=n.day}return{date,day,time:n.time,display:`${date} (${day}) ${n.time}`,iso:new Date().toISOString()};} 
-  function today(){return nowParts().date;} 
-  function validDate(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return today();const y=Number(v.slice(0,4));return y>=2000&&y<=3000?v:today();} 
-  function load(){try{const raw=JSON.parse(localStorage.getItem(HK_KEY)||'{}');hkDB={days:raw.days&&typeof raw.days==='object'?raw.days:{},orders:Array.isArray(raw.orders)?raw.orders:[]};}catch(e){hkDB={days:{},orders:[]};}} 
-  function save(){try{localStorage.setItem(HK_KEY,JSON.stringify(hkDB));}catch(e){alert('Browser storage is full. Please export your Hissab first.');}} 
-  function dayRec(date){if(!hkDB.days[date])hkDB.days[date]={date,ads:0,updatedAt:null};return hkDB.days[date];} 
-  function monthStats(key){const ord=hkDB.orders.filter(o=>String(o.entry?.date||'').startsWith(key));let ads=0,del=0,ret=0,cancel=0;Object.keys(hkDB.days).forEach(d=>{if(d.startsWith(key))ads+=Number(hkDB.days[d].ads||0)});ord.forEach(o=>{if(o.status==='Delivered')del+=Number(o.amount||0);if(o.status==='Return')ret++;if(o.status==='Cancel')cancel++;});return{ads,orders:ord.length,delivered:del,returns:ret,cancels:cancel,net:del-ads};} 
-  function selectedDate(){return validDate(document.getElementById('hkDate')?.value||today());} 
-  function setDate(date){date=validDate(date);const d=document.getElementById('hkDate');if(d)d.value=date;const y=document.getElementById('hkYear'),m=document.getElementById('hkMonth');if(y)y.value=date.slice(0,4);if(m)m.value=date.slice(5,7);loadDayForm();render();} 
-  function populate(){const y=document.getElementById('hkYear'),m=document.getElementById('hkMonth');if(!y||!m)return;const cy=Number(today().slice(0,4)),cm=Number(today().slice(5,7));y.innerHTML='';for(let i=2000;i<=3000;i++){const o=document.createElement('option');o.value=i;o.textContent=i;if(i===cy)o.selected=true;y.appendChild(o)}const names=['January','February','March','April','May','June','July','August','September','October','November','December'];m.innerHTML=names.map((n,i)=>`<option value="${pad(i+1)}" ${i+1===cm?'selected':''}>${n}</option>`).join('');document.getElementById('hkDate').value=today();} 
-  function loadDayForm(){const date=selectedDate(),r=dayRec(date);document.getElementById('hkDate').value=date;document.getElementById('hkAdsAmount').value=Number(r.ads||0).toFixed(2);const n=hkDB.orders.filter(o=>o.entry?.date===date);document.getElementById('hkSelectedDateLabel').textContent=date;document.getElementById('hkSelectedDayLabel').textContent=n.length?`${n.length} order${n.length===1?'':'s'} entered`:'No orders yet';} 
-  function dayOrders(date){return hkDB.orders.filter(o=>o.entry?.date===date).sort((a,b)=>String(a.entry?.iso||'').localeCompare(String(b.entry?.iso||'')));} 
-  window.hkSetToday=function(){setDate(today());}; 
-  window.hkSaveDay=function(){const date=selectedDate(),ads=Number(document.getElementById('hkAdsAmount').value||0);if(!Number.isFinite(ads)||ads<0)return alert('Enter a valid Meta Ads amount.');const r=dayRec(date);r.ads=Number(ads.toFixed(2));r.updatedAt=nowParts();save();loadDayForm();render();toast(`Meta Ads saved for ${date}`);}; 
-  window.hkAddOrder=function(){const date=selectedDate(),tracking=String(document.getElementById('hkTrackingNumber').value||'').trim();if(!tracking)return alert('Tracking Number is required.');const dup=hkDB.orders.find(o=>String(o.trackingNumber||'').toLowerCase()===tracking.toLowerCase());if(dup)return alert('This Tracking Number already exists. Use Edit instead.');const st=stampForDate(date);hkDB.orders.push({id:'HK-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),trackingNumber:tracking,entry:st,status:'Pending',amount:0,deliveredStamp:null,returnStamp:null,cancelStamp:null,history:[{status:'Pending',stamp:st,amount:0}]});save();document.getElementById('hkTrackingNumber').value='';loadDayForm();render();toast(`Order added to ${date}`);}; 
-  function statusClass(s){return s==='Delivered'?'delivered':s==='Return'?'return':s==='Cancel'?'cancel':'pending';} 
-  function statusIcon(s){return s==='Delivered'?'fa-check':s==='Return'?'fa-rotate-left':s==='Cancel'?'fa-ban':'fa-clock';} 
-  function buttons(o){return `<div class="hk-actions"><button class="hk-btn success" onclick="hkSetStatus('${o.id}','Delivered')"><i class="fa-solid fa-check"></i></button><button class="hk-btn danger" onclick="hkSetStatus('${o.id}','Return')"><i class="fa-solid fa-rotate-left"></i></button><button class="hk-btn neutral" onclick="hkSetStatus('${o.id}','Cancel')"><i class="fa-solid fa-ban"></i></button><button class="hk-btn primary" onclick="hkEditOrder('${o.id}')"><i class="fa-solid fa-pen"></i> Edit</button></div>`;} 
-  window.hkSetStatus=function(id,status){const o=hkDB.orders.find(x=>x.id===id);if(!o)return;if(status==='Delivered'){const raw=prompt(`Delivered Amount (OMR):`,Number(o.amount||0).toFixed(2));if(raw===null)return;const amount=Number(raw);if(!Number.isFinite(amount)||amount<0)return alert('Invalid delivered amount.');o.amount=Number(amount.toFixed(2));}else if(status!=='Delivered'&&o.status==='Delivered'&&status!=='Delivered'){if(!confirm('This will remove this order from Delivered revenue total. Continue?'))return;o.amount=0;}const st=stampForDate(o.entry.date);o.status=status;o.deliveredStamp=status==='Delivered'?st:null;o.returnStamp=status==='Return'?st:null;o.cancelStamp=status==='Cancel'?st:null;o.history=Array.isArray(o.history)?o.history:[];o.history.push({status,stamp:st,amount:Number(o.amount||0)});save();render();toast(`Order status updated → ${status}`);}; 
-  window.hkEditOrder=function(id){const o=hkDB.orders.find(x=>x.id===id);if(!o)return;hkEditId=id;document.getElementById('hkEditTracking').value=o.trackingNumber||'';document.getElementById('hkEditDate').value=o.entry.date;document.getElementById('hkEditStatus').value=o.status;document.getElementById('hkEditAmount').value=Number(o.amount||0).toFixed(2);document.getElementById('hkEditModal').classList.add('open');}; 
-  window.hkCloseEdit=function(){hkEditId=null;document.getElementById('hkEditModal').classList.remove('open');}; 
-  window.hkSaveEdit=function(){const o=hkDB.orders.find(x=>x.id===hkEditId);if(!o)return;const tracking=String(document.getElementById('hkEditTracking').value||'').trim(),date=validDate(document.getElementById('hkEditDate').value),status=document.getElementById('hkEditStatus').value,amount=Number(document.getElementById('hkEditAmount').value||0);if(!tracking||!Number.isFinite(amount)||amount<0)return alert('Please enter valid data.');const dup=hkDB.orders.find(x=>x.id!==o.id&&String(x.trackingNumber||'').toLowerCase()===tracking.toLowerCase());if(dup)return alert('Another record already uses this Tracking Number.');const oldStatus=o.status,oldDate=o.entry.date;o.trackingNumber=tracking;o.amount=Number(amount.toFixed(2));if(oldDate!==date)o.entry={...o.entry,...stampForDate(date),iso:o.entry.iso};if(oldStatus!==status){const st=stampForDate(date);o.status=status;o.deliveredStamp=status==='Delivered'?st:null;o.returnStamp=status==='Return'?st:null;o.cancelStamp=status==='Cancel'?st:null;o.history=Array.isArray(o.history)?o.history:[];o.history.push({status,stamp:st,amount:o.amount});}if(status!=='Delivered')o.amount=Number(status==='Pending'||status==='Return'||status==='Cancel'?0:o.amount);save();hkCloseEdit();setDate(date);toast('Record edited and saved successfully.');}; 
-  function renderDayOrders(){const box=document.getElementById('hkDayOrders'),date=selectedDate(),list=dayOrders(date),day=dayRec(date),del=list.filter(o=>o.status==='Delivered').reduce((n,o)=>n+Number(o.amount||0),0),pending=list.filter(o=>o.status==='Pending').length,ret=list.filter(o=>o.status==='Return').length,cancel=list.filter(o=>o.status==='Cancel').length;document.getElementById('hkDayAdsMini').textContent=money(day.ads);document.getElementById('hkDayDeliveredMini').textContent=money(del);document.getElementById('hkDayPendingMini').textContent=pending;document.getElementById('hkDayReturnMini').textContent=ret;document.getElementById('hkDayCancelMini').textContent=cancel;if(!list.length){box.innerHTML='<div class="hk-empty"><i class="fa-regular fa-calendar-plus"></i><br><b>No orders on this date</b><br>Select any date above, enter Tracking Number, then press Add Order.</div>';return;}box.innerHTML=`<div class="hk-table-wrap"><table class="hk-table"><thead><tr><th>Tracking</th><th>Entry</th><th>Status</th><th>Amount</th><th>Actions</th></tr></thead><tbody>${list.map(o=>`<tr><td><b>${esc(o.trackingNumber)}</b></td><td>${esc(o.entry.time)}<br><span class="hk-mini">${esc(o.entry.day)}</span></td><td><span class="hk-status ${statusClass(o.status)}"><i class="fa-solid ${statusIcon(o.status)}"></i>${esc(o.status)}</span></td><td>${o.status==='Delivered'?money(o.amount):'—'}</td><td>${buttons(o)}</td></tr>`).join('')}</tbody></table></div>`;} 
-  function render(){const y=document.getElementById('hkYear').value,m=document.getElementById('hkMonth').value,key=`${y}-${m}`,st=monthStats(key);document.getElementById('hkMonthAds').textContent=money(st.ads);document.getElementById('hkMonthOrders').textContent=st.orders;document.getElementById('hkMonthDelivered').textContent=money(st.delivered);document.getElementById('hkMonthNet').textContent=money(st.net);document.getElementById('hkMonthReturns').textContent=st.returns+st.cancels;document.getElementById('hkSelectedDateLabel').textContent=selectedDate();document.getElementById('hkSelectedDayLabel').textContent=dayOrders(selectedDate()).length+' orders';renderDayOrders();const days=new Date(Number(y),Number(m),0).getDate();let html='';for(let d=1;d<=days;d++){const date=`${y}-${m}-${pad(d)}`,r=dayRec(date),list=dayOrders(date),del=list.filter(o=>o.status==='Delivered').reduce((n,o)=>n+Number(o.amount||0),0),is=selectedDate()===date;html+=`<div class="hk-day ${is?'selected':''}"><div class="hk-day-head"><div><div class="hk-day-title">${esc(date)}</div><div class="hk-day-meta">${new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'))}</div></div><div style="text-align:right"><div class="hk-day-total">${money(del)}</div><div class="hk-day-meta">Delivered</div></div></div><div class="hk-day-body"><div class="hk-day-row"><span>Meta Ads</span><b style="color:#67e8f9">${money(r.ads)}</b></div><div class="hk-day-row"><span>Orders</span><b>${list.length}</b></div><div class="hk-day-row"><span>Pending / Return / Cancel</span><b>${list.filter(o=>o.status==='Pending').length} / ${list.filter(o=>o.status==='Return').length} / ${list.filter(o=>o.status==='Cancel').length}</b></div><div class="hk-day-row"><span>Net After Ads</span><b style="color:#fcd34d">${money(del-Number(r.ads||0))}</b></div><div style="margin-top:9px;display:flex;justify-content:flex-end"><button class="hk-btn ${is?'success':'primary'}" onclick="hkSelectDate('${date}')"><i class="fa-solid fa-${is?'check':'arrow-right'}"></i> ${is?'Selected':'Open Day'}</button></div></div></div>`;}document.getElementById('hkDaysList').innerHTML=html;} 
-  window.hkSelectDate=function(date){setDate(date);}; 
-  window.hkOpenSearch=function(){document.getElementById('hkSearchModal').classList.add('open');document.getElementById('hkSearchResults').innerHTML='<div class="hk-empty">Search by Tracking Number.</div>';setTimeout(()=>document.getElementById('hkSearchInput').focus(),50)}; 
-  window.hkCloseSearch=function(){document.getElementById('hkSearchModal').classList.remove('open');}; 
-  window.hkSearch=function(){const q=String(document.getElementById('hkSearchInput').value||'').trim().toLowerCase(),box=document.getElementById('hkSearchResults');if(!q){box.innerHTML='<div class="hk-empty">Enter a Tracking Number.</div>';return}const list=hkDB.orders.filter(o=>String(o.trackingNumber||'').toLowerCase().includes(q));if(!list.length){box.innerHTML='<div class="hk-empty">No matching order found.</div>';return}box.innerHTML=list.map(o=>{const ss=o.status==='Delivered'?o.deliveredStamp:o.status==='Return'?o.returnStamp:o.status==='Cancel'?o.cancelStamp:null;return `<div class="hk-result-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><b>Tracking ${esc(o.trackingNumber)}</b><span class="hk-status ${statusClass(o.status)}"><i class="fa-solid ${statusIcon(o.status)}"></i>${esc(o.status)}</span></div><div class="hk-result-grid" style="margin-top:10px"><div class="hk-result-item"><span>Tracking</span><b>${esc(o.trackingNumber)}</b></div><div class="hk-result-item"><span>Entry Date</span><b>${esc(o.entry.date)}</b></div><div class="hk-result-item"><span>Entry Day / Time</span><b>${esc(o.entry.day)} · ${esc(o.entry.time)}</b></div><div class="hk-result-item"><span>Delivered Amount</span><b>${o.status==='Delivered'?money(o.amount):'—'}</b></div><div class="hk-result-item"><span>Status Date / Time</span><b>${ss?esc(ss.display):'Not set'}</b></div><div class="hk-result-item"><span>Current Day</span><b>${esc(o.entry.date)}</b></div></div><div style="margin-top:10px;display:flex;justify-content:flex-end"><button class="hk-btn primary" onclick="hkCloseSearch();hkEditOrder('${o.id}')"><i class="fa-solid fa-pen"></i> Edit Record</button></div></div>`}).join('');}; 
-  window.hkExport=function(){const rows=hkDB.orders.map(o=>({'Tracking Number':o.trackingNumber,'Entry Date':o.entry.date,'Entry Day':o.entry.day,'Entry Time':o.entry.time,'Status':o.status,'Delivered Amount (OMR)':o.status==='Delivered'?o.amount:0,'Delivered Date':o.deliveredStamp?.date||'','Delivered Time':o.deliveredStamp?.time||'','Return Date':o.returnStamp?.date||'','Cancel Date':o.cancelStamp?.date||''}));const days=Object.values(hkDB.days).map(r=>({'Date':r.date,'Meta Ads (OMR)':Number(r.ads||0),'Updated':r.updatedAt?.display||''}));if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(days.length?days:[{'Date':'No records'}]),'Daily Meta Ads');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.length?rows:[{'Tracking Number':'No records'}]),'Hissab Orders');XLSX.writeFile(wb,`Hissab_Kittab_${today()}.xlsx`)}else{const csv=[Object.keys(rows[0]||{'Tracking Number':''}).join(','),...rows.map(r=>Object.values(r).map(v=>'"'+String(v).replaceAll('"','""')+'"').join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`Hissab_Kittab_${today()}.csv`;a.click();}toast('Hissab export ready.');}; 
-  function toast(msg){if(typeof showToast_==='function'){showToast_(msg,'ok');return}const x=document.createElement('div');x.textContent=msg;x.style='position:fixed;right:20px;bottom:20px;z-index:999999;padding:12px 16px;border-radius:12px;background:#0f766e;color:white;font-weight:800;box-shadow:0 12px 30px #0008';document.body.appendChild(x);setTimeout(()=>x.remove(),2200)} 
-  window.openHissabLock=function(){document.getElementById('hkPortalPassword').value='';document.getElementById('hkLockError').style.display='none';document.getElementById('hkLockModal').classList.add('open');setTimeout(()=>document.getElementById('hkPortalPassword').focus(),50)}; 
-  window.closeHissabLock=function(){document.getElementById('hkLockModal').classList.remove('open')}; 
-  window.unlockHissab=function(){if(document.getElementById('hkPortalPassword').value!==HK_PASS){document.getElementById('hkLockError').style.display='block';document.getElementById('hkPortalPassword').select();return}closeHissabLock();load();populate();loadDayForm();render();document.getElementById('hkPortal').classList.add('open');document.getElementById('hkPortal').setAttribute('aria-hidden','false')}; 
-  window.closeHissabPortal=function(){document.getElementById('hkPortal').classList.remove('open');document.getElementById('hkPortal').setAttribute('aria-hidden','true');}; 
-  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('hkLockModal')?.classList.contains('open'))unlockHissab();if(e.key==='Escape'){if(document.getElementById('hkEditModal')?.classList.contains('open'))hkCloseEdit();else if(document.getElementById('hkSearchModal')?.classList.contains('open'))hkCloseSearch();else if(document.getElementById('hkLockModal')?.classList.contains('open'))closeHissabLock();}}); 
-  document.addEventListener('DOMContentLoaded',()=>{const host=document.querySelector('#mainLoginGateway .btn-employee-login');if(host&&!document.getElementById('hkLaunchBtn')){const b=document.createElement('button');b.id='hkLaunchBtn';b.type='button';b.className='hk-launch-btn';b.innerHTML='<i class="fa-solid fa-calculator"></i> &nbsp; Hissab Kittab';b.onclick=openHissabLock;host.insertAdjacentElement('afterend',b)} }); 
+/* ============================================================
+   META ADS EXPENSE ENGINE
+   Admin Panel only — daily Meta Ads amounts
+   ============================================================ */
+(function(){
+  const HK_KEY='happyMart_hissab_kittab_v1';
+  let hkDB={days:{},orders:[]};
+
+  const pad=n=>String(n).padStart(2,'0');
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const money=v=>'OMR '+Number(v||0).toFixed(2);
+
+  function nowParts(){
+    const d=new Date();
+    const p=new Intl.DateTimeFormat('en-CA',{
+      timeZone:'Asia/Muscat',year:'numeric',month:'2-digit',day:'2-digit',
+      weekday:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true
+    }).formatToParts(d);
+    const g=k=>p.find(x=>x.type===k)?.value||'';
+    return {
+      date:`${g('year')}-${g('month')}-${g('day')}`,
+      day:g('weekday'),
+      time:`${g('hour')}:${g('minute')}:${g('second')} ${g('dayPeriod')}`
+    };
+  }
+
+  function today(){return nowParts().date;}
+
+  function validDate(v){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(v||'')) return today();
+    const y=Number(v.slice(0,4));
+    return y>=2000&&y<=3000?v:today();
+  }
+
+  function load(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(HK_KEY)||'{}');
+      hkDB={
+        days:raw.days&&typeof raw.days==='object'?raw.days:{},
+        orders:[]
+      };
+      /*
+       * The old order ledger is intentionally removed.
+       * Meta Ads day records are preserved exactly from the existing database.
+       * Save the migrated shape once so the old order records are actually cleared.
+       */
+      if(Array.isArray(raw.orders)&&raw.orders.length){
+        localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
+      }
+    }catch(e){
+      hkDB={days:{},orders:[]};
+    }
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
+    }catch(e){
+      alert('Browser storage is full. Please export your Meta Ads expenses first.');
+    }
+  }
+
+  function dayRec(date){
+    if(!hkDB.days[date]||typeof hkDB.days[date]!=='object'){
+      hkDB.days[date]={date,ads:0,updatedAt:null};
+    }
+    return hkDB.days[date];
+  }
+
+  function selectedDate(){
+    return validDate(document.getElementById('hkDate')?.value||today());
+  }
+
+  function loadDayForm(){
+    const date=selectedDate();
+    const r=dayRec(date);
+    const d=document.getElementById('hkDate');
+    const amount=document.getElementById('hkAdsAmount');
+    const label=document.getElementById('hkSelectedDateLabel');
+    const dayLabel=document.getElementById('hkSelectedDayLabel');
+
+    if(d)d.value=date;
+    if(amount)amount.value=Number(r.ads||0).toFixed(2);
+    if(label)label.textContent=date;
+    if(dayLabel){
+      const dayName=new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'));
+      dayLabel.textContent=`${dayName} · ${Number(r.ads||0).toFixed(2)} OMR`;
+    }
+  }
+
+  function monthKey(){
+    const date=selectedDate();
+    return date.slice(0,7);
+  }
+
+  function render(){
+    const key=monthKey();
+    let total=0;
+    let count=0;
+
+    Object.keys(hkDB.days).forEach(date=>{
+      if(!date.startsWith(key))return;
+      const amount=Number(hkDB.days[date]?.ads||0);
+      if(Number.isFinite(amount)){
+        total+=amount;
+        if(hkDB.days[date]?.updatedAt||amount>0)count++;
+      }
+    });
+
+    const monthAds=document.getElementById('hkMonthAds');
+    const savedDays=document.getElementById('hkSavedDays');
+    if(monthAds)monthAds.textContent=money(total);
+    if(savedDays)savedDays.textContent=String(count);
+
+    const tbody=document.getElementById('hkAdsTableBody');
+    if(!tbody)return;
+
+    const rows=Object.values(hkDB.days)
+      .filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.date||''))&&String(r.date).startsWith(key))
+      .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+
+    if(!rows.length){
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No Meta Ads expense saved for this month.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML=rows.map(r=>{
+      const date=String(r.date);
+      const dayName=new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'));
+      const updated=r.updatedAt?.display||'—';
+      return `<tr>
+        <td><b>${esc(date)}</b></td>
+        <td>${esc(dayName)}</td>
+        <td><b style="color:#67e8f9">${money(r.ads)}</b></td>
+        <td>${esc(updated)}</td>
+        <td><button type="button" class="hk-btn primary" onclick="hkSelectDate('${date}')"><i class="fa-solid fa-pen"></i> Edit</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  window.hkInit=function(){
+    load();
+    const d=document.getElementById('hkDate');
+    if(d&&!d.value)d.value=today();
+    loadDayForm();
+    render();
+  };
+
+  window.hkSetToday=function(){
+    setDate(today());
+  };
+
+  window.hkSelectDate=function(date){
+    setDate(date);
+  };
+
+  function setDate(date){
+    date=validDate(date);
+    const d=document.getElementById('hkDate');
+    if(d)d.value=date;
+    loadDayForm();
+    render();
+  }
+
+  window.hkSaveDay=function(){
+    const date=selectedDate();
+    const input=document.getElementById('hkAdsAmount');
+    const raw=String(input?.value??'').trim();
+
+    if(raw===''){
+      alert('Enter a Meta Ads amount.');
+      input?.focus();
+      return;
+    }
+
+    const ads=Number(raw);
+    if(!Number.isFinite(ads)||ads<0){
+      alert('Enter a valid Meta Ads amount.');
+      input?.focus();
+      return;
+    }
+
+    const r=dayRec(date);
+    r.ads=Number(ads.toFixed(2));
+    r.updatedAt=nowParts();
+
+    save();
+    loadDayForm();
+    render();
+
+    if(typeof showToast_==='function'){
+      showToast_(`Meta Ads saved for ${date}`,'ok');
+    }
+  };
+
+  window.hkExport=function(){
+    load();
+
+    const rows=Object.values(hkDB.days)
+      .filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.date||'')))
+      .sort((a,b)=>String(a.date).localeCompare(String(b.date)))
+      .map(r=>({
+        'Date':r.date,
+        'Day':new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(r.date+'T12:00:00')),
+        'Meta Ads (OMR)':Number(r.ads||0),
+        'Last Updated':r.updatedAt?.display||''
+      }));
+
+    if(window.XLSX){
+      const wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(
+        wb,
+        XLSX.utils.json_to_sheet(rows.length?rows:[{'Date':'No records'}]),
+        'Meta Ads Expense'
+      );
+      XLSX.writeFile(wb,`Meta_Ads_Expense_${today()}.xlsx`);
+    }else{
+      const data=rows.length?rows:[{'Date':'No records'}];
+      const csv=[Object.keys(data[0]).join(','),...data.map(r=>Object.values(r).map(v=>`"${String(v).replaceAll('"','""')}"`).join(','))].join('\n');
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download=`Meta_Ads_Expense_${today()}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    if(typeof showToast_==='function')showToast_('Meta Ads expense export ready.','ok');
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    /*
+     * Safety migration:
+     * remove only the old Hissab order ledger, never the saved Meta Ads day records.
+     */
+    load();
+  });
 })(); 
-</script> 
- 
-<!-- HISSAB KITTAB PORTAL --> 
-<div id="hkLockModal" class="hk-modal"> 
-  <div class="hk-modal-card hk-lock-card"> 
-    <div class="hk-lock-icon"><i class="fa-solid fa-calculator"></i></div> 
-    <h2 style="font-size:25px;margin-bottom:5px;">Hissab Kittab</h2> 
-    <p class="hk-mini" style="margin-bottom:18px;">Secure Daily Accounts & Order Ledger</p> 
-    <div id="hkLockError" class="hk-error">Incorrect password. Please try again.</div> 
-    <div class="hk-field" style="text-align:left"><label>Portal Password</label><input id="hkPortalPassword" type="password" placeholder="Enter password" autocomplete="off"></div> 
-    <div class="hk-actions-row"><button class="hk-btn neutral" onclick="closeHissabLock()">Cancel</button><button class="hk-btn primary" onclick="unlockHissab()"><i class="fa-solid fa-lock-open"></i> Unlock</button></div> 
-  </div> 
-</div> 
-<div id="hkPortal" class="hk-overlay" aria-hidden="true"> 
-  <div class="hk-shell"> 
-    <header class="hk-head"> 
-      <div class="hk-brand"><div class="hk-brand-icon"><i class="fa-solid fa-chart-pie"></i></div><div><div class="hk-brand-title">HISSAB KITTAB</div><div class="hk-brand-sub">Meta Ads • Daily Orders • Delivered Revenue • Complete Monthly Accounts</div></div></div> 
-      <div class="hk-head-actions"><button class="hk-btn primary" onclick="hkOpenSearch()"><i class="fa-solid fa-magnifying-glass"></i> Search</button><button class="hk-btn" onclick="hkExport()"><i class="fa-solid fa-file-excel"></i> Export</button><button class="hk-btn neutral" onclick="closeHissabPortal()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Exit</button></div> 
-    </header> 
-    <main class="hk-body"> 
-      <section class="hk-hero"><div class="hk-hero-row"><div><h1>Daily Hissab Dashboard</h1><p>Har din ka Meta Ads expense aur orders ek hi screen par manage karein. Purani date select karke bhi directly entry submit aur edit ho sakti hai.</p></div><div class="hk-live"><span class="hk-live-dot"></span> Oman Time Auto Sync</div></div></section> 
-      <div class="hk-stats"><div class="hk-stat"><div class="hk-stat-label">Month Meta Ads</div><div class="hk-stat-value cyan" id="hkMonthAds">OMR 0.00</div></div><div class="hk-stat"><div class="hk-stat-label">Total Orders</div><div class="hk-stat-value purple" id="hkMonthOrders">0</div></div><div class="hk-stat"><div class="hk-stat-label">Delivered Revenue</div><div class="hk-stat-value green" id="hkMonthDelivered">OMR 0.00</div></div><div class="hk-stat"><div class="hk-stat-label">Net After Ads</div><div class="hk-stat-value yellow" id="hkMonthNet">OMR 0.00</div></div><div class="hk-stat"><div class="hk-stat-label">Return + Cancel</div><div class="hk-stat-value red" id="hkMonthReturns">0</div></div></div> 
-      <div class="hk-main-grid"> 
-        <section class="hk-card"> 
-          <div class="hk-card-title"><i class="fa-solid fa-calendar-days"></i> 1. Select Date & Daily Meta Ads</div> 
-          <div class="hk-card-sub">Aaj ya kisi bhi previous date ko select karein — 2000 se 3000 tak supported.</div> 
-          <div class="hk-form-grid"><div class="hk-field"><label>Accounting Date</label><input id="hkDate" type="date" min="2000-01-01" max="3000-12-31" onchange="hkSelectDate(this.value)"></div><div class="hk-field"><label>Meta Ads Investment (OMR)</label><input id="hkAdsAmount" type="number" min="0" step="0.01" placeholder="e.g. 15.00"></div></div> 
-          <div class="hk-date-banner"><strong><i class="fa-solid fa-calendar-check"></i> Selected: <span id="hkSelectedDateLabel">—</span></strong><span id="hkSelectedDayLabel">—</span></div> 
-          <div class="hk-actions-row"><button class="hk-btn primary large" onclick="hkSaveDay()"><i class="fa-solid fa-floppy-disk"></i> Save Meta Ads</button><button class="hk-btn neutral" onclick="hkSetToday()"><i class="fa-solid fa-calendar-day"></i> Today</button></div> 
-          <div class="hk-section-divider"></div> 
-          <div class="hk-card-title"><i class="fa-solid fa-cart-plus"></i> 2. Add Orders One by One</div> 
-          <div class="hk-card-sub">Sirf Tracking Number enter karein. Date selected day mein save hogi aur time automatically record hoga.</div> 
-          <div class="hk-form-grid"><div class="hk-field"><label>Tracking Number</label><input id="hkTrackingNumber" type="text" placeholder="Enter Tracking Number" autocomplete="off"></div></div> 
-          <div class="hk-actions-row"><button class="hk-btn success large" onclick="hkAddOrder()"><i class="fa-solid fa-plus"></i> Add Order</button></div> 
-          <div class="hk-note" style="margin-top:10px;margin-bottom:0"><b>Important:</b> Agar 5 September ka order add karna ho to sirf upar <b>5 September</b> select karein, phir Tracking Number add karein. Current date automatically force nahi hogi.</div> 
-          <div class="hk-section-divider"></div> 
-          <div class="hk-card-title"><i class="fa-solid fa-list-check"></i> Selected Date Orders</div> 
-          <div class="hk-order-counter"><div><span>Selected Date</span><b id="hkSelectedDateLabel2">—</b></div><div style="text-align:right"><span>Orders</span><b id="hkSelectedDayLabel2">0</b></div></div> 
-          <div class="hk-day-total-box"><div class="hk-mini-stat"><span>Meta Ads</span><b id="hkDayAdsMini" style="color:#67e8f9">OMR 0.00</b></div><div class="hk-mini-stat"><span>Delivered</span><b id="hkDayDeliveredMini" style="color:#6ee7b7">OMR 0.00</b></div><div class="hk-mini-stat"><span>Pending</span><b id="hkDayPendingMini">0</b></div><div class="hk-mini-stat"><span>Return / Cancel</span><b><span id="hkDayReturnMini">0</span> / <span id="hkDayCancelMini">0</span></b></div></div> 
-          <div id="hkDayOrders"></div> 
-        </section> 
-        <section class="hk-card"> 
-          <div class="hk-card-title"><i class="fa-solid fa-chart-column"></i> 3. Full Month Accounting</div> 
-          <div class="hk-card-sub">Har din ka Meta Ads, orders, delivered amount aur net automatically calculate hota rahega.</div> 
-          <div class="hk-filter-panel"><div class="hk-field"><label>Year</label><select id="hkYear" onchange="hkSelectDate(this.value+'-'+document.getElementById('hkMonth').value+'-01')"></select></div><div class="hk-field"><label>Month</label><select id="hkMonth" onchange="hkSelectDate(document.getElementById('hkYear').value+'-'+this.value+'-01')"></select></div><button class="hk-btn primary" onclick="hkSelectDate(document.getElementById('hkYear').value+'-'+document.getElementById('hkMonth').value+'-01')"><i class="fa-solid fa-filter"></i> Apply</button></div> 
-          <div class="hk-calendar-head"><strong id="hkCalendarTitle">Daily Records</strong><span>Leap years + real month days supported</span></div> 
-          <div id="hkDaysList" class="hk-day-list"></div> 
-        </section> 
-      </div> 
-    </main> 
-  </div> 
-</div> 
-<div id="hkEditModal" class="hk-modal"><div class="hk-modal-card"><div class="hk-modal-head"><h3><i class="fa-solid fa-pen-to-square"></i> Edit Hissab Order</h3><button class="hk-icon-btn" onclick="hkCloseEdit()"><i class="fa-solid fa-xmark"></i></button></div><div class="hk-form-grid"><div class="hk-field"><label>Tracking Number</label><input id="hkEditTracking" type="text"></div><div class="hk-field"><label>Accounting Date</label><input id="hkEditDate" type="date" min="2000-01-01" max="3000-12-31"></div><div class="hk-field"><label>Status</label><select id="hkEditStatus"><option>Pending</option><option>Delivered</option><option>Return</option><option>Cancel</option></select></div><div class="hk-field"><label>Delivered Amount (OMR)</label><input id="hkEditAmount" type="number" min="0" step="0.01"></div></div><div class="hk-note" style="margin-top:12px;margin-bottom:0">Edit karne se record delete nahi hota. Order ki original entry history aur status history retained rahegi.</div><div class="hk-actions-row" style="justify-content:flex-end"><button class="hk-btn neutral" onclick="hkCloseEdit()">Cancel</button><button class="hk-btn primary" onclick="hkSaveEdit()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></div></div></div> 
-<div id="hkSearchModal" class="hk-modal"><div class="hk-modal-card" style="width:min(900px,96vw)"><div class="hk-modal-head"><h3><i class="fa-solid fa-magnifying-glass"></i> Tracking Search</h3><button class="hk-icon-btn" onclick="hkCloseSearch()"><i class="fa-solid fa-xmark"></i></button></div><div class="hk-search"><input id="hkSearchInput" type="search" placeholder="Search Tracking Number..." onkeydown="if(event.key==='Enter')hkSearch()"><button class="hk-btn primary" onclick="hkSearch()"><i class="fa-solid fa-search"></i> Search</button></div><div id="hkSearchResults" class="hk-search-result"></div></div></div> 
-<script>/* HK label sync */ 
-(function(){const old=window.hkSelectDate;setTimeout(()=>{const a=document.getElementById('hkSelectedDateLabel'),b=document.getElementById('hkSelectedDateLabel2'),c=document.getElementById('hkSelectedDayLabel'),d=document.getElementById('hkSelectedDayLabel2');const sync=()=>{if(a&&b)b.textContent=a.textContent;if(c&&d)d.textContent=c.textContent};const mo=new MutationObserver(sync);[a,c].forEach(x=>x&&mo.observe(x,{childList:true,characterData:true,subtree:true}));sync();},100);})();</script> 
+</script>
 
     <!-- Excel Order Import Preview -->
     <div class="excel-import-overlay" id="excelImportOverlay" onclick="if(event.target===this)closeExcelImport()">
