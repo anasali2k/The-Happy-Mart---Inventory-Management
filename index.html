@@ -6782,16 +6782,67 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     if(status==='Pending Approval') return 'pending';
     return 'draft';
   }
+  function normalizeLookup(v){
+    return String(v ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\u200b-\u200d\ufeff]/g,'')
+      .replace(/[\s\-\u2010-\u2015_\/\\]/g,'');
+  }
+  function lookupVariants(v){
+    const raw=String(v ?? '').trim();
+    const n=normalizeLookup(raw);
+    const digits=n.replace(/[^0-9]/g,'');
+    return Array.from(new Set([n,digits,raw.toLowerCase()]));
+  }
   function findOrder(number){
     const source=(typeof orders!=='undefined' && Array.isArray(orders))?orders:[];
-    const q=String(number||'').trim().toLowerCase();
-    const nq=q.replace(/[\s-]/g,'');
-    return source.find(o=>{
-      const id=String(o?.id??'').trim().toLowerCase();
-      const client=String(o?.clientOrderId??'').trim().toLowerCase();
-      const phone=String(o?.phone??'').trim().toLowerCase().replace(/[\s-]/g,'');
-      return id===q || client===q || phone===nq;
-    }) || null;
+    const variants=lookupVariants(number);
+    if(!variants.some(Boolean)) return null;
+    const fields=[
+      'id','orderId','orderNumber','orderNo','orderID','clientOrderId','clientId',
+      'trackingNumber','trackingId','trackingNo','trackingID','dalileeTrackingNumber',
+      'awb','awbNumber','waybill','waybillNumber','shipmentId','shipmentNumber',
+      'phone','customerNumber'
+    ];
+    const matches=(value)=>{
+      const n=normalizeLookup(value);
+      if(!n) return false;
+      const d=n.replace(/[^0-9]/g,'');
+      return variants.includes(n) || (d && variants.includes(d));
+    };
+    // First pass: exact matches only, with Order/Tracking identifiers preferred.
+    for(const o of source){
+      for(const field of fields){
+        if(matches(o?.[field])) return o;
+      }
+    }
+    // Second pass: tolerate numeric formatting differences in any order property.
+    for(const o of source){
+      for(const value of Object.values(o || {})){
+        if(matches(value)) return o;
+      }
+    }
+    return null;
+  }
+  async function findOrderWithCloudRetry(number){
+    let found=findOrder(number);
+    if(found) return found;
+    // The cloud state can finish hydrating a moment after the page is visible.
+    // Wait briefly and retry so a valid order is never reported as missing
+    // merely because the initial cloud load has not completed yet.
+    for(let i=0;i<12 && !found;i++){
+      await new Promise(resolve=>setTimeout(resolve,250));
+      found=findOrder(number);
+    }
+    if(found) return found;
+    try{
+      if(typeof syncCloudOnBoot==='function' && !cloudHydrating){
+        await syncCloudOnBoot();
+        found=findOrder(number);
+      }
+    }catch(e){ console.warn('Tracking cloud refresh failed:',e); }
+    return found || null;
   }
   function step(label,stamp,done,active,icon){
     const cls=done?'done':(active?'active':'');
@@ -6853,15 +6904,21 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     box.style.display='block';
     box.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
-  window.trackOrderDirectly=function(){
+  window.trackOrderDirectly=async function(){
     const input=document.getElementById('dalileeTrackingNumber');
+    const box=document.getElementById('dalileeTrackingResult');
     if(!input)return;
     const number=String(input.value||'').trim();
     if(!number){
       if(typeof showToast_==='function') showToast_('Enter an Order / Tracking Number first.','warn');
       input.focus(); return;
     }
-    render(findOrder(number),number);
+    if(box){
+      box.style.display='block';
+      box.innerHTML='<div class="live-track-empty"><div class="live-track-empty-icon"><i class="fa-solid fa-spinner fa-spin"></i></div><div><strong>Finding Order…</strong><p>Checking the latest order data. Please wait.</p></div></div>';
+    }
+    const order=await findOrderWithCloudRetry(number);
+    render(order,number);
   };
   document.addEventListener('DOMContentLoaded',function(){
     const input=document.getElementById('dalileeTrackingNumber');
