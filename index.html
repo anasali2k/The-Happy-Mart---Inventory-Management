@@ -4112,7 +4112,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return false;
         }
 
-        function submitEmployeeLogin(e){
+        async function submitEmployeeLogin(e){
             if(e && typeof e.preventDefault==='function') e.preventDefault();
             clearEmployeeAuthMessages();
 
@@ -4124,6 +4124,25 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!phone||!password){
                 setEmployeeAuthMessage('employeeLoginMessage','Please enter your phone number and password.','warn');
                 return false;
+            }
+
+            /* Always make sure credentials are checked against the
+               authoritative Supabase-backed state. This fixes fresh-device
+               login when the modal opens before cloud hydration completes. */
+            if(!cloudReady || cloudHydrating || !Array.isArray(employees) || !employees.length){
+                try{
+                    const latest=await fetchLatestCloudState();
+                    if(latest.hasPayload){
+                        cloudLastUpdated=latest.updatedAt||cloudLastUpdated;
+                        cloudReady=true;
+                        applyCloudPayload(latest.payload);
+                        renderEmployeeManagement();
+                    }
+                }catch(error){
+                    console.error('Employee login cloud load failed:',error);
+                    setEmployeeAuthMessage('employeeLoginMessage','Unable to load your account from the server right now. Please check your internet connection and try again.','err');
+                    return false;
+                }
             }
             if(!/^03\d{9}$/.test(phone)){
                 setEmployeeAuthMessage('employeeLoginMessage','Enter the same registered Pakistani phone number used for your employee account.','warn');
@@ -4735,18 +4754,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             await syncCloudOnBoot(); 
             renderAllTables(); 
             renderEmployeeManagement(); 
-        }); 
- 
-        /* 
-         * Defensive auth wiring: keeps Employee Sign In functional even if 
-         * the inline form event is interrupted. 
-         */ 
-        document.addEventListener('click', function(ev) { 
-            const loginBtn = ev.target.closest('#employeeLoginSubmitBtn'); 
-            if (loginBtn) { 
-                ev.preventDefault(); 
-                submitEmployeeLogin(ev); 
-            } 
         }); 
  
         window.addEventListener('pagehide', function() { 
