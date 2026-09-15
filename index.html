@@ -1915,7 +1915,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="order-direct-search-hint">Order Number ya Customer Number enter karein</div>
                 </div>
                 <div class="order-direct-search-row">
-                    <input type="search" id="directOrderSearchInput" name="order_search_query_unique_7f2" class="order-direct-search-input" value="" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" inputmode="text" readonly aria-label="Search Order" onfocus="this.removeAttribute('readonly')" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
+                    <input type="search" id="directOrderSearchInput" class="order-direct-search-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" inputmode="text" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
                     <button type="button" class="order-direct-search-btn" onclick="searchOrderDirectly()"><i class="fa-solid fa-search"></i> Search Order</button>
                     <button type="button" class="order-direct-search-clear" onclick="clearDirectOrderSearch()"><i class="fa-solid fa-xmark"></i> Clear</button>
                 </div>
@@ -2599,25 +2599,32 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         const ADMIN_PASSCODE = "1379";
         const DB_KEY = 'urbanhub_db_v2';
 
-        /* Persistent application data is cloud-only: /api/state -> Supabase.
-           Browser storage is intentionally not used for application data. */
-        let localStateRevision = 0;
-        let pendingCloudSave = false;
-        let metaAds = { days: {}, orders: [] };
+        /* MAIN GATEWAY LOGIN HANDLER */
+        function handleMainLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('mainUsername').value.trim();
+            const p = document.getElementById('mainPassword').value.trim();
 
+            if (u === ['m','a','l','i','k','a','n','a','s'].join('') && p === ['a','n','a','s','2','k','3'].join('')) {
+                document.getElementById('mainLoginGateway').style.display = 'none';
+                showToast_('Welcome Anas! System unlocked successfully.', 'ok');
+            } else {
+                alert('Invalid Credentials! Access Denied.');
+                document.getElementById('mainPassword').value = '';
+            }
+        }
+
+
+        /* ===== SYSTEM SETTINGS: single source of truth ===== */
+        const SYSTEM_SETTINGS_KEY = 'happy_mart_system_settings_v1';
         const SYSTEM_SETTINGS_DEFAULTS = Object.freeze({ currency: 'OMR', country: 'Oman', countryCode: '968', timeZone: 'Asia/Muscat' });
-        let systemSettings = {...SYSTEM_SETTINGS_DEFAULTS};
-        function saveSystemSettings(){
-            meta = {...(meta || {}), systemSettings: {...systemSettings}};
-            saveData('system-settings');
-        }
+        let systemSettings = (() => {
+            try { return {...SYSTEM_SETTINGS_DEFAULTS, ...(JSON.parse(localStorage.getItem(SYSTEM_SETTINGS_KEY)) || {})}; }
+            catch(e) { return {...SYSTEM_SETTINGS_DEFAULTS}; }
+        })();
+        function saveSystemSettings(){ try{localStorage.setItem(SYSTEM_SETTINGS_KEY,JSON.stringify(systemSettings));}catch(e){} }
         function getCurrency(){ return systemSettings.currency || SYSTEM_SETTINGS_DEFAULTS.currency; }
-        function updateSystemSettings(patch){
-            systemSettings={...systemSettings,...(patch||{})};
-            saveSystemSettings();
-            updateClock();
-            renderAllTables();
-        }
+        function updateSystemSettings(patch){ systemSettings={...systemSettings,...(patch||{})}; saveSystemSettings(); updateClock(); renderAllTables(); }
         const STATUS = {
             DRAFT: 'Draft',
             APPROVAL: 'Pending Approval',
@@ -2673,6 +2680,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         /* ---------------- Employee Management Engine ---------------- */
         let employees = [];
+        const EMPLOYEE_DB_KEY = 'urbanhub_employees_v1';
         let adminSelectedEmployeeId = null;
 
         function employeeMonthRecord(emp, monthKey) {
@@ -3917,12 +3925,16 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
 
         function loadEmployees() {
-            if (!Array.isArray(employees)) employees=[];
+            try {
+                const raw=JSON.parse(localStorage.getItem(EMPLOYEE_DB_KEY));
+                employees=Array.isArray(raw)?raw.map(normalizeEmployee):[];
+            } catch(e) { employees=[]; }
         }
         function saveEmployees() {
-            localStateRevision += 1;
-            pendingCloudSave = true;
-            if (!cloudHydrating) pushCloudState('employees');
+            try { localStorage.setItem(EMPLOYEE_DB_KEY,JSON.stringify(employees)); }
+            catch(e) { showToast_('Employee storage issue encountered.','err'); }
+            persistLocalBackup();
+            pushCloudState('employees');
         }
 
         function saveEmployee(e) {
@@ -4112,7 +4124,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return false;
         }
 
-        async function submitEmployeeLogin(e){
+        function submitEmployeeLogin(e){
             if(e && typeof e.preventDefault==='function') e.preventDefault();
             clearEmployeeAuthMessages();
 
@@ -4124,25 +4136,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!phone||!password){
                 setEmployeeAuthMessage('employeeLoginMessage','Please enter your phone number and password.','warn');
                 return false;
-            }
-
-            /* Always make sure credentials are checked against the
-               authoritative Supabase-backed state. This fixes fresh-device
-               login when the modal opens before cloud hydration completes. */
-            if(!cloudReady || cloudHydrating || !Array.isArray(employees) || !employees.length){
-                try{
-                    const latest=await fetchLatestCloudState();
-                    if(latest.hasPayload){
-                        cloudLastUpdated=latest.updatedAt||cloudLastUpdated;
-                        cloudReady=true;
-                        applyCloudPayload(latest.payload);
-                        renderEmployeeManagement();
-                    }
-                }catch(error){
-                    console.error('Employee login cloud load failed:',error);
-                    setEmployeeAuthMessage('employeeLoginMessage','Unable to load your account from the server right now. Please check your internet connection and try again.','err');
-                    return false;
-                }
             }
             if(!/^03\d{9}$/.test(phone)){
                 setEmployeeAuthMessage('employeeLoginMessage','Enter the same registered Pakistani phone number used for your employee account.','warn');
@@ -4528,134 +4521,409 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }; 
         } 
  
-        function loadLocalData() {
-            inventory = JSON.parse(JSON.stringify(defaultInventory));
-            orders = defaultOrders.map(normalizeOrder);
-            returns = [];
-            meta = { lastUpdated: null, device: '', systemSettings: {...SYSTEM_SETTINGS_DEFAULTS} };
-            systemSettings = {...SYSTEM_SETTINGS_DEFAULTS};
-            employees = [];
-            metaAds = { days: {}, orders: [] };
-        }
-
-        function buildPayload() {
-            return { inventory, orders, returns, meta, employees, metaAds };
-        }
-
-        /* ================= CLOUD PERSISTENCE LAYER =================
-           Authoritative storage: /api/state -> Supabase.
-           No application data is stored in localStorage or IndexedDB.
-           Writes are serialized and conflict-aware.
-        */
-        let cloudReady=false;
-        let cloudHydrating=false;
-        let cloudLastUpdated=null;
-        let cloudWriteChain=Promise.resolve();
-        let cloudRetryTimer=null;
-        let cloudSaveVersion=0;
-        let cloudSaveError=null;
-
-        function normalizeCloudPayload(raw){
-            if(!raw||typeof raw!=='object')return null;
-            return {
-                inventory:Array.isArray(raw.inventory)?raw.inventory.map(i=>({id:Number(i.id),name:i.name||'',price:Number(i.price)||0,stock:Number(i.stock)||0})):[],
-                orders:Array.isArray(raw.orders)?raw.orders.map(normalizeOrder):[],
-                returns:Array.isArray(raw.returns)?raw.returns:[],
-                meta:raw.meta&&typeof raw.meta==='object'?raw.meta:{lastUpdated:null,device:''},
-                employees:Array.isArray(raw.employees)?raw.employees.map(normalizeEmployee):[],
-                metaAds:raw.metaAds&&typeof raw.metaAds==='object'?{days:raw.metaAds.days&&typeof raw.metaAds.days==='object'?raw.metaAds.days:{},orders:Array.isArray(raw.metaAds.orders)?raw.metaAds.orders:[]}:{days:{},orders:[]}
-            };
-        }
-
-        function applyCloudPayload(raw){
-            const p=normalizeCloudPayload(raw);
-            if(!p)return false;
-            inventory=p.inventory; orders=p.orders; returns=p.returns; meta=p.meta; employees=p.employees; metaAds=p.metaAds;
-            normalizeAllOrdersInMemory();
-            return true;
-        }
-
-        async function cloudRequest(method,body,extra={}){
-            const options={method,cache:'no-store',credentials:'same-origin',headers:{Accept:'application/json'},...extra};
-            if(body!==undefined){options.headers['Content-Type']='application/json';options.body=JSON.stringify(body);}
-            const response=await fetch('/api/state',options);
-            let data=null; try{data=await response.json();}catch(e){}
-            if(!response.ok){const err=new Error(data?.error||`Cloud request failed (${response.status})`);err.status=response.status;err.data=data;throw err;}
-            return data;
-        }
-
-        async function fetchLatestCloudState(){
-            const r=await cloudRequest('GET');
-            return r&&r.payload&&typeof r.payload==='object'?{hasPayload:true,payload:r.payload,updatedAt:r.updatedAt||null}:{hasPayload:false,payload:null,updatedAt:null};
-        }
-
-        function showCloudErrorOnce(message){if(cloudSaveError===message)return;cloudSaveError=message;try{showToast_(message,'err');}catch(e){}}
-        function clearCloudError(){cloudSaveError=null;}
-        function scheduleCloudRetry(reason='automatic-retry',delay=2500){
-            clearTimeout(cloudRetryTimer);
-            cloudRetryTimer=setTimeout(()=>{if(navigator.onLine&&pendingCloudSave)pushCloudState(reason);},Math.max(1000,delay));
-        }
-
-        function pushCloudState(reason='update'){
-            cloudSaveVersion+=1;
-            const requestedVersion=cloudSaveVersion;
-            cloudWriteChain=cloudWriteChain.catch(()=>{}).then(async()=>{
-                if(requestedVersion!==cloudSaveVersion)return;
-                const payload=JSON.parse(JSON.stringify(buildPayload()));
-                for(let attempt=0;attempt<=5;attempt++){
-                    if(requestedVersion!==cloudSaveVersion)return;
-                    try{
-                        const result=await cloudRequest('PUT',{payload,expectedUpdatedAt:cloudLastUpdated,reason});
-                        if(!result||!result.ok)throw new Error('Supabase save returned an invalid response.');
-                        cloudReady=true; cloudLastUpdated=result.updatedAt||new Date().toISOString();
-                        if(requestedVersion===cloudSaveVersion)pendingCloudSave=false;
-                        clearCloudError(); return;
-                    }catch(error){
-                        if(error.status===409&&attempt<5){
-                            try{const latest=await fetchLatestCloudState();cloudLastUpdated=latest.hasPayload?(latest.updatedAt||null):null;cloudReady=true;}catch(e){}
-                            await new Promise(r=>setTimeout(r,Math.min(2500,350*(attempt+1)))); continue;
-                        }
-                        console.error('Supabase save failed:',error); pendingCloudSave=true;
-                        showCloudErrorOnce('Supabase save failed. Automatic cloud retry is active.');
-                        if(navigator.onLine)scheduleCloudRetry('automatic-retry',Math.min(10000,2000+attempt*1500));
-                        return;
-                    }
-                }
-            });
-            return cloudWriteChain;
-        }
-
-        function saveData(reason='data'){
-            meta.lastUpdated=new Date(Date.now()+timeOffsetMs).toISOString();
-            localStateRevision+=1; pendingCloudSave=true;
-            if(!cloudHydrating)pushCloudState(reason);
-        }
-
-        async function syncCloudOnBoot(){
-            if(cloudHydrating)return; cloudHydrating=true;
-            const revisionAtStart=localStateRevision; const pendingAtStart=pendingCloudSave;
-            try{
-                const result=await fetchLatestCloudState();
-                if(result.hasPayload){
-                    cloudLastUpdated=result.updatedAt||null; cloudReady=true;
-                    const changed=localStateRevision!==revisionAtStart||pendingAtStart||pendingCloudSave;
-                    if(changed){await pushCloudState('boot-local-reconciliation');return;}
-                    applyCloudPayload(result.payload); pendingCloudSave=false;
-                    renderAllTables(); renderEmployeeManagement(); updateSidebarCounts(); return;
-                }
-                cloudReady=true; cloudLastUpdated=null; pendingCloudSave=true; await pushCloudState('initial-migration');
-            }catch(error){
-                console.error('Supabase initialization failed:',error);
-                showCloudErrorOnce('Supabase is temporarily unavailable. No application data was stored in this browser; automatic cloud retry is active.');
-                scheduleCloudRetry('cloud-boot-retry',4000);
-            }finally{cloudHydrating=false;}
-        }
-
-        window.addEventListener('pagehide',function(){
-            try{if(pendingCloudSave&&navigator.onLine){fetch('/api/state',{method:'PUT',keepalive:true,credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({payload:buildPayload(),expectedUpdatedAt:cloudLastUpdated,reason:'pagehide-final-save'})}).catch(()=>{});}}catch(e){}
-        });
-
-                /* Live workflow badge heartbeat: UI-only, no data mutation. */ 
+        function loadLocalData() { 
+            let raw = null; 
+            try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; } 
+ 
+            if (!raw) { 
+                let oldInv = null, oldOrd = null, oldRet = null; 
+                try { oldInv = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {} 
+                try { oldOrd = JSON.parse(localStorage.getItem('urbanhub_orders')); } catch (e) {} 
+                try { oldRet = JSON.parse(localStorage.getItem('urbanhub_returns')); } catch (e) {} 
+                if (oldInv || oldOrd || oldRet) { 
+                    raw = { inventory: oldInv || defaultInventory, orders: oldOrd || [], returns: oldRet || [], meta: { lastUpdated: null } }; 
+                } 
+            } 
+ 
+            if (raw && Array.isArray(raw.orders)) { 
+                inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
+                    id: Number(i.id), name: i.name || '', price: Number(i.price) || 0, stock: Number(i.stock) || 0 
+                })) : JSON.parse(JSON.stringify(defaultInventory)); 
+                orders = raw.orders.map(normalizeOrder); 
+                returns = Array.isArray(raw.returns) ? raw.returns : []; 
+                meta = raw.meta || { lastUpdated: null, device: '' }; 
+            } else { 
+                inventory = JSON.parse(JSON.stringify(defaultInventory)); 
+                orders = defaultOrders.map(normalizeOrder); 
+                returns = []; 
+                meta = { lastUpdated: null, device: '' }; 
+            } 
+        } 
+ 
+        function buildPayload() { 
+            return { inventory, orders, returns, meta, employees }; 
+        } 
+ 
+        /* ================= CLOUD PERSISTENCE LAYER ================= 
+           Authoritative storage: /api/state -> Supabase. 
+           localStorage: emergency browser backup only. 
+ 
+           Important behavior: 
+           - Cloud is read FIRST whenever the application starts. 
+           - A successful user change is queued and written to the cloud. 
+           - Writes are serialized so rapid add/edit/delete actions cannot 
+             overwrite one another because of overlapping requests. 
+           - A cloud conflict is retried against the newest cloud timestamp 
+             using the CURRENT local state, so a deliberate local delete/edit 
+             is not silently replaced by an older cloud copy. 
+           - If the cloud is temporarily unavailable, the browser keeps a 
+             local backup and retries automatically when connectivity returns. 
+        */ 
+ 
+        let cloudReady = false; 
+        let cloudHydrating = false; 
+        let cloudLastUpdated = null; 
+        let cloudWriteChain = Promise.resolve(); 
+        let cloudRetryTimer = null; 
+        let cloudSaveVersion = 0; 
+ 
+        function buildPayload() { 
+            return { 
+                inventory: Array.isArray(inventory) ? inventory : [], 
+                orders: Array.isArray(orders) ? orders : [], 
+                returns: Array.isArray(returns) ? returns : [], 
+                meta: meta || { lastUpdated: null, device: '' }, 
+                employees: Array.isArray(employees) ? employees : [] 
+            }; 
+        } 
+ 
+        function persistLocalBackup() { 
+            try { 
+                const payload = JSON.stringify(buildPayload()); 
+                localStorage.setItem(DB_KEY, payload); 
+                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees || [])); 
+                localStorage.setItem(DB_KEY + '_backup_latest', payload); 
+            } catch (e) { 
+                showToast_('Browser safety backup could not be updated.', 'err'); 
+            } 
+        } 
+ 
+        async function cloudRequest(method, body) { 
+            const options = { 
+                method, 
+                cache: 'no-store', 
+                credentials: 'same-origin', 
+                headers: { 
+                    'Accept': 'application/json' 
+                } 
+            }; 
+ 
+            if (body !== undefined) { 
+                options.headers['Content-Type'] = 'application/json'; 
+                options.body = JSON.stringify(body); 
+            } 
+ 
+            const response = await fetch('/api/state', options); 
+ 
+            let data = null; 
+            try { 
+                data = await response.json(); 
+            } catch (e) { 
+                data = null; 
+            } 
+ 
+            if (!response.ok) { 
+                const message = 
+                    data && data.error 
+                        ? data.error 
+                        : `Cloud request failed (${response.status})`; 
+ 
+                const error = new Error(message); 
+                error.status = response.status; 
+                error.data = data; 
+                throw error; 
+            } 
+ 
+            return data; 
+        } 
+ 
+        function normalizeCloudPayload(raw) { 
+            if (!raw || typeof raw !== 'object') return null; 
+ 
+            return { 
+                inventory: Array.isArray(raw.inventory) 
+                    ? raw.inventory.map(i => ({ 
+                        id: Number(i.id), 
+                        name: i.name || '', 
+                        price: Number(i.price) || 0, 
+                        stock: Number(i.stock) || 0 
+                    })) 
+                    : [], 
+ 
+                orders: Array.isArray(raw.orders) 
+                    ? raw.orders.map(normalizeOrder) 
+                    : [], 
+ 
+                returns: Array.isArray(raw.returns) 
+                    ? raw.returns 
+                    : [], 
+ 
+                meta: raw.meta && typeof raw.meta === 'object' 
+                    ? raw.meta 
+                    : { lastUpdated: null, device: '' }, 
+ 
+                employees: Array.isArray(raw.employees) 
+                    ? raw.employees.map(normalizeEmployee) 
+                    : [] 
+            }; 
+        } 
+ 
+        function applyCloudPayload(raw) { 
+            const payload = normalizeCloudPayload(raw); 
+            if (!payload) return false; 
+ 
+            /* 
+             * Replace state atomically as one snapshot. Inventory is taken 
+             * exactly from the cloud payload; no boot-time reset or cleanup 
+             * is performed. 
+             */ 
+            inventory = Array.isArray(payload.inventory) ? payload.inventory : []; 
+            orders = Array.isArray(payload.orders) ? payload.orders.map(normalizeOrder) : []; 
+            returns = Array.isArray(payload.returns) ? payload.returns : []; 
+            meta = payload.meta && typeof payload.meta === 'object' 
+                ? payload.meta 
+                : { lastUpdated: null, device: '' }; 
+            employees = Array.isArray(payload.employees) 
+                ? payload.employees.map(normalizeEmployee) 
+                : []; 
+ 
+            normalizeAllOrdersInMemory(); 
+ 
+            try { 
+                localStorage.setItem(DB_KEY, JSON.stringify(buildPayload())); 
+                localStorage.setItem(EMPLOYEE_DB_KEY, JSON.stringify(employees)); 
+            } catch (e) {} 
+ 
+            return true; 
+        } 
+ 
+        async function fetchLatestCloudState() { 
+            const result = await cloudRequest('GET'); 
+ 
+            if (result && result.payload && typeof result.payload === 'object') { 
+                return { 
+                    hasPayload: true, 
+                    payload: result.payload, 
+                    updatedAt: result.updatedAt || null 
+                }; 
+            } 
+ 
+            return { 
+                hasPayload: false, 
+                payload: null, 
+                updatedAt: null 
+            }; 
+        } 
+ 
+        /* 
+         * One writer at a time. Every save waits for the previous save to 
+         * finish, then captures the latest CURRENT state. Therefore if the 
+         * user deletes an item and immediately edits/adds another item, the 
+         * final queued write contains the newest complete state. 
+         */ 
+        function pushCloudState(reason = 'update') { 
+            cloudSaveVersion += 1; 
+            const requestedVersion = cloudSaveVersion; 
+ 
+            cloudWriteChain = cloudWriteChain 
+                .catch(() => {}) 
+                .then(async () => { 
+ 
+                    /* 
+                     * If another save superseded this request while we were 
+                     * waiting, the newest request will perform the actual 
+                     * write. We still continue if this is the newest version. 
+                     */ 
+                    if (requestedVersion !== cloudSaveVersion) return; 
+ 
+                    const payload = buildPayload(); 
+ 
+                    try { 
+                        const result = await cloudRequest('PUT', { 
+                            payload, 
+                            expectedUpdatedAt: cloudLastUpdated, 
+                            reason 
+                        }); 
+ 
+                        if (result && result.ok) { 
+                            cloudReady = true; 
+                            cloudLastUpdated = 
+                                result.updatedAt || 
+                                cloudLastUpdated || 
+                                new Date().toISOString(); 
+ 
+                            persistLocalBackup(); 
+                            return; 
+                        } 
+ 
+                    } catch (error) { 
+ 
+                        /* 
+                         * Conflict means another browser/device saved a newer 
+                         * version. Do NOT blindly replace the user's local 
+                         * change. Pull only the newest timestamp, then retry 
+                         * the user's current complete state. 
+                         */ 
+                        if (error.status === 409) { 
+                            try { 
+                                const latest = await fetchLatestCloudState(); 
+ 
+                                if (latest.hasPayload) { 
+                                    cloudLastUpdated = latest.updatedAt || null; 
+                                    cloudReady = true; 
+ 
+                                    /* 
+                                     * IMPORTANT: 
+                                     * We intentionally do not call 
+                                     * applyCloudPayload() here. The user's 
+                                     * current state remains authoritative for 
+                                     * this write and will be retried below. 
+                                     */ 
+                                    const retryPayload = buildPayload(); 
+ 
+                                    const retryResult = await cloudRequest('PUT', { 
+                                        payload: retryPayload, 
+                                        expectedUpdatedAt: cloudLastUpdated, 
+                                        reason: reason + '-conflict-retry' 
+                                    }); 
+ 
+                                    if (retryResult && retryResult.ok) { 
+                                        cloudLastUpdated = 
+                                            retryResult.updatedAt || 
+                                            cloudLastUpdated; 
+ 
+                                        persistLocalBackup(); 
+                                        return; 
+                                    } 
+                                } 
+ 
+                            } catch (retryError) { 
+                                console.error( 
+                                    'Cloud conflict retry failed:', 
+                                    retryError 
+                                ); 
+                            } 
+ 
+                        } else { 
+                            console.error('Cloud save failed:', error); 
+                        } 
+ 
+                        /* 
+                         * Do not destroy the current browser state. 
+                         * Keep it in local backup and retry when online. 
+                         */ 
+                        persistLocalBackup(); 
+ 
+                        clearTimeout(cloudRetryTimer); 
+                        cloudRetryTimer = setTimeout(() => { 
+                            if (navigator.onLine) { 
+                                pushCloudState('automatic-retry'); 
+                            } 
+                        }, 3000); 
+                    } 
+                }); 
+ 
+            return cloudWriteChain; 
+        } 
+ 
+        function saveData(reason = 'data') { 
+            meta.lastUpdated = 
+                new Date(Date.now() + timeOffsetMs).toISOString(); 
+ 
+            /* 
+             * Immediate browser safety copy. 
+             */ 
+            persistLocalBackup(); 
+ 
+            /* 
+             * Permanent cloud copy. 
+             */ 
+            if (!cloudHydrating) { 
+                pushCloudState(reason); 
+            } 
+        } 
+ 
+        async function syncCloudOnBoot() { 
+ 
+            /* 
+             * Never let two boot/visibility synchronizations run at the 
+             * same time. This prevents a GET from overwriting a fresh local 
+             * edit while a PUT is still running. 
+             */ 
+            if (cloudHydrating) return; 
+            cloudHydrating = true; 
+ 
+            try { 
+                const result = await fetchLatestCloudState(); 
+ 
+                if (result.hasPayload) { 
+ 
+                    /* 
+                     * Cloud is authoritative, but NEVER destructively reset 
+                     * inventory on boot. Whatever inventory already exists 
+                     * remains exactly where it is. Orders, inventory, 
+                     * employees and their histories are hydrated together. 
+                     */ 
+                    const cloudPayload = result.payload && typeof result.payload === 'object' 
+                        ? JSON.parse(JSON.stringify(result.payload)) 
+                        : {}; 
+ 
+                    applyCloudPayload(cloudPayload); 
+ 
+                    cloudReady = true; 
+                    cloudLastUpdated = result.updatedAt || null; 
+ 
+                    persistLocalBackup(); 
+                    renderAllTables(); 
+ 
+                    return; 
+                } 
+ 
+                /* 
+                 * First cloud initialization only: 
+                 * migrate the currently existing browser data once. 
+                 */ 
+                cloudReady = true; 
+                cloudLastUpdated = null; 
+ 
+                persistLocalBackup(); 
+ 
+                await pushCloudState('initial-migration'); 
+ 
+            } catch (error) { 
+ 
+                console.error('Cloud initialization failed:', error); 
+ 
+                /* 
+                 * Cloud is temporarily unavailable. Keep using the current 
+                 * local data and retain it safely for the next retry. 
+                 */ 
+                cloudReady = false; 
+                persistLocalBackup(); 
+ 
+                showToast_( 
+                    'Cloud temporarily unavailable. Local safety copy retained.', 
+                    'warn' 
+                ); 
+ 
+            } finally { 
+                cloudHydrating = false; 
+            } 
+        } 
+ 
+        /* 
+         * Save the latest local snapshot if the browser is being closed. 
+         * This does NOT replace the cloud; it is only the emergency local 
+         * fallback. 
+         */ 
+        window.addEventListener('beforeunload', function () { 
+            try { 
+                persistLocalBackup(); 
+            } catch (e) {} 
+        }); 
+ 
+ 
+        /* Live workflow badge heartbeat: UI-only, no data mutation. */ 
         let workflowBadgeTimer = null; 
         function startWorkflowBadgeHeartbeat(){ 
             if (workflowBadgeTimer) return; 
@@ -4673,10 +4941,15 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (appBooted) return; 
             appBooted = true; 
  
-            loadLocalData();
-            loadEmployees();
+            /* 
+             * Load the local safety copy first so the UI is immediately 
+             * usable. Cloud hydration then replaces it with the latest 
+             * authoritative state without clearing existing inventory. 
+             */ 
+            loadLocalData(); 
+            loadEmployees(); 
             normalizeAllOrdersInMemory(); 
-             
+            persistLocalBackup(); 
             startWorkflowBadgeHeartbeat(); 
  
             renderAllTables(); 
@@ -4756,6 +5029,18 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             renderEmployeeManagement(); 
         }); 
  
+        /* 
+         * Defensive auth wiring: keeps Employee Sign In functional even if 
+         * the inline form event is interrupted. 
+         */ 
+        document.addEventListener('click', function(ev) { 
+            const loginBtn = ev.target.closest('#employeeLoginSubmitBtn'); 
+            if (loginBtn) { 
+                ev.preventDefault(); 
+                submitEmployeeLogin(ev); 
+            } 
+        }); 
+ 
         window.addEventListener('pagehide', function() { 
             if (!loggedInEmployeeId) return; 
  
@@ -4792,7 +5077,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         }) 
                     }).catch(() => {}); 
  
-                     
+                    persistLocalBackup(); 
                 } catch (e) {} 
             } 
         }); 
@@ -6246,13 +6531,31 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
   }
 
   function load(){
-    const raw=(typeof metaAds==='object'&&metaAds)?metaAds:{days:{},orders:[]};
-    hkDB={days:raw.days&&typeof raw.days==='object'?raw.days:{},orders:[]};
+    try{
+      const raw=JSON.parse(localStorage.getItem(HK_KEY)||'{}');
+      hkDB={
+        days:raw.days&&typeof raw.days==='object'?raw.days:{},
+        orders:[]
+      };
+      /*
+       * The old order ledger is intentionally removed.
+       * Meta Ads day records are preserved exactly from the existing database.
+       * Save the migrated shape once so the old order records are actually cleared.
+       */
+      if(Array.isArray(raw.orders)&&raw.orders.length){
+        localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
+      }
+    }catch(e){
+      hkDB={days:{},orders:[]};
+    }
   }
 
   function save(){
-    metaAds={days:hkDB.days&&typeof hkDB.days==='object'?hkDB.days:{},orders:[]};
-    if(typeof saveData==='function')saveData('meta-ads-expense');
+    try{
+      localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
+    }catch(e){
+      alert('Browser storage is full. Please export your Meta Ads expenses first.');
+    }
   }
 
   function dayRec(date){
@@ -6438,7 +6741,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     if(typeof showToast_==='function')showToast_('Meta Ads expense export ready.','ok');
   };
 
-  document.addEventListener('DOMContentLoaded',()=>{});
+  document.addEventListener('DOMContentLoaded',()=>{
+    /*
+     * Safety migration:
+     * remove only the old Hissab order ledger, never the saved Meta Ads day records.
+     */
+    load();
+  });
 })(); 
 </script>
 
@@ -6465,31 +6774,32 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     if(o.status==='DRAFT' || o.status==='Draft') return 'Draft';
     return statusText(o);
   }
-  // Search Order is always blank on page entry. This does not touch saved order data.
-  (function keepOrderSearchBlank(){
-    const hardClear=()=>{
+  // Keep Search Order completely blank on first load and prevent browser autofill/history from pre-filling it.
+  (function preventSearchAutofill(){
+    const clearOnLoad=()=>{
       const input=document.getElementById('directOrderSearchInput');
       if(!input) return;
-      input.value='';
+      if(!input.dataset.userTyped) input.value='';
     };
-
+    document.addEventListener('DOMContentLoaded', clearOnLoad, {once:true});
+    window.addEventListener('pageshow', clearOnLoad);
+    window.addEventListener('load', ()=>{
+      clearOnLoad();
+      setTimeout(clearOnLoad, 50);
+      setTimeout(clearOnLoad, 300);
+      setTimeout(clearOnLoad, 1000);
+    }, {once:true});
     const bind=()=>{
       const input=document.getElementById('directOrderSearchInput');
-      if(!input || input.dataset.searchGuard==='1') return;
-      input.dataset.searchGuard='1';
-      hardClear();
-
+      if(!input || input.dataset.autofillGuard==='1') return;
+      input.dataset.autofillGuard='1';
       input.addEventListener('input', ()=>{ input.dataset.userTyped='1'; });
       input.addEventListener('focus', ()=>{
-        if(!input.dataset.userTyped) input.value='';
-        input.removeAttribute('readonly');
+        if(!input.dataset.userTyped && input.value) input.value='';
       });
     };
-
-    document.addEventListener('DOMContentLoaded', bind, {once:true});
-    window.addEventListener('pageshow', hardClear);
-    window.addEventListener('load', hardClear, {once:true});
-    if(document.readyState!=='loading') bind();
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+    else bind();
   })();
 
   window.searchOrderDirectly=async function(){
@@ -6540,11 +6850,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
   window.clearDirectOrderSearch=function(){
     const input=document.getElementById('directOrderSearchInput');
     const box=document.getElementById('directOrderSearchResults');
-    if(input){
-      input.value='';
-      delete input.dataset.userTyped;
-      input.setAttribute('readonly','readonly');
-    }
+    if(input)input.value='';
     if(box){box.innerHTML='';box.style.display='none';}
   };
 })();
@@ -6566,4 +6872,4 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     </div>
 
 </body> 
-</html>
+</html
