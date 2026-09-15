@@ -1826,12 +1826,71 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 #admin-sub-meta-ads .meta-expense-icon{width:58px;height:58px;border-radius:18px;font-size:24px}
 #admin-sub-meta-ads .meta-expense-title h2{font-size:23px;letter-spacing:-.02em}
 #admin-sub-meta-ads .meta-expense-title p{font-size:11px}
-#admin-sub-meta-ads .meta-expense-editor{margin:20px 24px;padding:20px;border:1px solid rgba(125,211,252,.16);border-radius:20px;background:rgba(2,10,20,.72);box-shadow:inset 0 1px rgba(255,255,255,.025),0 14px 35px rgba(0,0,0,.14);transition:.2s}
+.meta-expense-workspace{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;padding:20px 24px 24px}
+.meta-expense-calendar-card{align-self:start;position:sticky;top:18px;border:1px solid rgba(125,211,252,.16);border-radius:18px;background:rgba(2,10,20,.76);padding:14px;box-shadow:0 14px 35px rgba(0,0,0,.18)}
+.meta-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.meta-calendar-kicker{font-size:8px;letter-spacing:.14em;font-weight:1000;color:#67e8f9}
+.meta-calendar-title{font-size:15px;font-weight:1000;color:#f8fbff;margin-top:3px}
+.meta-calendar-nav{display:flex;gap:4px}
+.meta-calendar-nav button{width:29px;height:29px;border:1px solid rgba(148,163,184,.16);border-radius:8px;background:#102033;color:#cfefff;cursor:pointer;transition:.16s}
+.meta-calendar-nav button:hover{background:#263a59;border-color:#6366f1;transform:translateY(-1px)}
+.meta-calendar-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:5px}
+.meta-calendar-week span{text-align:center;color:#6f8499;font-size:8px;font-weight:1000}
+.meta-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.meta-calendar-day{position:relative;min-height:30px;border:1px solid rgba(148,163,184,.10);border-radius:8px;background:#0c1a2b;color:#cbd5e1;font-size:9px;font-weight:900;cursor:pointer;display:grid;place-items:center;transition:.16s}
+.meta-calendar-day:hover{border-color:rgba(34,211,238,.45);background:#13283c;color:#fff;transform:translateY(-1px)}
+.meta-calendar-day.muted{visibility:hidden;pointer-events:none}
+.meta-calendar-day.today{border-color:rgba(16,185,129,.72);color:#6ee7b7}
+.meta-calendar-day.selected{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:#a78bfa;color:#fff;box-shadow:0 5px 14px rgba(99,102,241,.28)}
+.meta-calendar-day.saved:after{content:"";position:absolute;width:4px;height:4px;border-radius:50%;right:4px;bottom:4px;background:#22d3ee;box-shadow:0 0 7px rgba(34,211,238,.85)}
+.meta-calendar-day.saved.selected:after{background:#fff}
+.meta-calendar-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid rgba(148,163,184,.10)}
+.meta-calendar-footer span{font-size:8px;color:#7f93a8;font-weight:800}
+.meta-calendar-footer span i{font-size:5px;color:#22d3ee;vertical-align:middle}
+.meta-calendar-footer button{border:0;background:none;color:#7dd3fc;font-size:9px;font-weight:900;cursor:pointer}
+.meta-calendar-footer button:hover{text-decoration:underline}
+.meta-expense-main{min-width:0}
+#admin-sub-meta-ads .meta-expense-editor{margin:0;padding:20px;border:1px solid rgba(125,211,252,.16);border-radius:20px;background:rgba(2,10,20,.72);box-shadow:inset 0 1px rgba(255,255,255,.025),0 14px 35px rgba(0,0,0,.14);transition:.2s}
 #admin-sub-meta-ads .meta-expense-editor.editing{border-color:rgba(167,139,250,.55);box-shadow:0 0 0 3px rgba(139,92,246,.08),0 18px 40px rgba(0,0,0,.2)}
 .meta-expense-editor-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:18px}
-.meta-expense-kicker{font-size:9px;letter-spacing:.14em;font-weight:1000;color:#67e8f9;margin-bottom:4px}.meta-expense-action-title{font-size:17px;font-weight:1000;color:#f8fbff}.meta-expense-action-title i{margin-right:7px;color:#a78bfa}.meta-expense-action-note{font-size:10px;color:#8295aa;margin-top:4px;line-height:1.5}.meta-expense-badge{padding:7px 10px;border-radius:999px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18);color:#86efac;font-size:9px;font-weight:1000;white-space:nowrap}.meta-money-input{display:flex;align-items:center;min-height:50px;border:1px solid rgba(148,163,184,.18);border-radius:13px;background:#03101c;overflow:hidden}.meta-money-input:focus-within{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.08)}.meta-money-input span{padding:0 12px;color:#67e8f9;font-size:10px;font-weight:1000;border-right:1px solid rgba(148,163,184,.12)}.meta-money-input input{border:0!important;box-shadow:none!important;background:transparent!important;min-height:48px!important}.meta-expense-selected{margin-top:14px!important;background:linear-gradient(90deg,rgba(34,211,238,.06),rgba(139,92,246,.05))!important}.meta-expense-selected small{display:block;color:#70859a;font-size:8px;letter-spacing:.1em;font-weight:1000;margin-bottom:3px}.meta-expense-selected strong{display:block;font-size:15px}.meta-selected-day{font-size:10px;font-weight:900;color:#b8c9db!important}.meta-expense-shell>.card{margin:0 24px 24px!important}
-#admin-sub-meta-ads .hk-table-wrap{border-color:rgba(125,211,252,.12);background:rgba(2,10,20,.45)}#admin-sub-meta-ads .hk-table th{background:#0b1829;color:#8ea6bc}#admin-sub-meta-ads .hk-table td{padding:13px 12px}.meta-edit-btn{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(167,139,250,.28);background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(139,92,246,.1));color:#ddd6fe;border-radius:10px;padding:8px 11px;font-size:10px;font-weight:1000;cursor:pointer;transition:.18s}.meta-edit-btn:hover{transform:translateY(-1px);border-color:rgba(167,139,250,.65);background:linear-gradient(135deg,rgba(99,102,241,.28),rgba(139,92,246,.18));box-shadow:0 7px 18px rgba(99,102,241,.16)}
-@media(max-width:760px){#admin-sub-meta-ads .meta-expense-top,#admin-sub-meta-ads .meta-expense-editor{margin-left:12px;margin-right:12px;padding:16px}#admin-sub-meta-ads .meta-expense-top{padding:18px 12px}#admin-sub-meta-ads>.meta-expense-shell>.card{margin-left:12px!important;margin-right:12px!important}.meta-expense-editor-head{flex-direction:column}.meta-expense-badge{align-self:flex-start}}
+.meta-expense-kicker{font-size:9px;letter-spacing:.14em;font-weight:1000;color:#67e8f9;margin-bottom:4px}
+.meta-expense-action-title{font-size:17px;font-weight:1000;color:#f8fbff}
+.meta-expense-action-title i{margin-right:7px;color:#a78bfa}
+.meta-expense-action-note{font-size:10px;color:#8295aa;margin-top:4px;line-height:1.5}
+.meta-expense-badge{padding:7px 10px;border-radius:999px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18);color:#86efac;font-size:9px;font-weight:1000;white-space:nowrap}
+.meta-money-input{display:flex;align-items:center;min-height:50px;border:1px solid rgba(148,163,184,.18);border-radius:13px;background:#03101c;overflow:hidden}
+.meta-money-input:focus-within{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.08)}
+.meta-money-input span{padding:0 12px;color:#67e8f9;font-size:10px;font-weight:1000;border-right:1px solid rgba(148,163,184,.12)}
+.meta-money-input input{border:0!important;box-shadow:none!important;background:transparent!important;min-height:48px!important}
+.meta-expense-form{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}
+.meta-expense-field{display:flex;flex-direction:column;gap:6px}
+.meta-expense-field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#91a4b9;font-weight:1000}
+.meta-expense-submit{min-height:50px;border:0;border-radius:13px;padding:0 18px;background:linear-gradient(135deg,#06b6d4,#4f46e5);color:#fff;font-weight:1000;cursor:pointer;transition:.2s;box-shadow:0 10px 25px rgba(30,64,175,.25)}
+.meta-expense-submit:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.meta-expense-selected{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding:11px 13px;border-radius:13px;background:linear-gradient(90deg,rgba(34,211,238,.06),rgba(139,92,246,.05));border:1px solid rgba(34,211,238,.11);font-size:11px}
+.meta-expense-selected small{display:block;color:#70859a;font-size:8px;letter-spacing:.1em;font-weight:1000;margin-bottom:3px}
+.meta-expense-selected strong{display:block;font-size:15px;color:#e0fbff}
+.meta-selected-day{font-size:10px;font-weight:900;color:#b8c9db!important;text-align:right}
+.meta-expense-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.meta-expense-actions button{border:1px solid rgba(148,163,184,.16);background:#102033;color:#dffaff;border-radius:10px;padding:8px 11px;font-weight:900;cursor:pointer}
+.meta-expense-actions button:hover{filter:brightness(1.1)}
+.meta-expense-stats{margin:16px 0!important}
+.meta-expense-days-card{margin:0!important;background:rgba(7,17,31,.55)}
+.meta-expense-day-list{display:flex;flex-direction:column;gap:7px;max-height:620px;overflow:auto;padding-right:3px}
+.meta-expense-day-row{display:grid;grid-template-columns:58px minmax(105px,1fr) minmax(130px,1fr) auto;gap:10px;align-items:center;min-height:52px;padding:8px 10px;border:1px solid rgba(148,163,184,.10);border-radius:12px;background:rgba(3,13,24,.55);transition:.16s}
+.meta-expense-day-row:hover{border-color:rgba(34,211,238,.22);background:rgba(8,24,39,.78)}
+.meta-expense-day-row.selected{border-color:rgba(34,211,238,.42);box-shadow:0 0 0 1px rgba(34,211,238,.07);background:rgba(8,30,47,.72)}
+.meta-day-number{font-size:17px;font-weight:1000;color:#f8fbff}
+.meta-day-date{font-size:9px;color:#71869a;margin-top:2px}
+.meta-day-name{font-size:10px;font-weight:900;color:#c7d9e8}
+.meta-day-status{font-size:8px;color:#64798d;margin-top:3px}
+.meta-day-amount{font-size:13px;font-weight:1000;color:#67e8f9}
+.meta-day-empty{font-size:11px;color:#536a7e;font-weight:800}
+.meta-day-edit{border:1px solid rgba(167,139,250,.25);background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.09));color:#ddd6fe;border-radius:9px;padding:7px 10px;font-size:9px;font-weight:1000;cursor:pointer}
+.meta-day-edit:hover{border-color:rgba(167,139,250,.62);transform:translateY(-1px)}
+@media(max-width:900px){.meta-expense-workspace{grid-template-columns:210px minmax(0,1fr)}.meta-expense-day-row{grid-template-columns:52px minmax(95px,1fr) minmax(110px,1fr) auto}}
+@media(max-width:760px){.meta-expense-workspace{grid-template-columns:1fr;padding:14px 12px 18px}.meta-expense-calendar-card{position:relative;top:auto;width:100%;box-sizing:border-box}.meta-expense-editor{margin:0!important}.meta-expense-form{grid-template-columns:1fr}.meta-expense-submit{width:100%}.meta-expense-day-row{grid-template-columns:48px 1fr auto;gap:8px}.meta-day-name,.meta-day-status{display:none}.meta-day-amount{text-align:right}}
+@media(max-width:520px){#admin-sub-meta-ads .meta-expense-top{padding:18px 12px}.meta-expense-editor{padding:15px!important}.meta-expense-editor-head{flex-direction:column}.meta-expense-badge{align-self:flex-start}.meta-expense-day-row{grid-template-columns:44px 1fr auto}.meta-day-amount{font-size:11px}.meta-day-edit{padding:7px 8px}}
 </style>
 </head>
 <body>
@@ -2448,52 +2507,91 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="meta-expense-top">
                         <div class="meta-expense-brand">
                             <div class="meta-expense-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                            <div class="meta-expense-title"><h2>Meta Ads Expense</h2><p>Daily expense tracker • PKR • Existing records stay saved</p></div>
+                            <div class="meta-expense-title">
+                                <h2>Meta Ads Expense</h2>
+                                <p>Daily expense tracker • PKR • Supabase cloud saved</p>
+                            </div>
                         </div>
-                        <div class="meta-expense-live"><i class="fa-solid fa-circle"></i> Ready to Record</div>
+                        <div class="meta-expense-live"><i class="fa-solid fa-circle"></i> Cloud Saved</div>
                     </div>
 
-                    <div class="meta-expense-editor" id="metaExpenseEditor">
-                        <div class="meta-expense-editor-head">
-                            <div><div class="meta-expense-kicker">EXPENSE ENTRY</div><div class="meta-expense-action-title" id="metaExpenseActionTitle"><i class="fa-solid fa-plus-circle"></i> Add / Update Expense</div><div class="meta-expense-action-note" id="metaExpenseActionNote">Select a date, enter your Meta Ads spend in PKR, then save it.</div></div>
-                            <div class="meta-expense-badge"><i class="fa-solid fa-shield-check"></i> Auto Saved</div>
+                    <div class="meta-expense-workspace">
+                        <div class="meta-expense-calendar-card">
+                            <div class="meta-calendar-head">
+                                <div>
+                                    <div class="meta-calendar-kicker">MONTH SELECTOR</div>
+                                    <div class="meta-calendar-title" id="hkCalendarMonthTitle">—</div>
+                                </div>
+                                <div class="meta-calendar-nav">
+                                    <button type="button" onclick="hkPrevMonth()" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" onclick="hkGoCurrentMonth()" aria-label="Current month"><i class="fa-solid fa-calendar-day"></i></button>
+                                    <button type="button" onclick="hkNextMonth()" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="meta-calendar-week">
+                                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                            </div>
+                            <div class="meta-calendar-grid" id="hkCalendarGrid"></div>
+                            <div class="meta-calendar-footer">
+                                <span><i class="fa-solid fa-circle"></i> Saved</span>
+                                <button type="button" onclick="hkGoCurrentMonth()">Current Month</button>
+                            </div>
                         </div>
-                        <div class="meta-expense-form">
-                            <div class="meta-expense-field"><label for="hkDate">DATE</label><input id="hkDate" type="date" min="2000-01-01" max="3000-12-31" onchange="hkSelectDate(this.value)"></div>
-                            <div class="meta-expense-field"><label for="hkAdsAmount">META ADS AMOUNT · PKR</label><div class="meta-money-input"><span>PKR</span><input id="hkAdsAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div></div>
-                            <button type="button" class="meta-expense-submit" onclick="hkSaveDay()"><i class="fa-solid fa-floppy-disk"></i><span>Save / Update</span></button>
-                        </div>
-                        <div class="meta-expense-selected"><div><small>SELECTED DATE</small><strong id="hkSelectedDateLabel">—</strong></div><div class="meta-selected-day" id="hkSelectedDayLabel">—</div></div>
-                    </div>
 
-                    <div class="meta-expense-selected">
-                        <strong><i class="fa-solid fa-calendar-check"></i> Selected: <span id="hkSelectedDateLabel">—</span></strong>
-                        <span id="hkSelectedDayLabel">—</span>
-                    </div>
-                    <div class="meta-expense-actions">
-                        <button type="button" onclick="hkSetToday()"><i class="fa-solid fa-calendar-day"></i> Today</button>
-                        <button type="button" onclick="hkExport()"><i class="fa-solid fa-file-export"></i> Export All</button>
-                    </div>
+                        <div class="meta-expense-main">
+                            <div class="meta-expense-editor" id="metaExpenseEditor">
+                                <div class="meta-expense-editor-head">
+                                    <div>
+                                        <div class="meta-expense-kicker">EXPENSE ENTRY</div>
+                                        <div class="meta-expense-action-title" id="metaExpenseActionTitle"><i class="fa-solid fa-plus-circle"></i> Add / Update Expense</div>
+                                        <div class="meta-expense-action-note" id="metaExpenseActionNote">Select a date from the calendar or the daily list, enter the Meta Ads amount in PKR, then save it.</div>
+                                    </div>
+                                    <div class="meta-expense-badge"><i class="fa-solid fa-cloud-arrow-up"></i> Auto Saved to Cloud</div>
+                                </div>
 
-                    <div class="hk-stats" style="margin:16px 0;">
-                        <div class="hk-stat">
-                            <div class="hk-stat-label">Selected Month Meta Ads</div>
-                            <div class="hk-stat-value cyan" id="hkMonthAds">PKR 0.00</div>
-                        </div>
-                        <div class="hk-stat">
-                            <div class="hk-stat-label">Saved Expense Days</div>
-                            <div class="hk-stat-value purple" id="hkSavedDays">0</div>
-                        </div>
-                    </div>
+                                <div class="meta-expense-form">
+                                    <div class="meta-expense-field">
+                                        <label for="hkAdsAmount">META ADS AMOUNT · PKR</label>
+                                        <div class="meta-money-input">
+                                            <span>PKR</span>
+                                            <input id="hkAdsAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="meta-expense-submit" onclick="hkSaveDay()">
+                                        <i class="fa-solid fa-floppy-disk"></i><span>Save / Update Expense</span>
+                                    </button>
+                                </div>
 
-                    <div class="card" style="margin:0;background:rgba(7,17,31,.55);">
-                        <div class="hk-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Saved Meta Ads Expenses</div>
-                        <div class="hk-card-sub">Click Edit on any saved date to load its amount above and update it. Nothing else in the order system is changed.</div>
-                        <div class="hk-table-wrap">
-                            <table class="hk-table">
-                                <thead><tr><th>Date</th><th>Day</th><th>Meta Ads Amount (PKR)</th><th>Last Updated</th><th>Action</th></tr></thead>
-                                <tbody id="hkAdsTableBody"></tbody>
-                            </table>
+                                <div class="meta-expense-selected">
+                                    <div>
+                                        <small>SELECTED DATE</small>
+                                        <strong id="hkSelectedDateLabel">—</strong>
+                                    </div>
+                                    <div class="meta-selected-day" id="hkSelectedDayLabel">—</div>
+                                </div>
+
+                                <div class="meta-expense-actions">
+                                    <button type="button" onclick="hkGoCurrentMonth()"><i class="fa-solid fa-calendar-day"></i> Current Month</button>
+                                    <button type="button" onclick="hkExport()"><i class="fa-solid fa-file-export"></i> Export All</button>
+                                </div>
+                            </div>
+
+                            <div class="hk-stats meta-expense-stats">
+                                <div class="hk-stat">
+                                    <div class="hk-stat-label">Selected Month Meta Ads</div>
+                                    <div class="hk-stat-value cyan" id="hkMonthAds">PKR 0.00</div>
+                                </div>
+                                <div class="hk-stat">
+                                    <div class="hk-stat-label">Saved Expense Days</div>
+                                    <div class="hk-stat-value purple" id="hkSavedDays">0</div>
+                                </div>
+                            </div>
+
+                            <div class="card meta-expense-days-card">
+                                <div class="hk-card-title"><i class="fa-solid fa-list-ol"></i> Daily Meta Ads Expenses</div>
+                                <div class="hk-card-sub">All dates of the selected month are shown below. Saved amounts remain attached to their exact dates. Change the month from the small calendar on the side.</div>
+                                <div class="meta-expense-day-list" id="hkAdsDayList"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4577,16 +4675,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         let cloudRetryTimer = null; 
         let cloudSaveVersion = 0; 
  
-        function buildPayload() { 
+        function buildPayload() {
+            const safeMeta = (meta && typeof meta === 'object') ? meta : { lastUpdated: null, device: '' };
+            try {
+                if (typeof window !== 'undefined' && typeof window.hkGetCloudData === 'function') {
+                    const adsData = window.hkGetCloudData();
+                    if (adsData && typeof adsData === 'object') safeMeta.metaAdsExpenses = adsData;
+                }
+            } catch (e) {}
             return { 
                 inventory: Array.isArray(inventory) ? inventory : [], 
                 orders: Array.isArray(orders) ? orders : [], 
                 returns: Array.isArray(returns) ? returns : [], 
-                meta: meta || { lastUpdated: null, device: '' }, 
+                meta: safeMeta,
                 employees: Array.isArray(employees) ? employees : [] 
             }; 
-        } 
- 
+        };
         function persistLocalBackup() { 
             try { 
                 const payload = JSON.stringify(buildPayload()); 
@@ -4658,10 +4762,26 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     ? raw.returns 
                     : [], 
  
-                meta: raw.meta && typeof raw.meta === 'object' 
-                    ? raw.meta 
-                    : { lastUpdated: null, device: '' }, 
- 
+                meta: (() => {
+                    const cloudMeta = raw.meta && typeof raw.meta === 'object'
+                        ? { ...raw.meta }
+                        : { lastUpdated: null, device: '' };
+                    try {
+                        const legacy = (typeof window !== 'undefined' && typeof window.hkGetLegacyDays === 'function')
+                            ? window.hkGetLegacyDays() : {};
+                        const existing = cloudMeta.metaAdsExpenses &&
+                            typeof cloudMeta.metaAdsExpenses === 'object' &&
+                            cloudMeta.metaAdsExpenses.days &&
+                            typeof cloudMeta.metaAdsExpenses.days === 'object'
+                            ? cloudMeta.metaAdsExpenses.days : {};
+                        const merged = { ...legacy, ...existing };
+                        if (Object.keys(merged).length) {
+                            cloudMeta.metaAdsExpenses = { version: 2, days: merged };
+                        }
+                    } catch (e) {}
+                    return cloudMeta;
+                })(), 
+
                 employees: Array.isArray(raw.employees) 
                     ? raw.employees.map(normalizeEmployee) 
                     : [] 
@@ -5223,7 +5343,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (productCodeField) productCodeField.readOnly = true; 
             updateSidebarCounts(); 
             requestAnimationFrame(() => updateSidebarCounts()); 
-            renderEmployeeManagement(); 
+            renderEmployeeManagement();
+            try {
+                if (typeof window !== 'undefined' && typeof window.hkRefresh === 'function') window.hkRefresh();
+            } catch (e) {} 
         } 
  
         /* 
@@ -6499,12 +6622,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 /* ============================================================
    META ADS EXPENSE ENGINE
    Admin Panel only — daily Meta Ads amounts
+   Storage: same authoritative cloud payload used by the whole app.
+   Legacy localStorage records are imported once and preserved.
    ============================================================ */
 (function(){
   const HK_KEY='happyMart_hissab_kittab_v1';
-  let hkDB={days:{},orders:[]};
+  let hkDB={days:{}};
 
-  const pad=n=>String(n).padStart(2,'0');
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   const money=v=>'PKR '+Number(v||0).toFixed(2);
 
@@ -6515,11 +6639,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
       weekday:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true
     }).formatToParts(d);
     const g=k=>p.find(x=>x.type===k)?.value||'';
-    return {
-      date:`${g('year')}-${g('month')}-${g('day')}`,
-      day:g('weekday'),
-      time:`${g('hour')}:${g('minute')}:${g('second')} ${g('dayPeriod')}`
-    };
+    return {date:`${g('year')}-${g('month')}-${g('day')}`,day:g('weekday'),time:`${g('hour')}:${g('minute')}:${g('second')} ${g('dayPeriod')}`};
   }
 
   function today(){return nowParts().date;}
@@ -6530,224 +6650,277 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     return y>=2000&&y<=3000?v:today();
   }
 
-  function load(){
+  function currentMonth(){return today().slice(0,7);}
+
+  function daysInMonth(month){
+    const [y,m]=String(month).split('-').map(Number);
+    return new Date(y,m,0).getDate();
+  }
+
+  function getDateKey(month,day){return `${month}-${String(day).padStart(2,'0')}`;}
+
+  function monthLabel(month){
+    const [y,m]=String(month).split('-').map(Number);
+    return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(y,m-1,1,12));
+  }
+
+  function normalizeDays(source){
+    const out={};
+    if(!source||typeof source!=='object') return out;
+    Object.keys(source).forEach(key=>{
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(String(key))) return;
+      const item=source[key];
+      if(!item||typeof item!=='object') return;
+      const ads=Number(item.ads);
+      out[key]={date:key,ads:Number.isFinite(ads)&&ads>=0?Number(ads.toFixed(2)):0,updatedAt:item.updatedAt&&typeof item.updatedAt==='object'?item.updatedAt:null};
+    });
+    return out;
+  }
+
+  function readLegacyDays(){
     try{
       const raw=JSON.parse(localStorage.getItem(HK_KEY)||'{}');
-      hkDB={
-        days:raw.days&&typeof raw.days==='object'?raw.days:{},
-        orders:[]
-      };
-      /*
-       * The old order ledger is intentionally removed.
-       * Meta Ads day records are preserved exactly from the existing database.
-       * Save the migrated shape once so the old order records are actually cleared.
-       */
-      if(Array.isArray(raw.orders)&&raw.orders.length){
-        localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
-      }
-    }catch(e){
-      hkDB={days:{},orders:[]};
-    }
+      return normalizeDays(raw?.days||{});
+    }catch(e){return {};}
   }
 
-  function save(){
+  window.hkGetLegacyDays=function(){return readLegacyDays();};
+
+  function load(){
+    const legacy=readLegacyDays();
+    let cloudDays={};
     try{
-      localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days,orders:[]}));
-    }catch(e){
-      alert('Browser storage is full. Please export your Meta Ads expenses first.');
-    }
+      const cloudMeta=(typeof meta!=='undefined'&&meta&&typeof meta==='object')?meta:{};
+      const cloudAds=cloudMeta.metaAdsExpenses;
+      cloudDays=normalizeDays(cloudAds?.days||{});
+    }catch(e){}
+    hkDB={days:{...legacy,...cloudDays}};
+    try{localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days}));}catch(e){}
   }
+
+  function saveLocalBackupOnly(){
+    try{localStorage.setItem(HK_KEY,JSON.stringify({days:hkDB.days}));}
+    catch(e){if(typeof showToast_==='function')showToast_('Browser safety backup could not be updated.','warn');}
+  }
+
+  function cloudData(){return {version:2,days:normalizeDays(hkDB.days)};}
+  window.hkGetCloudData=function(){return cloudData();};
 
   function dayRec(date){
-    if(!hkDB.days[date]||typeof hkDB.days[date]!=='object'){
-      hkDB.days[date]={date,ads:0,updatedAt:null};
-    }
+    if(!hkDB.days[date]||typeof hkDB.days[date]!=='object') hkDB.days[date]={date,ads:0,updatedAt:null};
     return hkDB.days[date];
   }
 
-  function selectedDate(){
-    return validDate(document.getElementById('hkDate')?.value||today());
+  function selectedDate(){return validDate(window.hkSelectedDate||today());}
+  function selectedMonth(){return selectedDate().slice(0,7);}
+
+  function setSelectedDate(date){
+    date=validDate(date);
+    window.hkSelectedDate=date;
+    render();
+  }
+
+  function setSelectedMonth(month,preferredDay){
+    if(!/^\d{4}-\d{2}$/.test(month||''))month=currentMonth();
+    const days=daysInMonth(month);
+    let day=Number(preferredDay)||1;
+    day=Math.max(1,Math.min(days,day));
+    setSelectedDate(getDateKey(month,day));
   }
 
   function loadDayForm(){
     const date=selectedDate();
     const r=dayRec(date);
-    const d=document.getElementById('hkDate');
     const amount=document.getElementById('hkAdsAmount');
     const label=document.getElementById('hkSelectedDateLabel');
     const dayLabel=document.getElementById('hkSelectedDayLabel');
-
-    if(d)d.value=date;
-    if(amount)amount.value=Number(r.ads||0).toFixed(2);
+    if(amount) amount.value=(r.updatedAt||Number(r.ads||0)>0)?Number(r.ads||0).toFixed(2):'';
     if(label)label.textContent=date;
     if(dayLabel){
       const dayName=new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'));
-      dayLabel.textContent=`${dayName} · PKR ${Number(r.ads||0).toFixed(2)}`;
+      const hasSaved=!!r.updatedAt||Number(r.ads||0)>0;
+      dayLabel.textContent=hasSaved?`${dayName} · ${money(r.ads)}`:`${dayName} · No expense saved`;
     }
   }
 
-  function monthKey(){
-    const date=selectedDate();
-    return date.slice(0,7);
+  function renderCalendar(){
+    const grid=document.getElementById('hkCalendarGrid');
+    const title=document.getElementById('hkCalendarMonthTitle');
+    if(!grid||!title)return;
+    const month=selectedMonth();
+    const [y,m]=month.split('-').map(Number);
+    const firstDay=new Date(y,m-1,1,12).getDay();
+    const totalDays=daysInMonth(month);
+    const selected=selectedDate();
+    const current=today();
+    title.textContent=monthLabel(month);
+    let html='';
+    for(let i=0;i<firstDay;i++)html+='<button type="button" class="meta-calendar-day muted" tabindex="-1" aria-hidden="true"></button>';
+    for(let day=1;day<=totalDays;day++){
+      const date=getDateKey(month,day);
+      const rec=hkDB.days[date];
+      const saved=!!rec&&(!!rec.updatedAt||Number(rec.ads||0)>0);
+      const cls=['meta-calendar-day',date===current?'today':'',date===selected?'selected':'',saved?'saved':''].filter(Boolean).join(' ');
+      html+=`<button type="button" class="${cls}" onclick="hkSelectDate('${date}')" aria-label="${esc(date)}">${day}</button>`;
+    }
+    grid.innerHTML=html;
+  }
+
+  function renderDayList(){
+    const box=document.getElementById('hkAdsDayList');
+    if(!box)return;
+    const month=selectedMonth();
+    const totalDays=daysInMonth(month);
+    const selected=selectedDate();
+    let html='';
+    for(let day=1;day<=totalDays;day++){
+      const date=getDateKey(month,day);
+      const rec=hkDB.days[date]||{date,ads:0,updatedAt:null};
+      const amount=Number(rec.ads||0);
+      const hasSaved=!!rec.updatedAt||amount>0;
+      const dayName=new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'));
+      html+=`<div class="meta-expense-day-row ${date===selected?'selected':''}" id="hk-day-row-${date}">
+        <div><div class="meta-day-number">${day}</div><div class="meta-day-date">${esc(date)}</div></div>
+        <div><div class="meta-day-name">${esc(dayName)}</div><div class="meta-day-status">${hasSaved?'Saved expense':'No expense saved'}</div></div>
+        <div class="${hasSaved?'meta-day-amount':'meta-day-empty'}">${hasSaved?money(amount):'—'}</div>
+        <button type="button" class="meta-day-edit" onclick="hkEditExpense('${date}')"><i class="fa-solid fa-pen-to-square"></i> ${hasSaved?'Edit':'Add'}</button>
+      </div>`;
+    }
+    box.innerHTML=html;
   }
 
   function render(){
-    const key=monthKey();
-    let total=0;
-    let count=0;
-
-    Object.keys(hkDB.days).forEach(date=>{
-      if(!date.startsWith(key))return;
-      const amount=Number(hkDB.days[date]?.ads||0);
+    const month=selectedMonth();
+    let total=0,count=0;
+    for(let day=1;day<=daysInMonth(month);day++){
+      const date=getDateKey(month,day);
+      const rec=hkDB.days[date];
+      if(!rec)continue;
+      const amount=Number(rec.ads||0);
       if(Number.isFinite(amount)){
         total+=amount;
-        if(hkDB.days[date]?.updatedAt||amount>0)count++;
+        if(rec.updatedAt||amount>0)count++;
       }
-    });
-
+    }
     const monthAds=document.getElementById('hkMonthAds');
     const savedDays=document.getElementById('hkSavedDays');
     if(monthAds)monthAds.textContent=money(total);
     if(savedDays)savedDays.textContent=String(count);
-
-    const tbody=document.getElementById('hkAdsTableBody');
-    if(!tbody)return;
-
-    const rows=Object.values(hkDB.days)
-      .filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.date||''))&&String(r.date).startsWith(key))
-      .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-
-    if(!rows.length){
-      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No Meta Ads expense saved for this month.</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML=rows.map(r=>{
-      const date=String(r.date);
-      const dayName=new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(date+'T12:00:00'));
-      const updated=r.updatedAt?.display||'—';
-      return `<tr>
-        <td><b>${esc(date)}</b></td>
-        <td>${esc(dayName)}</td>
-        <td><b style="color:#67e8f9">${money(r.ads)}</b></td>
-        <td>${esc(updated)}</td>
-        <td><button type="button" class="meta-edit-btn" data-edit-date="${esc(date)}" onclick="hkEditExpense('${esc(date)}')"><i class="fa-solid fa-pen-to-square"></i><span>Edit & Update</span></button></td>
-      </tr>`;
-    }).join('');
+    loadDayForm();
+    renderCalendar();
+    renderDayList();
   }
 
   window.hkInit=function(){
     load();
-    const d=document.getElementById('hkDate');
-    if(d&&!d.value)d.value=today();
-    loadDayForm();
+    if(!window.hkSelectedDate)window.hkSelectedDate=today();
+    else{
+      const month=selectedMonth();
+      const d=Math.min(Number(window.hkSelectedDate.slice(8,10))||1,daysInMonth(month));
+      window.hkSelectedDate=getDateKey(month,d);
+    }
     render();
+    const amount=document.getElementById('hkAdsAmount');
+    if(amount&&!amount.dataset.bound){
+      amount.dataset.bound='1';
+      amount.addEventListener('keydown',ev=>{
+        if(ev.key==='Enter'){ev.preventDefault();window.hkSaveDay();}
+      });
+    }
   };
 
-  window.hkSetToday=function(){
-    setDate(today());
+  window.hkRefresh=function(){
+    load();
+    if(document.getElementById('admin-sub-meta-ads'))render();
   };
 
   window.hkSelectDate=function(date){
-    setDate(date);
+    setSelectedDate(date);
+    const row=document.getElementById(`hk-day-row-${date}`);
+    if(row)row.scrollIntoView({behavior:'smooth',block:'nearest'});
   };
-
-  function setDate(date){
-    date=validDate(date);
-    const d=document.getElementById('hkDate');
-    if(d)d.value=date;
-    loadDayForm();
-    render();
-  }
 
   window.hkEditExpense=function(date){
     date=validDate(date);
-    const d=document.getElementById('hkDate');
-    const amount=document.getElementById('hkAdsAmount');
+    window.hkSelectedDate=date;
+    loadDayForm();
     const panel=document.getElementById('metaExpenseEditor');
     const title=document.getElementById('metaExpenseActionTitle');
     const note=document.getElementById('metaExpenseActionNote');
-    if(d)d.value=date;
-    loadDayForm();
-    if(panel) panel.classList.add('editing');
-    if(title) title.innerHTML='<i class=\"fa-solid fa-pen-to-square\"></i> Editing Saved Expense';
-    if(note) note.textContent='Update the amount below and press Update Expense. Your previous record will be replaced for this date.';
+    const amount=document.getElementById('hkAdsAmount');
+    if(panel)panel.classList.add('editing');
+    if(title)title.innerHTML='<i class="fa-solid fa-pen-to-square"></i> Editing Saved Expense';
+    if(note)note.textContent='Update the amount below and press Update Expense. Your previous record will be replaced for this date.';
     if(amount){amount.focus();amount.select();}
-    if(panel) panel.scrollIntoView({behavior:'smooth',block:'center'});
+    render();
+    setTimeout(()=>{const row=document.getElementById(`hk-day-row-${date}`);if(row)row.scrollIntoView({behavior:'smooth',block:'center'});},50);
   };
 
   window.hkSaveDay=function(){
     const date=selectedDate();
     const input=document.getElementById('hkAdsAmount');
     const raw=String(input?.value??'').trim();
-
-    if(raw===''){
-      alert('Enter a Meta Ads amount.');
-      input?.focus();
-      return;
-    }
-
+    if(raw===''){alert('Enter a Meta Ads amount.');input?.focus();return;}
     const ads=Number(raw);
-    if(!Number.isFinite(ads)||ads<0){
-      alert('Enter a valid Meta Ads amount.');
-      input?.focus();
-      return;
-    }
-
+    if(!Number.isFinite(ads)||ads<0){alert('Enter a valid Meta Ads amount.');input?.focus();return;}
     const r=dayRec(date);
     r.ads=Number(ads.toFixed(2));
     r.updatedAt=nowParts();
-
-    save();
-    loadDayForm();
+    saveLocalBackupOnly();
+    try{if(typeof saveData==='function')saveData('meta-ads-expense-save');}
+    catch(e){console.error('Meta Ads cloud save error:',e);}
     render();
+    const panel=document.getElementById('metaExpenseEditor');
+    const title=document.getElementById('metaExpenseActionTitle');
+    const note=document.getElementById('metaExpenseActionNote');
+    if(panel)panel.classList.remove('editing');
+    if(title)title.innerHTML='<i class="fa-solid fa-plus-circle"></i> Add / Update Expense';
+    if(note)note.textContent='Select a date from the calendar or daily list, enter the Meta Ads amount in PKR, then save it.';
+    if(typeof showToast_==='function')showToast_(`Meta Ads saved for ${date} and queued for cloud sync.`,'ok');
+  };
 
-    if(typeof showToast_==='function'){
-      showToast_(`Meta Ads saved for ${date}`,'ok');
-    }
+  window.hkSetToday=function(){window.hkGoCurrentMonth();};
+
+  window.hkGoCurrentMonth=function(){
+    const current=today();
+    setSelectedDate(current);
+    const row=document.getElementById(`hk-day-row-${current}`);
+    if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+  };
+
+  window.hkPrevMonth=function(){
+    const [y,m]=selectedMonth().split('-').map(Number);
+    const d=new Date(y,m-2,1,12);
+    const month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    setSelectedMonth(month,Number(selectedDate().slice(8,10)));
+  };
+
+  window.hkNextMonth=function(){
+    const [y,m]=selectedMonth().split('-').map(Number);
+    const d=new Date(y,m,1,12);
+    const month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    setSelectedMonth(month,Number(selectedDate().slice(8,10)));
   };
 
   window.hkExport=function(){
     load();
-
     const rows=Object.values(hkDB.days)
       .filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.date||'')))
       .sort((a,b)=>String(a.date).localeCompare(String(b.date)))
-      .map(r=>({
-        'Date':r.date,
-        'Day':new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(r.date+'T12:00:00')),
-        'Meta Ads (PKR)':Number(r.ads||0),
-        'Last Updated':r.updatedAt?.display||''
-      }));
-
+      .map(r=>({'Date':r.date,'Day':new Intl.DateTimeFormat('en-US',{weekday:'long'}).format(new Date(r.date+'T12:00:00')),'Meta Ads (PKR)':Number(r.ads||0),'Last Updated':r.updatedAt?.display||''}));
     if(window.XLSX){
       const wb=XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(
-        wb,
-        XLSX.utils.json_to_sheet(rows.length?rows:[{'Date':'No records'}]),
-        'Meta Ads Expense'
-      );
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.length?rows:[{'Date':'No records'}]),'Meta Ads Expense');
       XLSX.writeFile(wb,`Meta_Ads_Expense_${today()}.xlsx`);
     }else{
       const data=rows.length?rows:[{'Date':'No records'}];
       const csv=[Object.keys(data[0]).join(','),...data.map(r=>Object.values(r).map(v=>`"${String(v).replaceAll('"','""')}"`).join(','))].join('\n');
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-      a.download=`Meta_Ads_Expense_${today()}.csv`;
-      a.click();
-      URL.revokeObjectURL(a.href);
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`Meta_Ads_Expense_${today()}.csv`;a.click();URL.revokeObjectURL(a.href);
     }
-
     if(typeof showToast_==='function')showToast_('Meta Ads expense export ready.','ok');
   };
 
-  document.addEventListener('DOMContentLoaded',()=>{
-    /*
-     * Safety migration:
-     * remove only the old Hissab order ledger, never the saved Meta Ads day records.
-     */
-    load();
-  });
+  document.addEventListener('DOMContentLoaded',()=>{load();});
 })(); 
 </script>
 
