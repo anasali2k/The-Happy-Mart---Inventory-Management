@@ -714,6 +714,20 @@
         .order-edit-footer { padding:16px 24px 22px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid rgba(148,163,184,.14); position:sticky; bottom:0; background:rgba(17,24,39,.96); backdrop-filter:blur(12px); }
         .order-edit-status { font-size:12px; color:#94a3b8; margin-top:4px; }
         @media(max-width:700px){ .order-edit-grid{grid-template-columns:1fr}.order-edit-card{max-height:95vh}.order-edit-body{padding:18px}.order-edit-head,.order-edit-footer{padding-left:18px;padding-right:18px} }
+        .order-edit-overlay.open{display:flex}
+        .order-edit-overlay[aria-hidden="true"]{display:none!important}
+        .order-edit-card{overscroll-behavior:contain}
+        .order-edit-field input[readonly]{opacity:.78;cursor:not-allowed}
+        .order-edit-footer .btn-submit{min-width:150px;justify-content:center}
+        body.order-edit-open{overflow:hidden}
+        @media(max-width:700px){
+            .order-edit-grid{grid-template-columns:1fr}
+            .order-edit-card{max-height:95vh}
+            .order-edit-body{padding:18px}
+            .order-edit-head,.order-edit-footer{padding-left:18px;padding-right:18px}
+            .order-edit-footer{flex-direction:column-reverse}
+            .order-edit-footer button{width:100%;justify-content:center}
+        }
 
         /* Admin Password Modal */
         .modal-overlay {
@@ -2600,6 +2614,139 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         </section>
 
     </main>
+
+    <!-- PROFESSIONAL ADMIN ORDER EDIT PORTAL
+         Kept outside all view sections so it works from Approvals, OFD,
+         Master Control and any other Admin order table. -->
+    <div class="order-edit-overlay" id="orderEditModal"
+         role="dialog" aria-modal="true" aria-labelledby="orderEditModalTitle"
+         onclick="if(event.target===this) closeOrderEditModal()">
+        <div class="order-edit-card">
+            <div class="order-edit-head">
+                <div class="order-edit-title-wrap">
+                    <div class="order-edit-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                    <div>
+                        <div id="orderEditModalTitle" style="font-size:19px;font-weight:800;">Edit Order</div>
+                        <div id="orderEditModalStatus" class="order-edit-status">Loading order details…</div>
+                    </div>
+                </div>
+                <button type="button" class="order-edit-close" aria-label="Close"
+                        onclick="closeOrderEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="professionalOrderEditForm" onsubmit="saveProfessionalOrderEdit(event)">
+                <input type="hidden" id="orderEditKey" value="">
+                <div class="order-edit-body">
+                    <div class="order-edit-grid">
+                        <div class="order-edit-field">
+                            <label for="editOrderId">Order ID</label>
+                            <input type="number" id="editOrderId" min="1" step="1" required>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editProductCode">Product Code</label>
+                            <input type="text" id="editProductCode" value="VIGA 50000" readonly>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editItemName">Item Name / Inventory</label>
+                            <select id="editItemName" required onchange="syncProfessionalEditItem()">
+                                <option value="">Select Item Name</option>
+                            </select>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editQty">Quantity</label>
+                            <input type="number" id="editQty" min="1" step="1" required>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editCustomer">Customer Name</label>
+                            <input type="text" id="editCustomer" required placeholder="Full Name">
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editPhone">Customer Number</label>
+                            <input type="text" id="editPhone" required placeholder="Customer Number">
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editCod">COD Amount (OMR)</label>
+                            <input type="number" id="editCod" min="0" step="0.01" required>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editCountryCode">Country Code</label>
+                            <input type="text" id="editCountryCode" required placeholder="968">
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editDeliverTo">Deliver To</label>
+                            <select id="editDeliverTo" required>
+                                <option value="Oman">Oman</option>
+                            </select>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label for="editStatus">Order Status</label>
+                            <select id="editStatus" required>
+                                <option value="Draft">Draft</option>
+                                <option value="Pending Approval">Pending Approval</option>
+                                <option value="OFD">OFD</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Returned">Returned</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="order-edit-field full">
+                            <label for="editClientOrderId">Client Order ID</label>
+                            <input type="text" id="editClientOrderId" placeholder="Enter Client Order ID">
+                        </div>
+
+                        <div class="order-edit-field full">
+                            <label for="editAddress">Delivery Address</label>
+                            <textarea id="editAddress" rows="3" required placeholder="Enter complete delivery address"></textarea>
+                        </div>
+
+                        <div class="order-edit-field full">
+                            <label for="editRemarks">Remarks</label>
+                            <textarea id="editRemarks" rows="3" placeholder="Special Instructions…"></textarea>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label>Created</label>
+                            <input type="text" id="editCreatedStamp" readonly>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label>Submitted</label>
+                            <input type="text" id="editSubmittedStamp" readonly>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label>Approved / OFD</label>
+                            <input type="text" id="editApprovedStamp" readonly>
+                        </div>
+
+                        <div class="order-edit-field">
+                            <label>Delivered</label>
+                            <input type="text" id="editDeliveredStamp" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-edit-footer">
+                    <button type="button" class="btn-back" onclick="closeOrderEditModal()">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-submit" id="professionalOrderSaveBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Admin Password Modal Portal -->
     <div class="modal-overlay" id="adminModal">
@@ -5692,7 +5839,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const tbody = document.getElementById('approvalTableBody'); 
             const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a,b)=>a.id-b.id); 
             if (!list.length) { tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.'); return; } 
-            tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button><button class="btn-warning" onclick="rejectOrder(${o.id})"><i class="fa-solid fa-rotate-left"></i> Send Back</button>`)}</tr>`).join(''); 
+            tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button><button class="btn-warning" type="button" onclick="sendBackApprovalOrder('${esc(o._key)}')"><i class="fa-solid fa-rotate-left"></i> Send Back</button>`)}</tr>`).join(''); 
         } 
  
         function approveOrder(id) { 
@@ -5716,19 +5863,11 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok'); 
         } 
  
-        function rejectOrder(id) { 
-            const order = getOrderByRef(id); 
-            if (!order || order.status !== STATUS.APPROVAL) return; 
-            order.status = STATUS.DRAFT; 
-            order.isSubmitted = false; 
-            order.isApproved = false; 
-            order.submittedStamp = null; 
-            saveData('order-sent-back-to-draft'); 
-            syncOrderWorkflowUI(); 
-            refreshWorkflowUI(); 
-            showToast_(`Order #${id} sent back to Daily Orders as a draft.`, 'ok'); 
-        } 
- 
+        function rejectOrder(ref) {
+            /* Backward-compatible entry point. New buttons use the stable _key. */
+            return sendBackApprovalOrder(ref);
+        }
+
         function rejectAllOrders() { 
             const list = orders.filter(o => o.status === STATUS.APPROVAL); 
             if (!list.length) { showToast_('Nothing is waiting for approval.', 'warn'); return; } 
@@ -5739,23 +5878,47 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             showToast_(`${list.length} order(s) sent back to Daily Orders.`, 'warn'); 
         } 
  
-        function sendBackOFDToApproval(ref) { 
-            const order = getOrderByRef(ref); 
-            if (!order || order.status !== STATUS.OFD) { 
-                showToast_('Only Out For Delivery orders can be sent back to approval.', 'warn'); 
-                return; 
-            } 
-            if (!confirm(`Send order #${order.id} back to Admin Approval?`)) return; 
-            order.status = STATUS.APPROVAL; 
-            order.isApproved = false; 
-            order.isSubmitted = true; 
-            order.approvedStamp = null; 
-            saveData('ofd-order-sent-back-to-approval'); 
-            syncOrderWorkflowUI(); 
-            refreshWorkflowUI(); 
-            showToast_(`Order #${order.id} sent back to Admin Approval.`, 'warn'); 
-        } 
- 
+        function sendBackApprovalOrder(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.APPROVAL) {
+                showToast_('Only Pending Approval orders can be sent back.', 'warn');
+                return;
+            }
+
+            if (!confirm(`Send order #${order.id} back to Daily Orders as a draft?`)) return;
+
+            order.status = STATUS.DRAFT;
+            order.isSubmitted = false;
+            order.isApproved = false;
+            order.submittedStamp = null;
+            order.approvedStamp = null;
+
+            saveData('order-sent-back-to-draft');
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} sent back to Daily Orders as a draft.`, 'ok');
+        }
+
+        function sendBackOFDToApproval(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.OFD) {
+                showToast_('Only Out For Delivery orders can be sent back to approval.', 'warn');
+                return;
+            }
+
+            if (!confirm(`Send order #${order.id} back to Admin Approval?`)) return;
+
+            order.status = STATUS.APPROVAL;
+            order.isApproved = false;
+            order.isSubmitted = true;
+            order.approvedStamp = null;
+
+            saveData('ofd-order-sent-back-to-approval');
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} sent back to Admin Approval.`, 'warn');
+        }
+
         /* ---------------- Out For Delivery ---------------- */ 
         function renderOFDTable() { 
             const tbody = document.getElementById('ofdTableBody'); 
@@ -6291,87 +6454,246 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             document.getElementById('editProductCode').readOnly = true; 
         } 
  
-        function openProfessionalOrderEdit(ref) { 
-            const order = getOrderByRef(ref); 
-            if (!order) { showToast_('Order not found.', 'warn'); return; } 
- 
-            document.getElementById('orderEditKey').value = order._key; 
-            document.getElementById('editOrderId').value = order.id; 
-            document.getElementById('editProductCode').value = 'VIGA 50000'; 
-            document.getElementById('editProductCode').readOnly = true; 
-            document.getElementById('editCustomer').value = order.customer || ''; 
-            document.getElementById('editPhone').value = order.phone || ''; 
-            document.getElementById('editQty').value = order.qty || 1; 
-            document.getElementById('editCod').value = Number(order.codAmount || orderTotal(order)); 
-            document.getElementById('editAddress').value = order.address || order.customerAddress || ''; 
-            document.getElementById('editClientOrderId').value = order.clientOrderId || ''; 
-            document.getElementById('editCountryCode').value = order.countryCode || '968'; 
-            document.getElementById('editDeliverTo').value = order.deliverTo || 'Oman'; 
-            document.getElementById('editRemarks').value = order.remarks || ''; 
-            const statusSelect = document.getElementById('editStatus'); if (statusSelect) statusSelect.value = order.status; 
-            document.getElementById('orderEditModalTitle').innerText = `Edit Order #${order.id}`; 
-            document.getElementById('orderEditModalStatus').innerText = `Status: ${order.status} • All order details can be updated`; 
-            populateProfessionalItemSelect('editItemName', order.itemId, order.itemName); 
-            document.getElementById('orderEditModal').style.display = 'flex'; 
-            setTimeout(() => document.getElementById('editItemName').focus(), 80); 
-        } 
- 
-        function closeOrderEditModal() { 
-            const modal = document.getElementById('orderEditModal'); 
-            if (modal) modal.style.display = 'none'; 
-            document.getElementById('orderEditKey').value = ''; 
-        } 
- 
-        function saveProfessionalOrderEdit() { 
-            const key=document.getElementById('orderEditKey').value; 
-            const order=getOrderByRef(key); 
-            if(!order){closeOrderEditModal();showToast_('Order not found.','warn');return;} 
-            const newId=Number(document.getElementById('editOrderId').value); 
-            const newQty=Number(document.getElementById('editQty').value); 
-            const newCod=Number(document.getElementById('editCod').value); 
-            const selectedId=Number(document.getElementById('editItemName').value); 
-            const selectedItem=inventory.find(i=>Number(i.id)===selectedId); 
-            const newStatus=document.getElementById('editStatus')?.value || order.status; 
-            if(!Number.isInteger(newId)||newId<1){showToast_('Order ID must be a positive whole number.','warn');return;} 
-            if(!Number.isInteger(newQty)||newQty<1){showToast_('Quantity must be at least 1.','warn');return;} 
-            if(!Number.isFinite(newCod)||newCod<0){showToast_('Enter a valid COD Amount (OMR).','warn');return;} 
-            if(!Object.values(STATUS).includes(newStatus)){showToast_('Invalid order status.','warn');return;} 
-            const oldItem=inventory.find(i=>Number(i.id)===Number(order.itemId)); 
-            const targetItem=selectedItem||oldItem; 
-            const stockResult=reconcileOrderStockChange(order,targetItem,newQty,newStatus); 
-            if(!stockResult.ok){showToast_(stockResult.message,'warn');return;} 
-            order.id=newId; 
-            order.itemId=targetItem?Number(targetItem.id):Number(order.itemId||0); 
-            order.itemName=targetItem?targetItem.name:(order.itemName||''); 
-            order.productCode='VIGA 50000'; 
-            order.customer=document.getElementById('editCustomer').value.trim(); 
-            order.phone=document.getElementById('editPhone').value.trim(); 
-            order.qty=newQty; 
-            order.codAmount=newCod; 
-            order.price=newQty>0?newCod/newQty:0; 
-            order.address=document.getElementById('editAddress').value.trim(); 
-            order.clientOrderId=document.getElementById('editClientOrderId').value.trim(); 
-            order.countryCode=document.getElementById('editCountryCode').value.trim()||'968'; 
-            order.deliverTo=document.getElementById('editDeliverTo').value||'Oman'; 
-            order.remarks=document.getElementById('editRemarks').value.trim(); 
-            if(newStatus!==order.status){ 
-                const stamp=makeStamp(); 
-                if(newStatus===STATUS.APPROVAL){order.isSubmitted=true;order.isApproved=false;order.submittedStamp=stamp;} 
-                if(newStatus===STATUS.OFD){order.isSubmitted=true;order.isApproved=true;order.approvedStamp=stamp;} 
-                if(newStatus===STATUS.DELIVERED){order.isSubmitted=true;order.isApproved=true;order.deliveredStamp=stamp;order.deliveryDate=stamp.display;} 
-                if(newStatus===STATUS.RETURNED){order.isSubmitted=true;order.isApproved=true;order.returnStamp=stamp;order.returnDate=stamp.display;} 
-                if(newStatus===STATUS.CANCELLED){order.isSubmitted=true;order.isApproved=true;order.cancelStamp=stamp;order.cancelDate=stamp.display;} 
-                if(newStatus===STATUS.DRAFT){order.isSubmitted=false;order.isApproved=false;} 
-                order.status=newStatus; 
-            } 
-            saveData('admin-complete-order-edit'); 
-            closeOrderEditModal(); renderAllTables(); showToast_(`Order #${order.id} updated successfully by Admin.`,'ok'); 
-        } 
- 
-        function adminEditOrder(ref) { 
-            openProfessionalOrderEdit(ref); 
-        } 
- 
+        function formatOrderStampForEdit(stamp, fallback='-') {
+            if (!stamp) return fallback;
+            if (typeof stamp === 'string') return stamp || fallback;
+            if (stamp.display) return String(stamp.display);
+            const parts = [stamp.day, stamp.date, stamp.time].filter(Boolean);
+            return parts.length ? parts.join(' • ') : fallback;
+        }
+
+        function setEditField(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.value = value ?? '';
+            return el;
+        }
+
+        function openProfessionalOrderEdit(ref) {
+            const order = getOrderByRef(ref);
+            if (!order) {
+                showToast_('Order not found.', 'warn');
+                return false;
+            }
+
+            const modal = document.getElementById('orderEditModal');
+            const form = document.getElementById('professionalOrderEditForm');
+
+            /* The modal is a real DOM portal, so a missing field can never silently
+               make the entire Edit action fail. */
+            if (!modal || !form) {
+                console.error('Order edit portal is missing from the page.');
+                showToast_('Order editor could not be opened. Please refresh the page once.', 'err');
+                return false;
+            }
+
+            setEditField('orderEditKey', order._key || String(order.id));
+            setEditField('editOrderId', order.id);
+            setEditField('editProductCode', order.productCode || 'VIGA 50000');
+            setEditField('editCustomer', order.customer || '');
+            setEditField('editPhone', order.phone || '');
+            setEditField('editQty', Number(order.qty) || 1);
+            setEditField('editCod', Number(order.codAmount ?? orderTotal(order) ?? 0));
+            setEditField('editAddress', order.address || order.customerAddress || '');
+            setEditField('editClientOrderId', order.clientOrderId || '');
+            setEditField('editCountryCode', order.countryCode || '968');
+            setEditField('editDeliverTo', order.deliverTo || 'Oman');
+            setEditField('editRemarks', order.remarks || '');
+            setEditField('editCreatedStamp', formatOrderStampForEdit(order.createdStamp || {date:order.creationDate}));
+            setEditField('editSubmittedStamp', formatOrderStampForEdit(order.submittedStamp));
+            setEditField('editApprovedStamp', formatOrderStampForEdit(order.approvedStamp));
+            setEditField('editDeliveredStamp', formatOrderStampForEdit(order.deliveredStamp));
+
+            const statusSelect = document.getElementById('editStatus');
+            if (statusSelect) {
+                statusSelect.value = Object.values(STATUS).includes(order.status) ? order.status : STATUS.DRAFT;
+            }
+
+            const productField = document.getElementById('editProductCode');
+            if (productField) {
+                productField.value = 'VIGA 50000';
+                productField.readOnly = true;
+                productField.setAttribute('readonly', 'readonly');
+            }
+
+            populateProfessionalItemSelect('editItemName', order.itemId, order.itemName);
+
+            const itemSelect = document.getElementById('editItemName');
+            if (itemSelect && !itemSelect.value && order.itemName) {
+                /* Preserve an item even if its inventory row was removed. */
+                const fallbackId = Number(order.itemId);
+                if (fallbackId > 0) {
+                    const option = document.createElement('option');
+                    option.value = String(fallbackId);
+                    option.textContent = `${order.itemName} — Current Item`;
+                    itemSelect.appendChild(option);
+                    itemSelect.value = String(fallbackId);
+                }
+            }
+
+            const title = document.getElementById('orderEditModalTitle');
+            if (title) title.textContent = `Edit Order #${order.id}`;
+
+            const statusLine = document.getElementById('orderEditModalStatus');
+            if (statusLine) {
+                statusLine.textContent =
+                    `Status: ${order.status} • Edit all order details safely`;
+            }
+
+            modal.style.display = 'flex';
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('order-edit-open');
+
+            setTimeout(() => {
+                const focusTarget = document.getElementById('editCustomer') || itemSelect;
+                if (focusTarget) focusTarget.focus();
+            }, 80);
+
+            return true;
+        }
+
+        function closeOrderEditModal() {
+            const modal = document.getElementById('orderEditModal');
+            if (modal) {
+                modal.classList.remove('open');
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+            }
+            const key = document.getElementById('orderEditKey');
+            if (key) key.value = '';
+            document.body.classList.remove('order-edit-open');
+        }
+
+        function saveProfessionalOrderEdit(event) {
+            if (event) event.preventDefault();
+
+            const keyEl = document.getElementById('orderEditKey');
+            const key = keyEl ? keyEl.value : '';
+            const order = getOrderByRef(key);
+
+            if (!order) {
+                closeOrderEditModal();
+                showToast_('Order not found. Please refresh and try again.', 'warn');
+                return false;
+            }
+
+            const getVal = id => {
+                const el = document.getElementById(id);
+                return el ? String(el.value ?? '').trim() : '';
+            };
+
+            const newId = Number(getVal('editOrderId'));
+            const newQty = Number(getVal('editQty'));
+            const newCod = Number(getVal('editCod'));
+            const selectedId = Number(getVal('editItemName'));
+            const selectedItem = inventory.find(i => Number(i.id) === selectedId);
+            const newStatus = getVal('editStatus') || order.status;
+
+            if (!Number.isInteger(newId) || newId < 1) {
+                showToast_('Order ID must be a positive whole number.', 'warn');
+                return false;
+            }
+            if (!Number.isInteger(newQty) || newQty < 1) {
+                showToast_('Quantity must be at least 1.', 'warn');
+                return false;
+            }
+            if (!Number.isFinite(newCod) || newCod < 0) {
+                showToast_('Enter a valid COD Amount (OMR).', 'warn');
+                return false;
+            }
+            if (!Object.values(STATUS).includes(newStatus)) {
+                showToast_('Invalid order status.', 'warn');
+                return false;
+            }
+
+            /* Prevent accidental duplicate Order IDs when the admin edits an ID. */
+            const duplicate = orders.find(o =>
+                o._key !== order._key && Number(o.id) === newId
+            );
+            if (duplicate) {
+                showToast_(`Order ID #${newId} is already used by another order.`, 'warn');
+                return false;
+            }
+
+            const oldItem = inventory.find(i => Number(i.id) === Number(order.itemId));
+            const targetItem = selectedItem || oldItem;
+
+            const stockResult = reconcileOrderStockChange(
+                order, targetItem, newQty, newStatus
+            );
+            if (!stockResult.ok) {
+                showToast_(stockResult.message, 'warn');
+                return false;
+            }
+
+            const oldStatus = order.status;
+
+            order.id = newId;
+            order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
+            order.itemName = targetItem ? targetItem.name : (order.itemName || '');
+            order.productCode = 'VIGA 50000';
+            order.customer = getVal('editCustomer');
+            order.phone = getVal('editPhone');
+            order.qty = newQty;
+            order.codAmount = newCod;
+            order.price = newQty > 0 ? newCod / newQty : 0;
+            order.address = getVal('editAddress');
+            order.clientOrderId = getVal('editClientOrderId');
+            order.countryCode = getVal('editCountryCode') || '968';
+            order.deliverTo = getVal('editDeliverTo') || 'Oman';
+            order.remarks = getVal('editRemarks');
+
+            if (newStatus !== oldStatus) {
+                const stamp = makeStamp();
+
+                if (newStatus === STATUS.DRAFT) {
+                    order.isSubmitted = false;
+                    order.isApproved = false;
+                    order.submittedStamp = null;
+                    order.approvedStamp = null;
+                } else if (newStatus === STATUS.APPROVAL) {
+                    order.isSubmitted = true;
+                    order.isApproved = false;
+                    order.submittedStamp = stamp;
+                    order.approvedStamp = null;
+                } else if (newStatus === STATUS.OFD) {
+                    order.isSubmitted = true;
+                    order.isApproved = true;
+                    order.approvedStamp = stamp;
+                } else if (newStatus === STATUS.DELIVERED) {
+                    order.isSubmitted = true;
+                    order.isApproved = true;
+                    order.deliveredStamp = stamp;
+                    order.deliveryDate = stamp.display;
+                } else if (newStatus === STATUS.RETURNED) {
+                    order.isSubmitted = true;
+                    order.isApproved = true;
+                    order.returnStamp = stamp;
+                    order.returnDate = stamp.display;
+                } else if (newStatus === STATUS.CANCELLED) {
+                    order.isSubmitted = true;
+                    order.isApproved = true;
+                    order.cancelStamp = stamp;
+                    order.cancelDate = stamp.display;
+                }
+
+                order.status = newStatus;
+            }
+
+            saveData('admin-complete-order-edit');
+            closeOrderEditModal();
+            renderAllTables();
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+
+            showToast_(`Order #${order.id} updated successfully by Admin.`, 'ok');
+            return true;
+        }
+
+        function adminEditOrder(ref) {
+            return openProfessionalOrderEdit(ref);
+        }
+
         function adminDeleteOrder(ref) { 
             const order = getOrderByRef(ref); if (!order) return; 
             if (!confirm(`Admin action: permanently delete order #${order.id}?`)) return; 
@@ -7044,5 +7366,21 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         </div>
     </div>
 
+
+<script>
+(function installOrderEditSafety(){
+    if (window.__orderEditSafetyInstalled) return;
+    window.__orderEditSafetyInstalled = true;
+
+    document.addEventListener('keydown', function(event){
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('orderEditModal');
+            if (modal && (modal.style.display === 'flex' || modal.classList.contains('open'))) {
+                closeOrderEditModal();
+            }
+        }
+    });
+})();
+</script>
 </body> 
 </html
