@@ -4803,7 +4803,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 qty: qty, 
                 price: qty > 0 ? codAmount / qty : (Number(o.price) || 0), 
                 codAmount: codAmount, 
-                itemCost: Number.isFinite(Number(o.itemCost)) ? Math.max(0, Number(o.itemCost)) : null,
+                itemCost: Number.isFinite(Number(o.itemCost ?? o.buyPrice ?? o.purchasePrice)) ? Math.max(0, Number(o.itemCost ?? o.buyPrice ?? o.purchasePrice)) : null,
                 clientOrderId: String(o.clientOrderId || o.clientId || '').trim(), 
                 countryCode: String(o.countryCode || '968').trim(), 
                 deliverTo: 'Oman', 
@@ -4842,7 +4842,11 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
             if (raw && Array.isArray(raw.orders)) { 
                 inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
-                    id: Number(i.id), name: i.name || '', price: Number(i.price) || 0, stock: Number(i.stock) || 0 
+                    id: Number(i.id), name: i.name || '', price: Number(i.price) || 0,
+                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : null,
+                    purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
+                    cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
+                    stock: Number(i.stock) || 0 
                 })) : JSON.parse(JSON.stringify(defaultInventory)); 
                 orders = raw.orders.map(normalizeOrder); 
                 returns = Array.isArray(raw.returns) ? raw.returns : []; 
@@ -5504,15 +5508,25 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             } 
         } 
  
+        function getInventoryUnitBuyPrice(item) {
+            if (!item) return 0;
+            const explicit = Number(item.buyPrice ?? item.purchasePrice ?? item.cost);
+            if (Number.isFinite(explicit) && explicit >= 0) return explicit;
+            const price = Number(item.price);
+            return Number.isFinite(price) && price >= 0 ? price : 0;
+        }
+
         function getProfitItemCost(order) {
+            // Always prefer the buy/cost price saved with this order.
+            // Inventory price is only a fallback, so later price edits cannot
+            // change the historical buy price used by the Profit Calculator.
+            const historical = Number(order && (order.itemCost ?? order.buyPrice ?? order.purchasePrice));
+            if (Number.isFinite(historical) && historical >= 0) return historical;
+
             const inv = Array.isArray(inventory) ? inventory : [];
             const byId = inv.find(i => Number(i.id) === Number(order && order.itemId));
-            if (byId && Number.isFinite(Number(byId.price)) && Number(byId.price) >= 0) return Number(byId.price);
             const byName = inv.find(i => String(i.name || '').trim().toLowerCase() === String(order && order.itemName || '').trim().toLowerCase());
-            if (byName && Number.isFinite(Number(byName.price)) && Number(byName.price) >= 0) return Number(byName.price);
-            const historical = Number(order && order.itemCost);
-            if (Number.isFinite(historical) && historical >= 0) return historical;
-            return 0;
+            return getInventoryUnitBuyPrice(byId || byName);
         }
 
         function profitMoney(value) {
@@ -5948,6 +5962,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 order.qty = qty; 
                 order.codAmount = codAmount; 
                 order.price = qty > 0 ? codAmount / qty : 0; 
+                order.itemCost = getInventoryUnitBuyPrice(item); 
  
                 showToast_(`Order #${order.id} updated. Stock synchronized.`, 'ok'); 
             } else { 
@@ -5969,6 +5984,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     qty, 
                     codAmount, 
                     price: qty > 0 ? codAmount / qty : 0, 
+                    itemCost: getInventoryUnitBuyPrice(item), 
                     status: STATUS.DRAFT, 
                     creationDate: stamp.date, 
                     createdStamp: stamp, 
@@ -7094,7 +7110,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return {ok:errors.length===0,errors,row,order:{
                 _key:makeOrderRecordKey(),id,productCode:'VIGA 50000',customer,phone,address,
                 itemId:item?Number(item.id):0,itemName:item?item.name:itemName,qty,codAmount:cod,
-                price:qty>0?cod/qty:0,clientOrderId,countryCode,deliverTo:'Oman',remarks,
+                price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo:'Oman',remarks,
                 status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,submittedStamp:null,
                 approvedStamp:null,deliveredStamp:null,returnStamp:null,cancelStamp:null,deliveryDate:'',
                 returnDate:'',cancelDate:'',returnReason:'',cancelReason:'',isSubmitted:false,isApproved:false
