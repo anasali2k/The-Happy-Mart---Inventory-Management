@@ -2548,7 +2548,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
 
                     <div class="profit-table-card">
-                        <div class="profit-card-head"><div><div class="profit-kicker">DELIVERED ORDERS</div><h3>Delivered Order Profit</h3><p>Buy Price is the actual item buy price; OMR Profit is the remaining balance after Buy Price is deducted.</p></div></div>
+                        <div class="profit-card-head"><div><div class="profit-kicker">DELIVERED ORDERS</div><h3>Delivered Order Profit</h3><p>Buy Price = item buy price × ordered quantity; OMR Profit is the remaining balance after the full Buy Price is deducted.</p></div></div>
                         <div class="table-responsive">
                             <table class="profit-table">
                                 <thead><tr><th>Order</th><th>Item</th><th>Qty</th><th>Sale Price</th><th>1% COD</th><th>Fulfilment 0.2</th><th>1.90 Delivery</th><th>Buy Price</th><th>OMR Profit</th><th>PKR Profit</th></tr></thead>
@@ -5537,14 +5537,15 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             // Exact calculation sequence used in the requested table:
             // Sale Price → after 1% COD → after 0.20 Fulfilment → after 1.90 Delivery
-            // → less Buy Price → OMR Profit → PKR Profit.
+            // → less (Buy Price per item × Qty) → OMR Profit → PKR Profit.
             const deliveredRows = delivered.map(o => {
                 const qty = Math.max(0, Number(o.qty) || 0);
                 const saleTotal = Math.max(0, Number(orderTotal(o)) || 0);
                 const afterOne = saleTotal - (saleTotal * 0.01);
                 const afterPointTwo = afterOne - 0.20;
                 const afterDelivery = afterPointTwo - 1.90;
-                const buyPrice = Math.max(0, Number(getProfitItemCost(o)) || 0);
+                const unitBuyPrice = Math.max(0, Number(getProfitItemCost(o)) || 0);
+                const buyPrice = unitBuyPrice * qty;
                 const omrProfit = afterDelivery - buyPrice;
                 return { o, qty, saleTotal, afterOne, afterPointTwo, afterDelivery, buyPrice, omrProfit };
             });
