@@ -1975,7 +1975,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 .profit-breakdown{display:grid;gap:8px}
 .profit-line{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px dashed rgba(148,163,184,.14);font-size:12px}
 .profit-line:last-child{border-bottom:0}.profit-line span:first-child{color:var(--text-muted)}
-.profit-line strong{font-weight:900}
+.profit-line strong{font-weight:900}.profit-line .profit-deduction{color:#fca5a5}.profit-line.profit-remaining{background:rgba(16,185,129,.045);border-radius:9px;padding-left:10px;padding-right:10px}.profit-line.profit-remaining span:first-child{color:#a7f3d0;font-weight:800}.profit-line.profit-remaining strong{color:#6ee7b7}
 .profit-final{margin-top:8px;padding:13px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,.13),rgba(99,102,241,.10));border:1px solid rgba(16,185,129,.24)}
 .profit-final .omr{font-size:24px;font-weight:950;color:#6ee7b7}.profit-final .pkr{font-size:15px;font-weight:900;color:#7dd3fc;margin-top:3px}
 .profit-rule-box{display:grid;gap:8px;font-size:11px;color:#cbd5e1;line-height:1.55}
@@ -2561,7 +2561,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
 
                     <div class="profit-calc-note">
-                        Calculation is applied exactly in the order requested: delivered sale total → less 1% → less OMR 0.20 per delivered order → less OMR 1.90 delivery charge per delivered order → less item cost × delivered quantity. Returned orders are then charged OMR 0.50 per return from profit (not from item cost).
+                        Calculation is applied exactly in the requested sequence. After EVERY deduction, the calculator writes the BALANCE LEFT. Delivered sale total → less 1% → show remaining balance → less OMR 0.20 per delivered order → show remaining balance → less OMR 1.90 delivery charge per delivered order → show remaining balance → less item cost × quantity → Profit Before Returns → less OMR 0.50 per return FROM PROFIT → FINAL PROFIT.
                         The PKR result uses the exchange rate entered above.
                     </div>
 
@@ -2578,12 +2578,16 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <h3><i class="fa-solid fa-calculator"></i> Profit Breakdown</h3>
                             <div class="profit-breakdown">
                                 <div class="profit-line"><span>Total Delivered Sale</span><strong id="profitGrossSales">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less 1% of Sale</span><strong id="profitOnePercent">− OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 0.20 × Delivered Orders</span><strong id="profitPointTwo">− OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 1.90 × Delivered Orders</span><strong id="profitDeliveryCharges">− OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less Item Cost × Delivered Qty</span><strong id="profitItemCost">− OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Profit Before Returns</span><strong id="profitBeforeReturns">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 0.50 × Returned Orders</span><strong id="profitReturnCharges">− OMR 0.00</strong></div>
+                                <div class="profit-line"><span>Less 1%</span><strong class="profit-deduction" id="profitOnePercent">− OMR 0.00</strong></div>
+                                <div class="profit-line profit-remaining"><span>Balance After 1%</span><strong id="profitAfterOnePercent">OMR 0.00</strong></div>
+                                <div class="profit-line"><span>Less OMR 0.20 × Delivered Orders</span><strong class="profit-deduction" id="profitPointTwo">− OMR 0.00</strong></div>
+                                <div class="profit-line profit-remaining"><span>Balance After OMR 0.20</span><strong id="profitAfterPointTwo">OMR 0.00</strong></div>
+                                <div class="profit-line"><span>Less OMR 1.90 × Delivered Orders</span><strong class="profit-deduction" id="profitDeliveryCharges">− OMR 0.00</strong></div>
+                                <div class="profit-line profit-remaining"><span>Balance After OMR 1.90 Delivery</span><strong id="profitAfterDelivery">OMR 0.00</strong></div>
+                                <div class="profit-line"><span>Less Item Cost × Delivered Qty</span><strong class="profit-deduction" id="profitItemCost">− OMR 0.00</strong></div>
+                                <div class="profit-line profit-remaining"><span>Balance After Item Cost = Profit Before Returns</span><strong id="profitBeforeReturns">OMR 0.00</strong></div>
+                                <div class="profit-line"><span>Less OMR 0.50 × Returned Orders</span><strong class="profit-deduction" id="profitReturnCharges">− OMR 0.00</strong></div>
+                                <div class="profit-line profit-remaining"><span>Balance After Return Charges = FINAL PROFIT</span><strong id="profitAfterReturns">OMR 0.00</strong></div>
                             </div>
                             <div class="profit-final">
                                 <div class="omr" id="profitFinalOmr">OMR 0.00</div>
@@ -2611,7 +2615,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="profit-table-wrap">
                         <table class="profit-table">
                             <thead><tr>
-                                <th>Order</th><th>Item</th><th>Qty</th><th>Sale / Item</th><th>Total Sale</th><th>1%</th><th>0.20</th><th>1.90 Delivery</th><th>Item Cost / Pc</th><th>Total Item Cost</th><th>Order Profit</th>
+                                <th>Order</th><th>Item</th><th>Qty</th><th>Sale / Item</th><th>Total Sale</th><th>After 1%</th><th>After 0.20</th><th>After 1.90 Delivery</th><th>Item Cost / Pc</th><th>Total Item Cost</th><th>Final Order Profit</th>
                             </tr></thead>
                             <tbody id="profitDeliveredTableBody"></tbody>
                         </table>
@@ -2624,7 +2628,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="profit-table-wrap">
                         <table class="profit-table profit-return-table">
                             <thead><tr>
-                                <th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Return Charge</th><th>Impact on Profit</th>
+                                <th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Less From Profit</th><th>Profit Before Return Charge</th><th>Balance After 0.50</th>
                             </tr></thead>
                             <tbody id="profitReturnsTableBody"></tbody>
                         </table>
@@ -5632,19 +5636,27 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             const deliveredOrders = delivered.length;
             const returnedOrders = returned.length;
-            const soldQty = delivered.reduce((sum,o) => sum + Math.max(0, Math.floor(profitNumber(o.qty))), 0);
-            const returnedQty = returned.reduce((sum,o) => sum + Math.max(0, Math.floor(profitNumber(o.qty))), 0);
+            const soldQty = delivered.reduce((sum,o) => sum + Math.max(0, profitNumber(o.qty)), 0);
+            const returnedQty = returned.reduce((sum,o) => sum + Math.max(0, profitNumber(o.qty)), 0);
 
+            /*
+             * IMPORTANT: Every deduction is shown as BOTH:
+             *   1) the amount being deducted, and
+             *   2) the balance remaining after that deduction.
+             * This follows the user's requested calculation sequence exactly.
+             */
             const grossSales = delivered.reduce((sum,o) => sum + Math.max(0, profitNumber(orderTotal(o))), 0);
             const onePercent = grossSales * 0.01;
+            const balanceAfterOnePercent = grossSales - onePercent;
             const pointTwo = deliveredOrders * 0.20;
+            const balanceAfterPointTwo = balanceAfterOnePercent - pointTwo;
             const deliveryCharges = deliveredOrders * 1.90;
+            const balanceAfterDelivery = balanceAfterPointTwo - deliveryCharges;
             const totalItemCost = delivered.reduce((sum,o) => {
                 const qty = Math.max(0, profitNumber(o.qty));
                 return sum + (getProfitItemCost(o) * qty);
             }, 0);
-
-            const profitBeforeReturns = grossSales - onePercent - pointTwo - deliveryCharges - totalItemCost;
+            const profitBeforeReturns = balanceAfterDelivery - totalItemCost;
             const returnCharges = returnedOrders * 0.50;
             const finalProfit = profitBeforeReturns - returnCharges;
             const rate = getProfitCalculatorRate();
@@ -5656,25 +5668,30 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             };
 
             setText('profitDeliveredOrders', deliveredOrders);
-            setText('profitSoldQty', soldQty);
+            setText('profitSoldQty', soldQty.toLocaleString(undefined, {maximumFractionDigits: 0}));
             setText('profitReturnedOrders', returnedOrders);
-            setText('profitReturnedQty', returnedQty);
+            setText('profitReturnedQty', returnedQty.toLocaleString(undefined, {maximumFractionDigits: 0}));
             setText('profitFinalOmrTop', profitMoney(finalProfit));
+
             setText('profitGrossSales', profitMoney(grossSales));
             setText('profitOnePercent', '− ' + profitMoney(onePercent));
+            setText('profitAfterOnePercent', profitMoney(balanceAfterOnePercent));
             setText('profitPointTwo', '− ' + profitMoney(pointTwo));
+            setText('profitAfterPointTwo', profitMoney(balanceAfterPointTwo));
             setText('profitDeliveryCharges', '− ' + profitMoney(deliveryCharges));
+            setText('profitAfterDelivery', profitMoney(balanceAfterDelivery));
             setText('profitItemCost', '− ' + profitMoney(totalItemCost));
             setText('profitBeforeReturns', profitMoney(profitBeforeReturns));
             setText('profitReturnCharges', '− ' + profitMoney(returnCharges));
+            setText('profitAfterReturns', profitMoney(finalProfit));
             setText('profitFinalOmr', profitMoney(finalProfit));
             setText('profitFinalPkr', rate > 0 ? profitPkr(finalPkr) : 'PKR rate required');
 
             const deliveredHint = document.getElementById('profitDeliveredTableHint');
-            if (deliveredHint) deliveredHint.textContent = `${deliveredOrders} delivered order(s) • ${soldQty} item(s)`;
+            if (deliveredHint) deliveredHint.textContent = `${deliveredOrders} delivered order(s) • ${soldQty} item(s) • each deduction shows the remaining balance`;
 
             const returnHint = document.getElementById('profitReturnsTableHint');
-            if (returnHint) returnHint.textContent = `${returnedOrders} returned order(s) • ${returnedQty} item(s)`;
+            if (returnHint) returnHint.textContent = `${returnedOrders} returned order(s) • ${returnedQty} item(s) • OMR 0.50 taken from profit per return`;
 
             const deliveredBody = document.getElementById('profitDeliveredTableBody');
             if (deliveredBody) {
@@ -5685,22 +5702,25 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         const qty = Math.max(0, profitNumber(o.qty));
                         const saleTotal = Math.max(0, profitNumber(orderTotal(o)));
                         const saleUnit = qty > 0 ? saleTotal / qty : 0;
+
                         const one = saleTotal * 0.01;
-                        const pointTwoOrder = 0.20;
-                        const delivery = 1.90;
+                        const afterOne = saleTotal - one;
+                        const afterPointTwo = afterOne - 0.20;
+                        const afterDelivery = afterPointTwo - 1.90;
                         const itemCost = getProfitItemCost(o);
                         const itemCostTotal = itemCost * qty;
-                        const orderProfit = saleTotal - one - pointTwoOrder - delivery - itemCostTotal;
+                        const orderProfit = afterDelivery - itemCostTotal;
                         const profitClass = orderProfit >= 0 ? 'profit-positive' : 'profit-negative';
+
                         return `<tr>
                             <td><b>#${esc(o.id)}</b></td>
                             <td>${esc(o.itemName || '-')}</td>
                             <td>${qty}</td>
                             <td>${profitMoney(saleUnit)}</td>
                             <td><b>${profitMoney(saleTotal)}</b></td>
-                            <td>${profitMoney(one)}</td>
-                            <td>${profitMoney(pointTwoOrder)}</td>
-                            <td>${profitMoney(delivery)}</td>
+                            <td class="profit-positive">${profitMoney(afterOne)}</td>
+                            <td class="profit-positive">${profitMoney(afterPointTwo)}</td>
+                            <td class="profit-positive">${profitMoney(afterDelivery)}</td>
                             <td>${profitMoney(itemCost)}</td>
                             <td>${profitMoney(itemCostTotal)}</td>
                             <td class="${profitClass}">${profitMoney(orderProfit)}</td>
@@ -5712,18 +5732,20 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const returnBody = document.getElementById('profitReturnsTableBody');
             if (returnBody) {
                 if (!returned.length) {
-                    returnBody.innerHTML = '<tr><td colspan="6"><div class="profit-empty">No returned orders found.</div></td></tr>';
+                    returnBody.innerHTML = '<tr><td colspan="7"><div class="profit-empty">No returned orders found.</div></td></tr>';
                 } else {
                     returnBody.innerHTML = returned.map(o => {
                         const qty = Math.max(0, profitNumber(o.qty));
                         const saleTotal = Math.max(0, profitNumber(orderTotal(o)));
+                        const afterReturn = profitBeforeReturns - 0.50;
                         return `<tr>
                             <td><b>#${esc(o.id)}</b></td>
                             <td>${esc(o.itemName || '-')}</td>
                             <td>${qty}</td>
                             <td>${profitMoney(saleTotal)}</td>
-                            <td class="profit-negative">${profitMoney(0.50)}</td>
                             <td class="profit-negative">− ${profitMoney(0.50)}</td>
+                            <td>${profitMoney(profitBeforeReturns)}</td>
+                            <td class="profit-negative">${profitMoney(afterReturn)}</td>
                         </tr>`;
                     }).join('');
                 }
