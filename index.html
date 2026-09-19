@@ -1689,6 +1689,34 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 @media(max-width:900px){body{height:auto;min-height:100vh;overflow:auto;display:block}.sidebar{width:100%;height:auto;max-height:none;position:relative;padding:14px 12px;overflow:visible;border-right:0;border-bottom:1px solid var(--border-color)}.brand-header{padding-bottom:12px;margin-bottom:10px}.nav-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.nav-item{padding:11px 10px;font-size:12px;min-height:44px}.main-content{padding:18px 12px;overflow:visible;min-width:0}.top-bar{margin-bottom:18px}.page-title{font-size:21px}.login-card{width:min(94vw,560px);padding:38px 24px}.login-title{font-size:25px}.login-live-ring{width:72vw;height:72vw}}
 @media(max-width:560px){.nav-list{grid-template-columns:1fr 1fr}.top-bar-right{width:100%;justify-content:flex-start;flex-wrap:wrap}.form-grid{grid-template-columns:1fr!important}.login-card{padding:30px 18px;border-radius:24px}.login-icon{width:74px;height:74px;font-size:31px}.login-title{font-size:22px}.toast-stack{right:12px;left:12px;bottom:12px}.toast{max-width:none}.admin-tabs{gap:7px}.admin-tab-btn{padding:10px 11px;font-size:12px}}
 
+        /* ===== ADMIN ORDER ACTIONS + ALWAYS-VISIBLE HORIZONTAL DRAG BAR ===== */
+        .admin-order-scroll{
+            position:relative;
+            width:100%;
+            overflow-x:scroll !important;
+            overflow-y:hidden;
+            -webkit-overflow-scrolling:touch;
+            scrollbar-width:auto;
+            scrollbar-color:#64748b rgba(15,23,42,.9);
+            padding-bottom:2px;
+        }
+        .admin-order-scroll::-webkit-scrollbar{height:14px;}
+        .admin-order-scroll::-webkit-scrollbar-track{background:rgba(15,23,42,.92);border-radius:999px;}
+        .admin-order-scroll::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#64748b,#94a3b8);border-radius:999px;border:2px solid rgba(15,23,42,.92);min-width:70px;}
+        .admin-order-scroll::-webkit-scrollbar-thumb:hover{background:linear-gradient(90deg,#818cf8,#38bdf8);}
+        .admin-action-cell{min-width:270px!important;width:270px;vertical-align:middle!important;}
+        .admin-order-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;width:100%;min-width:250px;}
+        .admin-order-actions button{flex:0 0 auto;min-height:38px;min-width:104px;justify-content:center;white-space:nowrap;}
+        .approval-row-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+        .admin-order-sticky-scroll{position:sticky;bottom:0;z-index:20;width:100%;height:16px;margin-top:4px;border:1px solid rgba(148,163,184,.18);border-radius:999px;background:rgba(7,13,29,.98);box-shadow:0 -8px 22px rgba(0,0,0,.24);overflow-x:scroll;overflow-y:hidden;scrollbar-width:auto;scrollbar-color:#64748b rgba(15,23,42,.95);}
+        .admin-order-sticky-scroll::-webkit-scrollbar{height:14px;}
+        .admin-order-sticky-scroll::-webkit-scrollbar-track{background:rgba(15,23,42,.95);border-radius:999px;}
+        .admin-order-sticky-scroll::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#64748b,#94a3b8);border-radius:999px;border:2px solid rgba(15,23,42,.95);}
+        .admin-order-sticky-scroll-inner{height:1px;min-width:2450px;}
+        @media(max-width:1100px){.admin-action-cell{min-width:245px!important;width:245px}.admin-order-actions{gap:7px}.admin-order-actions button{min-width:96px;padding:9px 11px;font-size:12px;}}
+        @media(max-width:760px){.admin-order-scroll{border-radius:11px}.admin-action-cell{min-width:225px!important;width:225px}.admin-order-actions{gap:6px}.admin-order-actions button{min-width:100px;flex:1 1 100px;min-height:42px}.admin-order-sticky-scroll{height:18px;margin-top:6px;bottom:0;}}
+        @media(max-width:480px){.admin-action-cell{min-width:210px!important;width:210px}.admin-order-actions button{flex:1 1 100%;width:100%;}}
+
         /* ===== EXCEL ORDER IMPORT ADD-ON ===== */
         .excel-import-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
         .btn-import-excel{position:relative;overflow:hidden;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:1px solid rgba(52,211,153,.55);padding:11px 18px;border-radius:10px;cursor:pointer;font-weight:800;display:inline-flex;align-items:center;gap:9px;box-shadow:0 7px 18px rgba(16,185,129,.20);transition:.2s}
@@ -2361,6 +2389,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
+                     <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button type="button" class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
                         <button type="button" class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
@@ -2380,6 +2409,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
+                     <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2433,6 +2463,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
                     </div>
+                     <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2441,6 +2472,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-circle-check" style="color:var(--accent-success)"></i> Admin Control: Delivered Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminDeliveredTableBody"></tbody></table></div>
+                    <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2449,6 +2481,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
+                    <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2457,6 +2490,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
+                    <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2465,6 +2499,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-info)"></i> Admin Control: Complete History</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminHistoryTableBody"></tbody></table></div>
+                    <div class="admin-order-sticky-scroll" aria-label="Horizontal order table scrollbar"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -5494,8 +5529,27 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             try {
                 if (typeof window !== 'undefined' && typeof window.hkRefresh === 'function') window.hkRefresh();
             } catch (e) {} 
+            requestAnimationFrame(syncAdminHorizontalScrollbars);
         } 
  
+        function syncAdminHorizontalScrollbars() {
+            document.querySelectorAll('.admin-order-scroll').forEach(scrollBox => {
+                const bar = scrollBox.nextElementSibling && scrollBox.nextElementSibling.classList.contains('admin-order-sticky-scroll') ? scrollBox.nextElementSibling : null;
+                if (!bar) return;
+                const inner = bar.querySelector('.admin-order-sticky-scroll-inner');
+                if (!inner) return;
+                inner.style.width = Math.max(scrollBox.scrollWidth, 2450) + 'px';
+                if (bar.dataset.hkBound !== '1') {
+                    bar.dataset.hkBound = '1';
+                    let lock = false;
+                    scrollBox.addEventListener('scroll', () => { if (lock) return; lock=true; bar.scrollLeft=scrollBox.scrollLeft; requestAnimationFrame(()=>lock=false); });
+                    bar.addEventListener('scroll', () => { if (lock) return; lock=true; scrollBox.scrollLeft=bar.scrollLeft; requestAnimationFrame(()=>lock=false); });
+                }
+                bar.scrollLeft = scrollBox.scrollLeft;
+            });
+        }
+        window.addEventListener('resize', () => requestAnimationFrame(syncAdminHorizontalScrollbars));
+
         /* 
          * ONE workflow refresh point. 
          * All order actions should call this after changing an order. It 
@@ -5832,88 +5886,15 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <td>${stamp(o.createdStamp || {date:o.creationDate})}</td><td>${stamp(o.submittedStamp)}</td><td>${stamp(o.approvedStamp)}</td> 
                 <td>${stamp(o.deliveredStamp)}</td><td>${stamp(o.returnStamp)}</td><td>${stamp(o.cancelStamp)}</td> 
                 <td style="min-width:180px;white-space:normal">${esc(reason)||'-'}</td><td style="min-width:220px;white-space:normal">${esc(o.remarks)||'-'}</td> 
-                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td style="white-space:nowrap">${actionHtml || defaultActions}</td>`; 
+                <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td class="admin-action-cell"><div class="admin-order-actions">${actionHtml || defaultActions}</div></td>`; 
         } 
  
         function renderApprovalTable() {
             const tbody = document.getElementById('approvalTableBody');
-            if (!tbody) return;
-
-            const list = orders
-                .filter(o => o.status === STATUS.APPROVAL)
-                .sort((a, b) => Number(a.id) - Number(b.id));
-
-            if (!list.length) {
-                tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.');
-                return;
-            }
-
-            /*
-             * IMPORTANT FIX:
-             * Approval-row buttons are rendered with data attributes and are
-             * handled by one delegated click listener. This removes the fragile
-             * inline onclick dependency from dynamically rebuilt table rows.
-             * Each button carries the exact order _key, so clicking one row
-             * can only change that specific order.
-             */
-            tbody.innerHTML = list.map(o => {
-                const key = esc(o._key);
-                const actionHtml = `
-                    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
-                        <button type="button" class="btn-warning approval-row-action" data-action="edit" data-order-key="${key}">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
-                        </button>
-                        <button type="button" class="btn-success approval-row-action" data-action="approve" data-order-key="${key}">
-                            <i class="fa-solid fa-check"></i> Approve
-                        </button>
-                        <button type="button" class="btn-warning approval-row-action" data-action="send-back" data-order-key="${key}">
-                            <i class="fa-solid fa-rotate-left"></i> Send Back
-                        </button>
-                    </div>`;
-
-                return `<tr>${adminOrderCells(o, actionHtml)}</tr>`;
-            }).join('');
+            const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a,b)=>a.id-b.id);
+            if (!list.length) { tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.'); return; }
+            tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<div class="admin-order-actions"><button type="button" class="btn-warning approval-row-action" data-action="edit" data-order-key="${esc(o._key)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button type="button" class="btn-success approval-row-action" data-action="approve" data-order-key="${esc(o._key)}"><i class="fa-solid fa-check"></i> Approve</button><button type="button" class="btn-warning approval-row-action" data-action="send-back" data-order-key="${esc(o._key)}"><i class="fa-solid fa-rotate-left"></i> Send Back</button><button type="button" class="btn-danger approval-row-action" data-action="delete" data-order-key="${esc(o._key)}"><i class="fa-solid fa-trash"></i> Delete</button></div>`)}</tr>`).join('');
         }
-
-        /* Per-order Admin Approval actions — intentionally isolated from the
-         * bulk Approve All / Send All Back controls. */
-        document.addEventListener('click', function (event) {
-            const button = event.target.closest('#approvalTableBody .approval-row-action');
-            if (!button) return;
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            const ref = button.getAttribute('data-order-key');
-            const action = button.getAttribute('data-action');
-            if (!ref || !action) return;
-
-            const order = getOrderByRef(ref);
-            if (!order) {
-                showToast_('This order could not be found. Please refresh and try again.', 'warn');
-                return;
-            }
-
-            if (order.status !== STATUS.APPROVAL) {
-                showToast_(`Order #${order.id} is no longer pending approval.`, 'warn');
-                syncOrderWorkflowUI();
-                return;
-            }
-
-            if (action === 'edit') {
-                adminEditOrder(ref);
-                return;
-            }
-
-            if (action === 'approve') {
-                approveOrder(ref);
-                return;
-            }
-
-            if (action === 'send-back') {
-                sendBackApprovalOrder(ref);
-            }
-        });
 
         function approveOrder(ref) {
             const order = getOrderByRef(ref);
@@ -5922,12 +5903,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 syncOrderWorkflowUI();
                 return;
             }
-
             order.status = STATUS.OFD;
             order.isApproved = true;
             order.isSubmitted = true;
             order.approvedStamp = makeStamp();
-
             saveData('order-approved');
             syncOrderWorkflowUI();
             refreshWorkflowUI();
@@ -5944,6 +5923,23 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             showToast_(`${list.length} order(s) approved and moved to Out For Delivery.`, 'ok'); 
         } 
  
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('#approvalTableBody .approval-row-action');
+            if (!button) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const ref = button.getAttribute('data-order-key');
+            const action = button.getAttribute('data-action');
+            if (!ref || !action) return;
+            const order = getOrderByRef(ref);
+            if (!order) { showToast_('This order could not be found. Please refresh and try again.', 'warn'); return; }
+            if (action === 'delete') { adminDeleteOrder(ref); return; }
+            if (order.status !== STATUS.APPROVAL) { showToast_(`Order #${order.id} is no longer pending approval.`, 'warn'); syncOrderWorkflowUI(); return; }
+            if (action === 'edit') { adminEditOrder(ref); return; }
+            if (action === 'approve') { approveOrder(ref); return; }
+            if (action === 'send-back') { sendBackApprovalOrder(ref); }
+        });
+
         function rejectOrder(ref) {
             /* Backward-compatible entry point. New buttons use the stable _key. */
             return sendBackApprovalOrder(ref);
@@ -6006,11 +6002,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const list = orders.filter(o => o.status === STATUS.OFD).sort((a,b)=>a.id-b.id); 
             if (!list.length) { tbody.innerHTML = emptyRow(18, 'No orders are out for delivery. Approve orders in the Admin Panel to fill this list.'); return; } 
             tbody.innerHTML = list.map(o => `<tr>${ofdOrderDataCells(o)} 
-                <td><div class="ofd-actions"> 
-                    <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
-                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
-                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button> 
-                    <button class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button> 
+                <td class="admin-action-cell"><div class="admin-order-actions"> 
+                    <button type="button" class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
+                    <button type="button" class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
+                    <button type="button" class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button> 
+                    <button type="button" class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button> 
+                    <button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button> 
                 </div></td> 
             </tr>`).join(''); 
         } 
