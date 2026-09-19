@@ -1944,58 +1944,20 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 @media(max-width:900px){.meta-expense-workspace{grid-template-columns:210px minmax(0,1fr)}.meta-expense-day-row{grid-template-columns:52px minmax(95px,1fr) minmax(110px,1fr) auto}}
 @media(max-width:760px){.meta-expense-workspace{grid-template-columns:1fr;padding:14px 12px 18px}.meta-expense-calendar-card{position:relative;top:auto;width:100%;box-sizing:border-box}.meta-expense-editor{margin:0!important}.meta-expense-form{grid-template-columns:1fr}.meta-expense-submit{width:100%}.meta-expense-day-row{grid-template-columns:48px 1fr auto;gap:8px}.meta-day-name,.meta-day-status{display:none}.meta-day-amount{text-align:right}}
 @media(max-width:520px){#admin-sub-meta-ads .meta-expense-top{padding:18px 12px}.meta-expense-editor{padding:15px!important}.meta-expense-editor-head{flex-direction:column}.meta-expense-badge{align-self:flex-start}.meta-expense-day-row{grid-template-columns:44px 1fr auto}.meta-day-amount{font-size:11px}.meta-day-edit{padding:7px 8px}}
+</style>
 
-/* ===== PROFIT CALCULATOR — ADMIN ONLY ===== */
-.profit-calculator-shell{position:relative;overflow:hidden;background:
- radial-gradient(circle at 8% 0%,rgba(99,102,241,.12),transparent 28%),
- radial-gradient(circle at 92% 8%,rgba(16,185,129,.09),transparent 25%),var(--card-bg);
- border:1px solid rgba(129,140,248,.18);border-radius:20px;padding:22px;
- box-shadow:0 24px 65px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04)}
-.profit-calculator-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:18px}
-.profit-calculator-brand{display:flex;align-items:center;gap:13px}
-.profit-calculator-icon{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;
- color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 28px rgba(99,102,241,.28)}
-.profit-calculator-title h2{font-size:21px;font-weight:900}
-.profit-calculator-title p{font-size:12px;color:var(--text-muted);margin-top:4px}
-.profit-rate-panel{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;background:rgba(15,23,42,.58);border:1px solid var(--border-color);border-radius:14px;padding:11px}
-.profit-rate-panel label{display:block;font-size:10px;color:var(--text-muted);font-weight:800;text-transform:uppercase;margin-bottom:5px}
-.profit-rate-panel input{width:130px;background:#0b1220;border:1px solid var(--border-color);border-radius:8px;color:#fff;padding:9px 10px;outline:none}
-.profit-rate-panel input:focus{border-color:var(--accent-primary);box-shadow:0 0 0 3px rgba(99,102,241,.13)}
-.profit-rate-btn{border:0;border-radius:8px;padding:9px 12px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;font-weight:800;cursor:pointer}
-.profit-calc-note{font-size:11px;color:var(--text-muted);line-height:1.55;margin:0 0 18px}
-.profit-stat-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px;margin-bottom:18px}
-.profit-stat{position:relative;overflow:hidden;background:rgba(15,23,42,.62);border:1px solid rgba(148,163,184,.14);border-radius:14px;padding:15px;min-height:96px}
-.profit-stat::after{content:"";position:absolute;right:-28px;top:-28px;width:90px;height:90px;border-radius:50%;background:rgba(99,102,241,.08);box-shadow:0 0 35px rgba(99,102,241,.10)}
-.profit-stat-label{font-size:10px;color:var(--text-muted);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
-.profit-stat-value{font-size:20px;font-weight:900;margin-top:7px;position:relative;z-index:1}
-.profit-stat-value.green{color:#6ee7b7}.profit-stat-value.red{color:#fca5a5}.profit-stat-value.cyan{color:#7dd3fc}.profit-stat-value.purple{color:#c4b5fd}.profit-stat-value.amber{color:#fcd34d}
-.profit-summary-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:18px}
-.profit-summary-card{background:#0f172a;border:1px solid var(--border-color);border-radius:16px;padding:17px}
-.profit-summary-card h3{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.profit-breakdown{display:grid;gap:8px}
-.profit-line{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px dashed rgba(148,163,184,.14);font-size:12px}
-.profit-line:last-child{border-bottom:0}.profit-line span:first-child{color:var(--text-muted)}
-.profit-line strong{font-weight:900}.profit-line .profit-deduction{color:#fca5a5}.profit-line.profit-remaining{background:rgba(16,185,129,.045);border-radius:9px;padding-left:10px;padding-right:10px}.profit-line.profit-remaining span:first-child{color:#a7f3d0;font-weight:800}.profit-line.profit-remaining strong{color:#6ee7b7}
-.profit-final{margin-top:8px;padding:13px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,.13),rgba(99,102,241,.10));border:1px solid rgba(16,185,129,.24)}
-.profit-final .omr{font-size:24px;font-weight:950;color:#6ee7b7}.profit-final .pkr{font-size:15px;font-weight:900;color:#7dd3fc;margin-top:3px}
-.profit-rule-box{display:grid;gap:8px;font-size:11px;color:#cbd5e1;line-height:1.55}
-.profit-rule{padding:10px 12px;border-radius:10px;background:rgba(30,41,59,.65);border:1px solid rgba(148,163,184,.10)}
-.profit-rule b{color:#fff}
-.profit-section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 12px}
-.profit-section-title h3{font-size:16px;font-weight:900}
-.profit-section-title span{font-size:11px;color:var(--text-muted)}
-.profit-table-wrap{overflow:auto;border:1px solid var(--border-color);border-radius:14px}
-.profit-table{min-width:1120px;border-collapse:collapse!important;background:rgba(15,23,42,.7)}
-.profit-table th{position:sticky;top:0;z-index:2;background:#0b2032!important;color:#9eddf0!important;padding:12px 11px!important;font-size:10px!important}
-.profit-table td{padding:11px!important;font-size:12px!important;white-space:nowrap}
-.profit-table .profit-positive{color:#6ee7b7;font-weight:900}.profit-table .profit-negative{color:#fca5a5;font-weight:900}
-.profit-empty{padding:26px;text-align:center;color:var(--text-muted);font-weight:700}
-.profit-return-table{min-width:760px}
-.profit-refreshing{opacity:.68;pointer-events:none;transition:opacity .2s}
-@media(max-width:1100px){.profit-stat-grid{grid-template-columns:repeat(3,minmax(150px,1fr))}.profit-summary-grid{grid-template-columns:1fr}}
-@media(max-width:650px){.profit-calculator-shell{padding:15px}.profit-stat-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.profit-stat-value{font-size:17px}.profit-rate-panel{width:100%}.profit-rate-panel input{flex:1;width:auto}}
-@media(prefers-reduced-motion:reduce){.profit-calculator-shell *{animation:none!important;transition:none!important}}
-
+<style id="profit-calculator-theme">
+.profit-shell{padding:22px;background:linear-gradient(145deg,rgba(9,24,39,.96),rgba(5,14,26,.96));border:1px solid rgba(125,211,252,.14);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.24)}
+.profit-hero{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:24px;border-radius:20px;background:linear-gradient(115deg,rgba(0,212,255,.11),rgba(99,102,241,.11));border:1px solid rgba(125,211,252,.15)}
+.profit-hero-left{display:flex;align-items:center;gap:16px;min-width:0}.profit-hero-icon{width:62px;height:62px;flex:0 0 62px;border-radius:18px;display:grid;place-items:center;font-size:25px;color:#fff;background:linear-gradient(145deg,#06b6d4,#6366f1);box-shadow:0 14px 35px rgba(30,64,175,.3)}
+.profit-kicker{font-size:9px;letter-spacing:.15em;font-weight:1000;color:#67e8f9;text-transform:uppercase}.profit-hero h2{margin:4px 0 5px;font-size:25px;color:#f8fbff}.profit-hero p,.profit-card-head p{font-size:10px;line-height:1.55;color:#8197ab;margin:0}
+.profit-rate-box{min-width:250px;padding:13px;border:1px solid rgba(148,163,184,.14);border-radius:15px;background:rgba(2,10,20,.6)}.profit-rate-box label{display:block;font-size:9px;color:#8fa6bf;font-weight:1000;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}.profit-rate-row{display:flex;gap:8px;align-items:center}.profit-rate-row input{width:110px!important;min-height:40px!important;padding:9px 10px!important}.profit-rate-source{font-size:10px;color:#7dd3fc;text-decoration:none;align-self:center;font-weight:700;white-space:nowrap}.profit-rate-source:hover{text-decoration:underline;color:#bae6fd}
+.profit-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(220px,1.35fr);gap:12px;margin:16px 0}.profit-metric{padding:17px;border-radius:17px;border:1px solid rgba(148,163,184,.12);background:rgba(3,13,24,.66);box-shadow:inset 0 1px rgba(255,255,255,.025)}.profit-metric span{display:block;font-size:9px;color:#7e94a8;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.profit-metric strong{display:block;margin-top:7px;font-size:21px;color:#f8fbff}.profit-metric-main{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.08));border-color:rgba(52,211,153,.2)}.profit-metric-main strong{color:#6ee7b7}.profit-metric-main small{display:block;margin-top:4px;color:#67e8f9;font-size:11px;font-weight:900}
+.profit-breakdown-card,.profit-table-card{margin-top:14px;padding:20px;border-radius:20px;border:1px solid rgba(125,211,252,.13);background:rgba(2,10,20,.58)}.profit-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:15px}.profit-card-head h3{margin:4px 0 3px;font-size:17px;color:#f8fbff}.profit-live-badge{padding:7px 10px;border-radius:999px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18);color:#86efac;font-size:9px;font-weight:1000}.profit-live-badge i{font-size:6px;margin-right:5px}
+.profit-breakdown-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profit-breakdown-grid>div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;background:rgba(8,24,39,.65);border:1px solid rgba(148,163,184,.08)}.profit-breakdown-grid span{font-size:10px;color:#8da1b4}.profit-breakdown-grid strong{font-size:12px;color:#dffaff;white-space:nowrap}.profit-breakdown-final{background:linear-gradient(90deg,rgba(16,185,129,.12),rgba(6,182,212,.08))!important;border-color:rgba(52,211,153,.22)!important}.profit-breakdown-final strong{font-size:16px;color:#6ee7b7}
+.profit-table{min-width:1120px}.profit-table th{white-space:nowrap}.profit-table td{font-size:10px;vertical-align:middle}.profit-table td strong{color:#f8fbff}.profit-table .positive{color:#6ee7b7;font-weight:1000}.profit-table .deduct{color:#fbbf24;font-weight:900}.profit-table .negative{color:#fb7185;font-weight:1000}.profit-rules{margin-top:14px;padding:12px 14px;border-radius:13px;background:rgba(14,165,233,.055);border:1px solid rgba(56,189,248,.1);font-size:10px;line-height:1.65;color:#7890a5}.profit-rules b{color:#bae6fd}
+@media(max-width:1100px){.profit-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profit-metric-main{grid-column:1/-1}.profit-hero{align-items:stretch;flex-direction:column}.profit-rate-box{min-width:0}}
+@media(max-width:700px){.profit-shell{padding:12px}.profit-hero{padding:16px}.profit-hero-left{align-items:flex-start}.profit-hero-icon{width:50px;height:50px;flex-basis:50px}.profit-hero h2{font-size:21px}.profit-summary-grid{grid-template-columns:1fr}.profit-metric-main{grid-column:auto}.profit-breakdown-grid{grid-template-columns:1fr}.profit-card-head{flex-direction:column}.profit-rate-row{flex-wrap:wrap}.profit-rate-source{width:100%}}
 </style>
 </head>
 <body>
@@ -2380,8 +2342,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <button class="admin-tab-btn" id="tab-btn-ret" onclick="switchAdminSubTab('returns')"><i class="fa-solid fa-rotate-left"></i> Returns Control</button>
                 <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
                 <button class="admin-tab-btn" id="tab-btn-emp" onclick="switchAdminSubTab('employees')"><i class="fa-solid fa-users"></i> Employee Management</button>
-                <button class="admin-tab-btn" id="tab-btn-profit" onclick="switchAdminSubTab('profit'); renderProfitCalculator()"><i class="fa-solid fa-chart-line"></i> Profit Calculator</button>
                 <button class="admin-tab-btn" id="tab-btn-meta-ads" onclick="switchAdminSubTab('metaAds'); hkInit()"><i class="fa-solid fa-bullhorn"></i> Meta Ads Expense</button>
+                <button class="admin-tab-btn" id="tab-btn-profit" onclick="switchAdminSubTab('profit'); renderProfitCalculator()"><i class="fa-solid fa-chart-line"></i> Profit Calculator</button>
             </div>
 
             <!-- SUB TAB 0: ORDER APPROVALS -->
@@ -2542,96 +2504,72 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             <!-- SUB TAB: PROFIT CALCULATOR -->
             <div id="admin-sub-profit" style="display:none;">
-                <div class="profit-calculator-shell" id="profitCalculatorShell">
-                    <div class="profit-calculator-head">
-                        <div class="profit-calculator-brand">
-                            <div class="profit-calculator-icon"><i class="fa-solid fa-chart-line"></i></div>
-                            <div class="profit-calculator-title">
-                                <h2>Profit Calculator</h2>
-                                <p>Delivered sales + returns • Complete inventory calculation • OMR & PKR</p>
-                            </div>
-                        </div>
-                        <div class="profit-rate-panel">
+                <div class="profit-shell">
+                    <div class="profit-hero">
+                        <div class="profit-hero-left">
+                            <div class="profit-hero-icon"><i class="fa-solid fa-chart-line"></i></div>
                             <div>
-                                <label for="profitOmerPkrRate">1 OMR = PKR</label>
-                                <input id="profitOmerPkrRate" type="number" min="0" step="0.01" value="730" inputmode="decimal" aria-label="OMR to PKR exchange rate">
+                                <div class="profit-kicker">ADMIN • FINANCIAL CONTROL</div>
+                                <h2>Profit Calculator</h2>
+                                <p>Delivered & returned orders • Every deduction and remaining balance is calculated from live inventory/order data.</p>
                             </div>
-                            <button type="button" class="profit-rate-btn" onclick="renderProfitCalculator()"><i class="fa-solid fa-rotate"></i> Recalculate</button>
                         </div>
-                    </div>
-
-                    <div class="profit-calc-note">
-                        Calculation is applied exactly in the requested sequence. After EVERY deduction, the calculator writes the BALANCE LEFT. Delivered sale total → less 1% → show remaining balance → less OMR 0.20 per delivered order → show remaining balance → less OMR 1.90 delivery charge per delivered order → show remaining balance → less item cost × quantity → Profit Before Returns → less OMR 0.50 per return FROM PROFIT → FINAL PROFIT.
-                        The PKR result uses the exchange rate entered above.
-                    </div>
-
-                    <div class="profit-stat-grid">
-                        <div class="profit-stat"><div class="profit-stat-label">Delivered Orders</div><div class="profit-stat-value green" id="profitDeliveredOrders">0</div></div>
-                        <div class="profit-stat"><div class="profit-stat-label">Items Sold</div><div class="profit-stat-value cyan" id="profitSoldQty">0</div></div>
-                        <div class="profit-stat"><div class="profit-stat-label">Returned Orders</div><div class="profit-stat-value red" id="profitReturnedOrders">0</div></div>
-                        <div class="profit-stat"><div class="profit-stat-label">Returned Items</div><div class="profit-stat-value amber" id="profitReturnedQty">0</div></div>
-                        <div class="profit-stat"><div class="profit-stat-label">Final Profit</div><div class="profit-stat-value green" id="profitFinalOmrTop">OMR 0.00</div></div>
+                        <div class="profit-rate-box">
+                            <label for="profitOmerPkrRate">1 OMR → PKR</label>
+                            <div class="profit-rate-row">
+                                <input id="profitOmerPkrRate" type="number" min="0" step="0.001" value="720.875" inputmode="decimal" onchange="renderProfitCalculator()">
+                                <a class="profit-rate-source" href="https://www.investing.com/currencies/omr-pkr" target="_blank" rel="noopener noreferrer">Rate source: Investing.com</a>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="profit-summary-grid">
-                        <div class="profit-summary-card">
-                            <h3><i class="fa-solid fa-calculator"></i> Profit Breakdown</h3>
-                            <div class="profit-breakdown">
-                                <div class="profit-line"><span>Total Delivered Sale</span><strong id="profitGrossSales">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less 1%</span><strong class="profit-deduction" id="profitOnePercent">− OMR 0.00</strong></div>
-                                <div class="profit-line profit-remaining"><span>Balance After 1%</span><strong id="profitAfterOnePercent">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 0.20 × Delivered Orders</span><strong class="profit-deduction" id="profitPointTwo">− OMR 0.00</strong></div>
-                                <div class="profit-line profit-remaining"><span>Balance After OMR 0.20</span><strong id="profitAfterPointTwo">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 1.90 × Delivered Orders</span><strong class="profit-deduction" id="profitDeliveryCharges">− OMR 0.00</strong></div>
-                                <div class="profit-line profit-remaining"><span>Balance After OMR 1.90 Delivery</span><strong id="profitAfterDelivery">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less Item Cost × Delivered Qty</span><strong class="profit-deduction" id="profitItemCost">− OMR 0.00</strong></div>
-                                <div class="profit-line profit-remaining"><span>Balance After Item Cost = Profit Before Returns</span><strong id="profitBeforeReturns">OMR 0.00</strong></div>
-                                <div class="profit-line"><span>Less OMR 0.50 × Returned Orders</span><strong class="profit-deduction" id="profitReturnCharges">− OMR 0.00</strong></div>
-                                <div class="profit-line profit-remaining"><span>Balance After Return Charges = FINAL PROFIT</span><strong id="profitAfterReturns">OMR 0.00</strong></div>
-                            </div>
-                            <div class="profit-final">
-                                <div class="omr" id="profitFinalOmr">OMR 0.00</div>
-                                <div class="pkr" id="profitFinalPkr">PKR 0.00</div>
-                            </div>
-                        </div>
+                        <div class="profit-metric"><span>Delivered Orders</span><strong id="profitDeliveredOrders">0</strong></div>
+                        <div class="profit-metric"><span>Items Sold</span><strong id="profitItemsSold">0</strong></div>
+                        <div class="profit-metric"><span>Returned Orders</span><strong id="profitReturnedOrders">0</strong></div>
+                        <div class="profit-metric"><span>Returned Items</span><strong id="profitReturnedItems">0</strong></div>
+                        <div class="profit-metric profit-metric-main"><span>FINAL PROFIT</span><strong id="profitFinalOmr">OMR 0.00</strong><small id="profitFinalPkr">PKR 0.00</small></div>
+                    </div>
 
-                        <div class="profit-summary-card">
-                            <h3><i class="fa-solid fa-shield-check"></i> Applied Rules</h3>
-                            <div class="profit-rule-box">
-                                <div class="profit-rule"><b>1%</b> is calculated from the total delivered sale amount.</div>
-                                <div class="profit-rule"><b>OMR 0.20</b> is deducted once for every delivered order.</div>
-                                <div class="profit-rule"><b>OMR 1.90</b> is deducted once for every delivered order.</div>
-                                <div class="profit-rule"><b>Item cost</b> is multiplied by the quantity delivered. The calculator uses the matching inventory item's BUY / PURCHASE PRICE as item cost. This is never the customer sale price.</div>
-                                <div class="profit-rule"><b>OMR 0.50</b> is deducted once for every returned order, after the delivered-profit calculation; it does not reduce item cost.</div>
-                                <div class="profit-rule"><b>PKR</b> = final OMR profit × the exchange rate entered above.</div>
-                            </div>
+                    <div class="profit-breakdown-card">
+                        <div class="profit-card-head"><div><div class="profit-kicker">MASTER CALCULATION</div><h3>Profit & Loss Breakdown</h3></div><span class="profit-live-badge"><i class="fa-solid fa-circle"></i> Live</span></div>
+                        <div class="profit-breakdown-grid">
+                            <div><span>Total Sale Price</span><strong id="profitGrossSales">OMR 0.00</strong></div>
+                            <div><span>Less 1% COD</span><strong id="profitLessOne">− OMR 0.00</strong></div>
+                            <div><span>Balance After 1% COD</span><strong id="profitAfterOne">OMR 0.00</strong></div>
+                            <div><span>Less Fulfilment 0.2 × Delivered Orders</span><strong id="profitLessPointTwo">− OMR 0.00</strong></div>
+                            <div><span>Balance After Fulfilment 0.2</span><strong id="profitAfterPointTwo">OMR 0.00</strong></div>
+                            <div><span>Less 1.90 Delivery × Delivered Orders</span><strong id="profitLessDelivery">− OMR 0.00</strong></div>
+                            <div><span>Balance After 1.90 Delivery</span><strong id="profitAfterDelivery">OMR 0.00</strong></div>
+                            <div><span>Less Item Buy Price × Delivered Qty</span><strong id="profitLessItemCost">− OMR 0.00</strong></div>
+                            <div><span>Balance After Item Cost = Profit Before Returns</span><strong id="profitBeforeReturns">OMR 0.00</strong></div>
+                            <div><span>Less OMR 0.50 × Returned Orders</span><strong id="profitLessReturns">− OMR 0.00</strong></div>
+                            <div class="profit-breakdown-final"><span>Balance After Return Charges = FINAL PROFIT</span><strong id="profitFinalBreakdown">OMR 0.00</strong></div>
                         </div>
                     </div>
 
-                    <div class="profit-section-title">
-                        <h3><i class="fa-solid fa-truck-fast"></i> Delivered Orders — Full Profit Calculation</h3>
-                        <span id="profitDeliveredTableHint">0 delivered orders</span>
-                    </div>
-                    <div class="profit-table-wrap">
-                        <table class="profit-table">
-                            <thead><tr>
-                                <th>Order</th><th>Item</th><th>Qty</th><th>Sale Price</th><th>1% COD</th><th>Fulfilment 0.2</th><th>1.90 Delivery</th><th>Item Cost / Pc (Buy Price)</th><th>Total Item Cost</th><th>Final Order Profit</th>
-                            </tr></thead>
-                            <tbody id="profitDeliveredTableBody"></tbody>
-                        </table>
+                    <div class="profit-table-card">
+                        <div class="profit-card-head"><div><div class="profit-kicker">DELIVERED ORDERS</div><h3>Delivered Order Profit</h3><p>Item Buy Price shows the remaining balance after the actual inventory buy price × quantity is deducted.</p></div></div>
+                        <div class="table-responsive">
+                            <table class="profit-table">
+                                <thead><tr><th>Order</th><th>Item</th><th>Qty</th><th>Sale Price</th><th>1% COD</th><th>Fulfilment 0.2</th><th>1.90 Delivery</th><th>Item Buy Price</th><th>OMR Profit</th><th>PKR Profit</th></tr></thead>
+                                <tbody id="profitDeliveredTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div class="profit-section-title">
-                        <h3><i class="fa-solid fa-rotate-left"></i> Returned Orders — Return Charge</h3>
-                        <span id="profitReturnsTableHint">0 returned orders</span>
+                    <div class="profit-table-card">
+                        <div class="profit-card-head"><div><div class="profit-kicker">RETURNS</div><h3>Returned Orders — OMR 0.50 From Profit</h3><p>The OMR 0.50 return charge is taken from profit, not from item buy cost.</p></div></div>
+                        <div class="table-responsive">
+                            <table class="profit-table return-table">
+                                <thead><tr><th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Less From Profit</th><th>Profit Before Return Charge</th><th>Balance After 0.50</th></tr></thead>
+                                <tbody id="profitReturnedTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="profit-table-wrap">
-                        <table class="profit-table profit-return-table">
-                            <thead><tr>
-                                <th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Less From Profit</th><th>Profit Before Return Charge</th><th>Balance After 0.50</th>
-                            </tr></thead>
-                            <tbody id="profitReturnsTableBody"></tbody>
-                        </table>
+
+                    <div class="profit-rules">
+                        <b>Applied rules:</b> Total sale → less 1% COD → less OMR 0.20 per delivered order → less OMR 1.90 delivery per delivered order → less inventory Item Buy Price × delivered quantity → profit before returns → less OMR 0.50 per returned order. Final PKR = final OMR × selected OMR/PKR rate.
                     </div>
                 </div>
             </div>
@@ -3173,6 +3111,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             applyMonthInputBounds();
             renderEmployeeManagement();
             renderAdminEmployeeManagement();
+            try { renderProfitCalculator(); } catch (e) { console.error('Profit Calculator render error:', e); }
             if(loggedInEmployeeId) renderEmployeeSelfPortal();
         }
 
@@ -4865,6 +4804,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 qty: qty, 
                 price: qty > 0 ? codAmount / qty : (Number(o.price) || 0), 
                 codAmount: codAmount, 
+                itemCost: Number.isFinite(Number(o.itemCost)) ? Math.max(0, Number(o.itemCost)) : null,
                 clientOrderId: String(o.clientOrderId || o.clientId || '').trim(), 
                 countryCode: String(o.countryCode || '968').trim(), 
                 deliverTo: 'Oman', 
@@ -5565,6 +5505,127 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             } 
         } 
  
+        function getProfitItemCost(order) {
+            const inv = Array.isArray(inventory) ? inventory : [];
+            const byId = inv.find(i => Number(i.id) === Number(order && order.itemId));
+            if (byId && Number.isFinite(Number(byId.price)) && Number(byId.price) >= 0) return Number(byId.price);
+            const byName = inv.find(i => String(i.name || '').trim().toLowerCase() === String(order && order.itemName || '').trim().toLowerCase());
+            if (byName && Number.isFinite(Number(byName.price)) && Number(byName.price) >= 0) return Number(byName.price);
+            const historical = Number(order && order.itemCost);
+            if (Number.isFinite(historical) && historical >= 0) return historical;
+            return 0;
+        }
+
+        function profitMoney(value) {
+            const n = Number(value) || 0;
+            return 'OMR ' + n.toFixed(2);
+        }
+
+        function profitPkr(value, rate) {
+            const n = (Number(value) || 0) * (Number(rate) || 0);
+            return 'PKR ' + n.toFixed(2);
+        }
+
+        function renderProfitCalculator() {
+            const host = document.getElementById('admin-sub-profit');
+            if (!host) return;
+            const safeOrders = Array.isArray(orders) ? orders : [];
+            const delivered = safeOrders.filter(o => o && o.status === STATUS.DELIVERED);
+            const returned = safeOrders.filter(o => o && o.status === STATUS.RETURNED);
+            const rateInput = document.getElementById('profitOmerPkrRate');
+            const rate = rateInput && Number.isFinite(Number(rateInput.value)) && Number(rateInput.value) >= 0 ? Number(rateInput.value) : 720.875;
+            if (rateInput && String(rateInput.value) !== String(rate)) rateInput.value = rate.toFixed(3);
+
+            const grossSales = delivered.reduce((sum, o) => sum + Math.max(0, Number(orderTotal(o)) || 0), 0);
+            const onePercent = grossSales * 0.01;
+            const afterOne = grossSales - onePercent;
+            const fulfilment = delivered.length * 0.20;
+            const afterPointTwo = afterOne - fulfilment;
+            const deliveryCharges = delivered.length * 1.90;
+            const afterDelivery = afterPointTwo - deliveryCharges;
+            const totalItemCost = delivered.reduce((sum, o) => {
+                const qty = Math.max(0, Number(o.qty) || 0);
+                return sum + getProfitItemCost(o) * qty;
+            }, 0);
+            const beforeReturns = afterDelivery - totalItemCost;
+            const returnCharges = returned.length * 0.50;
+            const finalProfit = beforeReturns - returnCharges;
+            const itemsSold = delivered.reduce((sum, o) => sum + Math.max(0, Number(o.qty) || 0), 0);
+            const returnedItems = returned.reduce((sum, o) => sum + Math.max(0, Number(o.qty) || 0), 0);
+
+            const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+            setText('profitDeliveredOrders', delivered.length);
+            setText('profitItemsSold', itemsSold);
+            setText('profitReturnedOrders', returned.length);
+            setText('profitReturnedItems', returnedItems);
+            setText('profitFinalOmr', profitMoney(finalProfit));
+            setText('profitFinalPkr', profitPkr(finalProfit, rate));
+            setText('profitGrossSales', profitMoney(grossSales));
+            setText('profitLessOne', '− ' + profitMoney(onePercent));
+            setText('profitAfterOne', profitMoney(afterOne));
+            setText('profitLessPointTwo', '− ' + profitMoney(fulfilment));
+            setText('profitAfterPointTwo', profitMoney(afterPointTwo));
+            setText('profitLessDelivery', '− ' + profitMoney(deliveryCharges));
+            setText('profitAfterDelivery', profitMoney(afterDelivery));
+            setText('profitLessItemCost', '− ' + profitMoney(totalItemCost));
+            setText('profitBeforeReturns', profitMoney(beforeReturns));
+            setText('profitLessReturns', '− ' + profitMoney(returnCharges));
+            setText('profitFinalBreakdown', profitMoney(finalProfit));
+
+            const deliveredBody = document.getElementById('profitDeliveredTableBody');
+            if (deliveredBody) {
+                if (!delivered.length) {
+                    deliveredBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:28px">No delivered orders found.</td></tr>';
+                } else {
+                    deliveredBody.innerHTML = delivered.slice().sort((a,b) => Number(a.id||0)-Number(b.id||0)).map(o => {
+                        const qty = Math.max(0, Number(o.qty) || 0);
+                        const saleTotal = Math.max(0, Number(orderTotal(o)) || 0);
+                        const one = saleTotal * 0.01;
+                        const afterOneRow = saleTotal - one;
+                        const afterPointTwoRow = afterOneRow - 0.20;
+                        const afterDeliveryRow = afterPointTwoRow - 1.90;
+                        const buyPrice = getProfitItemCost(o);
+                        const buyCostTotal = buyPrice * qty;
+                        const balanceAfterBuy = afterDeliveryRow - buyCostTotal;
+                        return `<tr>
+                            <td><b>#${esc(o.id)}</b></td>
+                            <td><b>${esc(o.itemName || '-')}</b></td>
+                            <td>${esc(qty)}</td>
+                            <td>${profitMoney(saleTotal)}</td>
+                            <td class="deduct">− ${profitMoney(one)}</td>
+                            <td class="deduct">− ${profitMoney(0.20)}</td>
+                            <td class="deduct">− ${profitMoney(1.90)}</td>
+                            <td class="positive">${profitMoney(balanceAfterBuy)}</td>
+                            <td class="positive">${profitMoney(balanceAfterBuy)}</td>
+                            <td class="positive">${profitPkr(balanceAfterBuy, rate)}</td>
+                        </tr>`;
+                    }).join('');
+                }
+            }
+
+            const returnedBody = document.getElementById('profitReturnedTableBody');
+            if (returnedBody) {
+                if (!returned.length) {
+                    returnedBody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:28px">No returned orders found.</td></tr>';
+                } else {
+                    returnedBody.innerHTML = returned.slice().sort((a,b) => Number(a.id||0)-Number(b.id||0)).map((o, index) => {
+                        const sale = Math.max(0, Number(orderTotal(o)) || 0);
+                        const before = index === 0 ? beforeReturns : beforeReturns - (index * 0.50);
+                        const after = before - 0.50;
+                        return `<tr>
+                            <td><b>#${esc(o.id)}</b></td>
+                            <td><b>${esc(o.itemName || '-')}</b></td>
+                            <td>${esc(Math.max(0, Number(o.qty) || 0))}</td>
+                            <td>${profitMoney(sale)}</td>
+                            <td class="deduct">− OMR 0.50</td>
+                            <td>${profitMoney(before)}</td>
+                            <td class="positive">${profitMoney(after)}</td>
+                        </tr>`;
+                    }).join('');
+                }
+            }
+        }
+
         function switchAdminSubTab(subTab) { 
             refreshWorkflowUI(); 
             const map = { 
@@ -5588,181 +5649,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }); 
         } 
  
-
-        /* ================= PROFIT CALCULATOR ================= */
-        function profitNumber(value, fallback = 0) {
-            const n = Number(value);
-            return Number.isFinite(n) ? n : fallback;
-        }
-
-        function profitMoney(value) {
-            return 'OMR ' + profitNumber(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function profitPkr(value) {
-            return 'PKR ' + profitNumber(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function getProfitItemCost(order) {
-            /*
-             * INVENTORY PRICE = BUY / PURCHASE COST.
-             * It is NOT the customer sale price.
-             * The Profit Calculator therefore always reads the matching
-             * inventory item's purchase price first.
-             */
-            const itemId = Number(order && order.itemId);
-            const item = inventory.find(i => Number(i.id) === itemId);
-
-            if (item) {
-                if (Number.isFinite(Number(item.cost)) && Number(item.cost) >= 0) {
-                    return Number(item.cost);
-                }
-                if (Number.isFinite(Number(item.price)) && Number(item.price) >= 0) {
-                    return Number(item.price);
-                }
-            }
-
-            /* Historical fallback only when the inventory item can no longer
-             * be found. Never use the customer's sale price as item cost. */
-            const savedCost = profitNumber(order && order.itemCost, NaN);
-            if (Number.isFinite(savedCost) && savedCost >= 0) return savedCost;
-
-            return 0;
-        }
-
-        function getProfitCalculatorRate() {
-            const input = document.getElementById('profitOmerPkrRate');
-            const rate = profitNumber(input && input.value, 0);
-            return rate > 0 ? rate : 0;
-        }
-
-        function renderProfitCalculator() {
-            const root = document.getElementById('profitCalculatorShell');
-            if (!root) return;
-
-            const delivered = (Array.isArray(orders) ? orders : [])
-                .filter(o => o && o.status === STATUS.DELIVERED)
-                .sort((a,b) => Number(a.id) - Number(b.id));
-
-            const returned = (Array.isArray(orders) ? orders : [])
-                .filter(o => o && o.status === STATUS.RETURNED)
-                .sort((a,b) => Number(a.id) - Number(b.id));
-
-            const deliveredOrders = delivered.length;
-            const returnedOrders = returned.length;
-            const soldQty = delivered.reduce((sum,o) => sum + Math.max(0, profitNumber(o.qty)), 0);
-            const returnedQty = returned.reduce((sum,o) => sum + Math.max(0, profitNumber(o.qty)), 0);
-
-            /*
-             * IMPORTANT: Every deduction is shown as BOTH:
-             *   1) the amount being deducted, and
-             *   2) the balance remaining after that deduction.
-             * This follows the user's requested calculation sequence exactly.
-             */
-            const grossSales = delivered.reduce((sum,o) => sum + Math.max(0, profitNumber(orderTotal(o))), 0);
-            const onePercent = grossSales * 0.01;
-            const balanceAfterOnePercent = grossSales - onePercent;
-            const pointTwo = deliveredOrders * 0.20;
-            const balanceAfterPointTwo = balanceAfterOnePercent - pointTwo;
-            const deliveryCharges = deliveredOrders * 1.90;
-            const balanceAfterDelivery = balanceAfterPointTwo - deliveryCharges;
-            const totalItemCost = delivered.reduce((sum,o) => {
-                const qty = Math.max(0, profitNumber(o.qty));
-                return sum + (getProfitItemCost(o) * qty);
-            }, 0);
-            const profitBeforeReturns = balanceAfterDelivery - totalItemCost;
-            const returnCharges = returnedOrders * 0.50;
-            const finalProfit = profitBeforeReturns - returnCharges;
-            const rate = getProfitCalculatorRate();
-            const finalPkr = rate > 0 ? finalProfit * rate : 0;
-
-            const setText = (id,value) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = value;
-            };
-
-            setText('profitDeliveredOrders', deliveredOrders);
-            setText('profitSoldQty', soldQty.toLocaleString(undefined, {maximumFractionDigits: 0}));
-            setText('profitReturnedOrders', returnedOrders);
-            setText('profitReturnedQty', returnedQty.toLocaleString(undefined, {maximumFractionDigits: 0}));
-            setText('profitFinalOmrTop', profitMoney(finalProfit));
-
-            setText('profitGrossSales', profitMoney(grossSales));
-            setText('profitOnePercent', '− ' + profitMoney(onePercent));
-            setText('profitAfterOnePercent', profitMoney(balanceAfterOnePercent));
-            setText('profitPointTwo', '− ' + profitMoney(pointTwo));
-            setText('profitAfterPointTwo', profitMoney(balanceAfterPointTwo));
-            setText('profitDeliveryCharges', '− ' + profitMoney(deliveryCharges));
-            setText('profitAfterDelivery', profitMoney(balanceAfterDelivery));
-            setText('profitItemCost', '− ' + profitMoney(totalItemCost));
-            setText('profitBeforeReturns', profitMoney(profitBeforeReturns));
-            setText('profitReturnCharges', '− ' + profitMoney(returnCharges));
-            setText('profitAfterReturns', profitMoney(finalProfit));
-            setText('profitFinalOmr', profitMoney(finalProfit));
-            setText('profitFinalPkr', rate > 0 ? profitPkr(finalPkr) : 'PKR rate required');
-
-            const deliveredHint = document.getElementById('profitDeliveredTableHint');
-            if (deliveredHint) deliveredHint.textContent = `${deliveredOrders} delivered order(s) • ${soldQty} item(s) • each deduction shows the remaining balance`;
-
-            const returnHint = document.getElementById('profitReturnsTableHint');
-            if (returnHint) returnHint.textContent = `${returnedOrders} returned order(s) • ${returnedQty} item(s) • OMR 0.50 taken from profit per return`;
-
-            const deliveredBody = document.getElementById('profitDeliveredTableBody');
-            if (deliveredBody) {
-                if (!delivered.length) {
-                    deliveredBody.innerHTML = '<tr><td colspan="11"><div class="profit-empty">No delivered orders found.</div></td></tr>';
-                } else {
-                    deliveredBody.innerHTML = delivered.map(o => {
-                        const qty = Math.max(0, profitNumber(o.qty));
-                        const saleTotal = Math.max(0, profitNumber(orderTotal(o)));
-                        const one = saleTotal * 0.01;
-                        const afterOne = saleTotal - one;
-                        const afterPointTwo = afterOne - 0.20;
-                        const afterDelivery = afterPointTwo - 1.90;
-                        const itemCost = getProfitItemCost(o);
-                        const itemCostTotal = itemCost * qty;
-                        const orderProfit = afterDelivery - itemCostTotal;
-                        const profitClass = orderProfit >= 0 ? 'profit-positive' : 'profit-negative';
-
-                        return `<tr>
-                            <td><b>#${esc(o.id)}</b></td>
-                            <td>${esc(o.itemName || '-')}</td>
-                            <td>${qty}</td>
-                            <td><b>${profitMoney(saleTotal)}</b></td>
-                            <td class="profit-positive">${profitMoney(afterOne)}</td>
-                            <td class="profit-positive">${profitMoney(afterPointTwo)}</td>
-                            <td class="profit-positive">${profitMoney(afterDelivery)}</td>
-                            <td>${profitMoney(itemCost)}</td>
-                            <td>${profitMoney(itemCostTotal)}</td>
-                            <td class="${profitClass}">${profitMoney(orderProfit)}</td>
-                        </tr>`;
-                    }).join('');
-                }
-            }
-
-            const returnBody = document.getElementById('profitReturnsTableBody');
-            if (returnBody) {
-                if (!returned.length) {
-                    returnBody.innerHTML = '<tr><td colspan="7"><div class="profit-empty">No returned orders found.</div></td></tr>';
-                } else {
-                    returnBody.innerHTML = returned.map(o => {
-                        const qty = Math.max(0, profitNumber(o.qty));
-                        const saleTotal = Math.max(0, profitNumber(orderTotal(o)));
-                        const afterReturn = profitBeforeReturns - 0.50;
-                        return `<tr>
-                            <td><b>#${esc(o.id)}</b></td>
-                            <td>${esc(o.itemName || '-')}</td>
-                            <td>${qty}</td>
-                            <td>${profitMoney(saleTotal)}</td>
-                            <td class="profit-negative">− ${profitMoney(0.50)}</td>
-                            <td>${profitMoney(profitBeforeReturns)}</td>
-                            <td class="profit-negative">${profitMoney(afterReturn)}</td>
-                        </tr>`;
-                    }).join('');
-                }
-            }
-        }
-
         /* ---------------- Rendering ---------------- */ 
         function renderAllTables() { 
             renderOrdersTable(); 
@@ -5775,8 +5661,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             renderAdminInventoryTable(); 
             renderAdminOrdersTable(); 
             renderAdminSectionTables(); 
-            renderAdminEmployeeManagement();
-            try { renderProfitCalculator(); } catch (e) {} 
+            renderAdminEmployeeManagement(); 
             /* Keep Daily Orders Item Name directly synced with Admin Inventory. 
              * The old dropdown used a legacy element id (orderItemSelect), while 
              * the actual Daily Orders field is orderItemName. */ 
@@ -6060,8 +5945,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 Object.assign(order, fields); 
                 order.qty = qty; 
                 order.codAmount = codAmount; 
-                order.price = qty > 0 ? codAmount / qty : 0;
-                if (!Number.isFinite(Number(order.itemCost))) order.itemCost = Number(item.price) || 0; 
+                order.price = qty > 0 ? codAmount / qty : 0; 
  
                 showToast_(`Order #${order.id} updated. Stock synchronized.`, 'ok'); 
             } else { 
@@ -6082,8 +5966,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     itemName: item.name, 
                     qty, 
                     codAmount, 
-                    price: qty > 0 ? codAmount / qty : 0,
-                    itemCost: Number(item.price) || 0,
+                    price: qty > 0 ? codAmount / qty : 0, 
                     status: STATUS.DRAFT, 
                     creationDate: stamp.date, 
                     createdStamp: stamp, 
@@ -7821,4 +7704,4 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         </div>
     </div>
 </body> 
-</html
+</html>
