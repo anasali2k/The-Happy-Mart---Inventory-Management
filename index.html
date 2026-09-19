@@ -1698,12 +1698,15 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
         .admin-order-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;width:100%;min-width:0;}
         .admin-order-actions button{flex:0 1 auto;min-height:40px;min-width:104px;padding:9px 12px;justify-content:center;white-space:nowrap;}
         .approval-row-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
-        .admin-order-sticky-scroll{position:sticky;bottom:8px;z-index:50;width:100%;height:17px;margin-top:6px;border:1px solid rgba(148,163,184,.22);border-radius:999px;background:rgba(7,13,29,.98);box-shadow:0 -6px 18px rgba(0,0,0,.24);overflow-x:auto;overflow-y:hidden;scrollbar-width:auto;scrollbar-color:#64748b rgba(15,23,42,.95);-webkit-overflow-scrolling:touch;}
-        .admin-order-sticky-scroll::-webkit-scrollbar{height:14px;}
-        .admin-order-sticky-scroll::-webkit-scrollbar-track{background:rgba(15,23,42,.95);border-radius:999px;}
-        .admin-order-sticky-scroll::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#64748b,#94a3b8);border-radius:999px;border:2px solid rgba(15,23,42,.95);min-width:80px;}
-        .admin-order-sticky-scroll::-webkit-scrollbar-thumb:hover{background:linear-gradient(90deg,#818cf8,#38bdf8);}
-        .admin-order-sticky-scroll-inner{height:1px;min-width:2450px;}
+        .admin-order-sticky-scroll{position:sticky;bottom:8px;z-index:50;width:100%;height:20px;margin-top:6px;border:1px solid rgba(148,163,184,.22);border-radius:999px;background:rgba(7,13,29,.98);box-shadow:0 -6px 18px rgba(0,0,0,.24);overflow:hidden;}
+        .admin-order-sticky-scroll-inner{display:block;width:100%;height:100%;min-width:0;margin:0;padding:0;}
+        .admin-order-sticky-range{display:block;width:100%;height:18px;margin:0;padding:0;cursor:grab;touch-action:none;accent-color:#64748b;}
+        .admin-order-sticky-range:active{cursor:grabbing;}
+        .admin-order-sticky-range::-webkit-slider-runnable-track{height:10px;background:rgba(15,23,42,.95);border-radius:999px;}
+        .admin-order-sticky-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:78px;height:14px;margin-top:-2px;border:2px solid rgba(15,23,42,.95);border-radius:999px;background:linear-gradient(90deg,#64748b,#94a3b8);box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:grab;}
+        .admin-order-sticky-range:active::-webkit-slider-thumb{cursor:grabbing;}
+        .admin-order-sticky-range::-moz-range-track{height:10px;background:rgba(15,23,42,.95);border-radius:999px;}
+        .admin-order-sticky-range::-moz-range-thumb{width:78px;height:14px;border:2px solid rgba(15,23,42,.95);border-radius:999px;background:linear-gradient(90deg,#64748b,#94a3b8);box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:grab;}
         @media(max-width:1100px){.admin-action-cell{min-width:360px!important;width:360px}.admin-order-actions{gap:7px}.admin-order-actions button{min-width:100px;padding:9px 11px;font-size:12px;}}
         @media(max-width:760px){.admin-order-scroll{border-radius:11px}.admin-action-cell{min-width:230px!important;width:230px}.admin-order-actions{gap:6px}.admin-order-actions button{min-width:100px;flex:1 1 100px;min-height:42px}.admin-order-sticky-scroll{height:18px;margin-top:7px;bottom:5px;}}
         @media(max-width:480px){.admin-action-cell{min-width:215px!important;width:215px}.admin-order-actions button{flex:1 1 100%;width:100%;}}
@@ -1729,7 +1732,22 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
         .excel-import-footer{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}.excel-import-footer .hint{margin-right:auto;color:var(--text-muted);font-size:11px}
         @media(max-width:760px){.excel-import-summary{grid-template-columns:1fr 1fr}.excel-import-card{padding:15px}}
 
-    </style>
+    
+/* DELETE CONFIRMATION 3D MODAL */
+.delete-confirm-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,6,23,.72);backdrop-filter:blur(10px);perspective:1200px}
+.delete-confirm-overlay.open{display:flex;animation:deleteOverlayIn .18s ease-out}
+.delete-confirm-box{width:min(440px,94vw);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:28px;background:linear-gradient(145deg,rgba(24,32,52,.98),rgba(10,15,28,.99));box-shadow:0 28px 80px rgba(0,0,0,.55),0 12px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.12);transform:rotateX(0deg) translateY(0);animation:deleteBoxIn .28s cubic-bezier(.2,.8,.2,1);color:#fff;text-align:center}
+.delete-confirm-icon{width:68px;height:68px;margin:0 auto 16px;border-radius:20px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,#ef4444,#991b1b);box-shadow:0 12px 26px rgba(239,68,68,.28),inset 0 2px 0 rgba(255,255,255,.22)}
+.delete-confirm-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.delete-confirm-text{color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:22px}
+.delete-confirm-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.delete-confirm-actions button{min-width:135px;border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;transition:.18s transform,.18s filter;box-shadow:0 7px 0 rgba(0,0,0,.18)}
+.delete-confirm-actions button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.delete-confirm-cancel{background:#334155;color:#fff}.delete-confirm-ok{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff}
+@keyframes deleteOverlayIn{from{opacity:0}to{opacity:1}}
+@keyframes deleteBoxIn{from{opacity:0;transform:rotateX(-10deg) translateY(24px) scale(.94)}to{opacity:1;transform:rotateX(0) translateY(0) scale(1)}}
+@media(max-width:520px){.delete-confirm-box{padding:23px 18px}.delete-confirm-actions{flex-direction:column}.delete-confirm-actions button{width:100%}}
+</style>
 
 <style id="final-modern-theme">
 /* ===== FINAL MODERN THEME OVERRIDE ===== */
@@ -2212,6 +2230,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <th>Cancel Date</th>
                             <th>Time</th>
                             <th>Day</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="cancelledTableBody"></tbody>
@@ -2380,7 +2399,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
+                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button type="button" class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
                         <button type="button" class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
@@ -2400,7 +2419,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
+                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
                 </div>
             </div>
 
@@ -2454,7 +2473,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
+                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
                 </div>
             </div>
 
@@ -2463,7 +2482,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-circle-check" style="color:var(--accent-success)"></i> Admin Control: Delivered Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminDeliveredTableBody"></tbody></table></div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2472,7 +2490,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2481,7 +2498,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -2490,7 +2506,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-info)"></i> Admin Control: Complete History</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminHistoryTableBody"></tbody></table></div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"></div></div>
                 </div>
             </div>
 
@@ -5528,19 +5543,28 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!bar || !bar.classList.contains('admin-order-sticky-scroll')) {
                     bar = document.createElement('div');
                     bar.className = 'admin-order-sticky-scroll';
-                    bar.innerHTML = '<div class="admin-order-sticky-scroll-inner"></div>';
+                    bar.innerHTML = '<div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div>';
                     scrollBox.insertAdjacentElement('afterend', bar);
                 }
-                const inner = bar.querySelector('.admin-order-sticky-scroll-inner');
-                if (!inner) return;
-                inner.style.width = Math.max(scrollBox.scrollWidth, 2450) + 'px';
+                let inner = bar.querySelector('.admin-order-sticky-scroll-inner');
+                if (!inner) { inner = document.createElement('div'); inner.className='admin-order-sticky-scroll-inner'; bar.appendChild(inner); }
+                let range = bar.querySelector('.admin-order-sticky-range');
+                if (!range) {
+                    range = document.createElement('input');
+                    range.className='admin-order-sticky-range'; range.type='range'; range.min='0'; range.step='1'; range.value='0'; range.setAttribute('aria-label','Horizontal table scroll');
+                    inner.appendChild(range);
+                }
+                const maxScroll = Math.max(0, scrollBox.scrollWidth - scrollBox.clientWidth);
+                range.max = String(maxScroll);
+                range.value = String(Math.min(scrollBox.scrollLeft, maxScroll));
                 if (bar.dataset.hkBound !== '1') {
                     bar.dataset.hkBound = '1';
                     let lock = false;
-                    scrollBox.addEventListener('scroll', () => { if(lock)return; lock=true; bar.scrollLeft=scrollBox.scrollLeft; requestAnimationFrame(()=>lock=false); }, {passive:true});
-                    bar.addEventListener('scroll', () => { if(lock)return; lock=true; scrollBox.scrollLeft=bar.scrollLeft; requestAnimationFrame(()=>lock=false); }, {passive:true});
+                    const syncRangeFromTable = () => { if(lock)return; lock=true; range.value=String(Math.min(scrollBox.scrollLeft, maxScroll)); requestAnimationFrame(()=>lock=false); };
+                    scrollBox.addEventListener('scroll', syncRangeFromTable, {passive:true});
+                    range.addEventListener('input', () => { if(lock)return; lock=true; scrollBox.scrollLeft=Number(range.value)||0; requestAnimationFrame(()=>lock=false); });
+                    range.addEventListener('change', () => { scrollBox.scrollLeft=Number(range.value)||0; });
                 }
-                bar.scrollLeft = scrollBox.scrollLeft;
             });
         }
         window.addEventListener('resize', () => requestAnimationFrame(syncAdminHorizontalScrollbars));
@@ -6174,11 +6198,41 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         } 
  
         /* ---------------- Cancelled ---------------- */ 
+        function sendCancelledOrderToReturns(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.CANCELLED) {
+                showToast_('Only Cancelled orders can be sent to Returns.', 'warn');
+                return;
+            }
+            openReasonModal(
+                `Send Order #${order.id} to Returns`,
+                'Why is this cancelled order being moved to Returns? The stock will be added back to inventory.',
+                'Send to Returns',
+                'fa-solid fa-rotate-left',
+                'linear-gradient(135deg,#f59e0b,#d97706)',
+                function(reason) {
+                    const stamp = makeStamp();
+                    order.status = STATUS.RETURNED;
+                    order.returnStamp = stamp;
+                    order.returnDate = stamp.display;
+                    order.returnReason = reason || order.cancelReason || 'Moved from Cancelled Orders';
+                    const item = inventory.find(i => Number(i.id) === Number(order.itemId));
+                    if (item) item.stock += Number(order.qty || 0);
+                    returns = returns.filter(r => r.orderId !== order.id);
+                    returns.push({ orderId: order.id, customer: order.customer, phone: order.phone, itemName: order.itemName, qty: order.qty, amount: orderTotal(order), reason: order.returnReason, date: stamp.date, time: stamp.time, day: stamp.day });
+                    saveData('cancelled-order-sent-to-returns');
+                    syncOrderWorkflowUI();
+                    refreshWorkflowUI();
+                    showToast_(`Order #${order.id} sent to Returns. Stock restored.`, 'warn');
+                }
+            );
+        }
+
         function renderCancelledTable() { 
             const tbody = document.getElementById('cancelledTableBody'); 
             const list = orders.filter(o => o.status === STATUS.CANCELLED).sort((a, b) => a.id - b.id); 
-            if (!list.length) { tbody.innerHTML = emptyRow(22, 'No cancelled orders yet.'); return; } 
-            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o, o.cancelReason)}</tr>`).join(''); 
+            if (!list.length) { tbody.innerHTML = emptyRow(23, 'No cancelled orders yet.'); return; } 
+            tbody.innerHTML = list.map(o => `<tr>${fullOrderDataCells(o, o.cancelReason)}<td class="admin-action-cell"><div class="admin-order-actions"><button type="button" class="ofd-action ofd-return" onclick="sendCancelledOrderToReturns('${esc(o._key)}')"><i class="fa-solid fa-rotate-left"></i> Send to Returns</button><button type="button" class="ofd-action ofd-cancel" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash-can"></i> Delete</button></div></td></tr>`).join(''); 
         } 
  
         /* NEW ADDITION: SECTION 2 REPORT GENERATION (CANCELLED) */ 
@@ -6768,18 +6822,40 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return openProfessionalOrderEdit(ref);
         }
 
-        function adminDeleteOrder(ref) { 
-            const order = getOrderByRef(ref); if (!order) return; 
-            if (!confirm(`Admin action: permanently delete order #${order.id}?`)) return; 
-            if (stockDeductedStatus(order.status)) { 
-                const item=inventory.find(i=>Number(i.id)===Number(order.itemId)); 
-                if(item)item.stock += Number(order.qty || 0); 
-            } 
-            orders=orders.filter(o=>o._key!==order._key); 
-            returns=returns.filter(r=>r.orderId!==order.id); 
-            saveData(); renderAllTables(); showToast_(`Order #${order.id} deleted by Admin.`, 'ok'); 
-        } 
- 
+        function adminDeleteOrder(ref) {
+            const order = getOrderByRef(ref);
+            if (!order) { showToast_('Order could not be found.', 'warn'); return; }
+            pendingAdminDeleteRef = order._key || ref;
+            const text = document.getElementById('deleteConfirmText');
+            if (text) text.innerHTML = `Are you sure you want to permanently delete <b>Order #${esc(order.id)}</b>?<br><small>This action cannot be undone.</small>`;
+            const overlay = document.getElementById('deleteConfirmOverlay');
+            if (overlay) { overlay.classList.add('open'); document.body.classList.add('modal-open'); }
+        }
+
+        let pendingAdminDeleteRef = null;
+        function closeDeleteConfirm() {
+            pendingAdminDeleteRef = null;
+            const overlay = document.getElementById('deleteConfirmOverlay');
+            if (overlay) overlay.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        }
+        function confirmAdminDelete() {
+            const ref = pendingAdminDeleteRef;
+            const order = ref ? getOrderByRef(ref) : null;
+            if (!order) { closeDeleteConfirm(); showToast_('Order could not be found. Please refresh and try again.', 'warn'); return; }
+            if (stockDeductedStatus(order.status)) {
+                const item=inventory.find(i=>Number(i.id)===Number(order.itemId));
+                if(item)item.stock += Number(order.qty || 0);
+            }
+            orders=orders.filter(o=>o._key!==order._key);
+            returns=returns.filter(r=>r.orderId!==order.id);
+            saveData('admin-order-deleted');
+            closeDeleteConfirm();
+            renderAllTables();
+            showToast_(`Order #${order.id} deleted by Admin.`, 'ok');
+        }
+
+
         /* ---------------- Excel Order Import ---------------- */
         let pendingExcelOrders = [];
         let pendingExcelRows = [];
@@ -7456,5 +7532,17 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
     });
 })();
 </script>
+
+    <div id="deleteConfirmOverlay" class="delete-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+        <div class="delete-confirm-box" onclick="event.stopPropagation()">
+            <div class="delete-confirm-icon"><i class="fa-solid fa-trash-can"></i></div>
+            <div id="deleteConfirmTitle" class="delete-confirm-title">Delete Order?</div>
+            <div id="deleteConfirmText" class="delete-confirm-text">Are you sure you want to permanently delete this order?</div>
+            <div class="delete-confirm-actions">
+                <button type="button" class="delete-confirm-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+                <button type="button" class="delete-confirm-ok" onclick="confirmAdminDelete()"><i class="fa-solid fa-trash-can"></i> Delete Order</button>
+            </div>
+        </div>
+    </div>
 </body> 
 </html
