@@ -2362,8 +2362,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
-                        <button class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
+                        <button type="button" class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
+                        <button type="button" class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
                     </div>
                     <p class="hint-text">Approved orders move straight into Out For Delivery. Rejected orders go back to Daily Orders as editable drafts.</p>
                 </div>
@@ -5835,24 +5835,105 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <td><span class="badge ${badgeClassFor(o.status)}">${esc(o.status)}</span></td><td style="white-space:nowrap">${actionHtml || defaultActions}</td>`; 
         } 
  
-        function renderApprovalTable() { 
-            const tbody = document.getElementById('approvalTableBody'); 
-            const list = orders.filter(o => o.status === STATUS.APPROVAL).sort((a,b)=>a.id-b.id); 
-            if (!list.length) { tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.'); return; } 
-            tbody.innerHTML = list.map(o => `<tr>${adminOrderCells(o, `<button class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn-success" onclick="approveOrder(${o.id})"><i class="fa-solid fa-check"></i> Approve</button><button class="btn-warning" type="button" onclick="sendBackApprovalOrder('${esc(o._key)}')"><i class="fa-solid fa-rotate-left"></i> Send Back</button>`)}</tr>`).join(''); 
-        } 
- 
-        function approveOrder(id) { 
-            const order = getOrderByRef(id); 
-            if (!order || order.status !== STATUS.APPROVAL) return; 
-            order.status = STATUS.OFD; 
-            order.isApproved = true; 
-            order.approvedStamp = makeStamp(); 
-            saveData('order-approved'); 
-            syncOrderWorkflowUI(); 
-            showToast_(`Order #${id} approved and moved to Out For Delivery.`, 'ok'); 
-        } 
- 
+        function renderApprovalTable() {
+            const tbody = document.getElementById('approvalTableBody');
+            if (!tbody) return;
+
+            const list = orders
+                .filter(o => o.status === STATUS.APPROVAL)
+                .sort((a, b) => Number(a.id) - Number(b.id));
+
+            if (!list.length) {
+                tbody.innerHTML = emptyRow(23, 'Nothing is waiting for approval right now.');
+                return;
+            }
+
+            /*
+             * IMPORTANT FIX:
+             * Approval-row buttons are rendered with data attributes and are
+             * handled by one delegated click listener. This removes the fragile
+             * inline onclick dependency from dynamically rebuilt table rows.
+             * Each button carries the exact order _key, so clicking one row
+             * can only change that specific order.
+             */
+            tbody.innerHTML = list.map(o => {
+                const key = esc(o._key);
+                const actionHtml = `
+                    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
+                        <button type="button" class="btn-warning approval-row-action" data-action="edit" data-order-key="${key}">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <button type="button" class="btn-success approval-row-action" data-action="approve" data-order-key="${key}">
+                            <i class="fa-solid fa-check"></i> Approve
+                        </button>
+                        <button type="button" class="btn-warning approval-row-action" data-action="send-back" data-order-key="${key}">
+                            <i class="fa-solid fa-rotate-left"></i> Send Back
+                        </button>
+                    </div>`;
+
+                return `<tr>${adminOrderCells(o, actionHtml)}</tr>`;
+            }).join('');
+        }
+
+        /* Per-order Admin Approval actions — intentionally isolated from the
+         * bulk Approve All / Send All Back controls. */
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('#approvalTableBody .approval-row-action');
+            if (!button) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const ref = button.getAttribute('data-order-key');
+            const action = button.getAttribute('data-action');
+            if (!ref || !action) return;
+
+            const order = getOrderByRef(ref);
+            if (!order) {
+                showToast_('This order could not be found. Please refresh and try again.', 'warn');
+                return;
+            }
+
+            if (order.status !== STATUS.APPROVAL) {
+                showToast_(`Order #${order.id} is no longer pending approval.`, 'warn');
+                syncOrderWorkflowUI();
+                return;
+            }
+
+            if (action === 'edit') {
+                adminEditOrder(ref);
+                return;
+            }
+
+            if (action === 'approve') {
+                approveOrder(ref);
+                return;
+            }
+
+            if (action === 'send-back') {
+                sendBackApprovalOrder(ref);
+            }
+        });
+
+        function approveOrder(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.APPROVAL) {
+                showToast_('Only Pending Approval orders can be approved.', 'warn');
+                syncOrderWorkflowUI();
+                return;
+            }
+
+            order.status = STATUS.OFD;
+            order.isApproved = true;
+            order.isSubmitted = true;
+            order.approvedStamp = makeStamp();
+
+            saveData('order-approved');
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} approved and moved to Out For Delivery.`, 'ok');
+        }
+
         function approveAllOrders() { 
             const list = orders.filter(o => o.status === STATUS.APPROVAL); 
             if (!list.length) { showToast_('Nothing is waiting for approval.', 'warn'); return; } 
