@@ -2389,8 +2389,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                                 <input type="text" id="adminItemName" required placeholder="e.g. Wireless Headphones">
                             </div>
                             <div class="form-group">
-                                <label>Default Price (OMR)</label>
+                                <label>Default Price / Sale Price (OMR)</label>
                                 <input type="number" id="adminItemPrice" min="0" required placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Unit Buy Price (OMR)</label>
+                                <input type="number" id="adminItemBuyPrice" min="0" step="0.01" required placeholder="1">
                             </div>
                             <div class="form-group">
                                 <label>Stock Quantity</label>
@@ -2410,7 +2414,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <tr>
                                 <th>Item ID</th>
                                 <th>Item Name</th>
-                                <th>Price</th>
+                                <th>Sale Price</th>
+                                <th>Unit Buy Price</th>
                                 <th>Current Stock</th>
                                 <th>Actions</th>
                             </tr>
@@ -4803,6 +4808,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 qty: qty, 
                 price: qty > 0 ? codAmount / qty : (Number(o.price) || 0), 
                 codAmount: codAmount, 
+                buyPrice: Number.isFinite(Number(o.buyPrice ?? o.purchasePrice ?? o.itemCost)) ? Math.max(0, Number(o.buyPrice ?? o.purchasePrice ?? o.itemCost)) : null,
                 itemCost: Number.isFinite(Number(o.itemCost ?? o.buyPrice ?? o.purchasePrice)) ? Math.max(0, Number(o.itemCost ?? o.buyPrice ?? o.purchasePrice)) : null,
                 clientOrderId: String(o.clientOrderId || o.clientId || '').trim(), 
                 countryCode: String(o.countryCode || '968').trim(), 
@@ -4843,7 +4849,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (raw && Array.isArray(raw.orders)) { 
                 inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
                     id: Number(i.id), name: i.name || '', price: Number(i.price) || 0,
-                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : null,
+                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : (Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : 1),
                     purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                     cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
                     stock: Number(i.stock) || 0 
@@ -5510,31 +5516,29 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
         function getInventoryUnitBuyPrice(item) {
             if (!item) return 0;
-            // Profit Calculator uses the item's actual Inventory Price as the
-            // UNIT buy price. It must NOT reuse an old order snapshot or a
-            // legacy cost/buyPrice field when the current Inventory Price exists.
-            const price = Number(item.price);
-            if (Number.isFinite(price) && price >= 0) return price;
-
-            // Legacy fallback only when the Inventory Price is genuinely absent.
-            const explicit = Number(item.buyPrice ?? item.purchasePrice ?? item.cost);
-            return Number.isFinite(explicit) && explicit >= 0 ? explicit : 0;
+            // Sale Price and Unit Buy Price are separate values. The Profit
+            // Calculator NEVER uses sale price as a buy price.
+            const buy = Number(item.buyPrice);
+            if (Number.isFinite(buy) && buy >= 0) return buy;
+            const purchase = Number(item.purchasePrice);
+            if (Number.isFinite(purchase) && purchase >= 0) return purchase;
+            // Legacy inventory records that predate the Buy Price field are
+            // migrated to the requested 1 OMR unit buy price. Never use the
+            // sale/default price or an old itemCost/cost value as Buy Price.
+            return 1;
         }
 
         function getProfitItemCost(order) {
-            // IMPORTANT: Always resolve the current Inventory item's UNIT PRICE
-            // first. Existing orders may contain an older itemCost (for example 6),
-            // but the Profit Calculator must follow the item's current Inventory
-            // Price (for example 1) and then multiply it by the order quantity.
             const inv = Array.isArray(inventory) ? inventory : [];
             const byId = inv.find(i => Number(i.id) === Number(order && order.itemId));
             const byName = inv.find(i => String(i.name || '').trim().toLowerCase() === String(order && order.itemName || '').trim().toLowerCase());
             const item = byId || byName;
             if (item) return getInventoryUnitBuyPrice(item);
 
-            // Only use the order's saved value if the inventory item cannot be found.
-            const historical = Number(order && (order.itemCost ?? order.buyPrice ?? order.purchasePrice));
-            return Number.isFinite(historical) && historical >= 0 ? historical : 0;
+            // Only if the inventory item no longer exists, use the order's
+            // historical buy-price snapshot.
+            const historical = Number(order && (order.buyPrice ?? order.itemCost ?? order.purchasePrice));
+            return Number.isFinite(historical) && historical >= 0 ? historical : 1;
         }
 
         function profitMoney(value) {
@@ -5970,7 +5974,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 order.qty = qty; 
                 order.codAmount = codAmount; 
                 order.price = qty > 0 ? codAmount / qty : 0; 
-                order.itemCost = getInventoryUnitBuyPrice(item); 
+                order.buyPrice = getInventoryUnitBuyPrice(item);
+                order.itemCost = order.buyPrice; 
  
                 showToast_(`Order #${order.id} updated. Stock synchronized.`, 'ok'); 
             } else { 
@@ -5992,6 +5997,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     qty, 
                     codAmount, 
                     price: qty > 0 ? codAmount / qty : 0, 
+                    buyPrice: getInventoryUnitBuyPrice(item),
                     itemCost: getInventoryUnitBuyPrice(item), 
                     status: STATUS.DRAFT, 
                     creationDate: stamp.date, 
@@ -6569,6 +6575,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <td>#${i.id}</td> 
                     <td><b>${esc(i.name)}</b></td> 
                     <td>${money(i.price)}</td> 
+                    <td>${money(getInventoryUnitBuyPrice(i))}</td> 
                     <td><b>${i.stock}</b></td> 
                     <td><span class="badge ${i.stock > 5 ? 'badge-delivered' : 'badge-returned'}">${i.stock > 5 ? 'In Stock' : 'Low Stock'}</span></td> 
                 </tr>`).join(''); 
@@ -6632,13 +6639,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         /* ---------------- Admin: Inventory ---------------- */ 
         function renderAdminInventoryTable() { 
             const tbody = document.getElementById('adminInventoryTableBody'); 
-            if (!inventory.length) { tbody.innerHTML = emptyRow(5, 'No inventory items yet. Add one above.'); return; } 
+            if (!inventory.length) { tbody.innerHTML = emptyRow(6, 'No inventory items yet. Add one above.'); return; } 
  
             tbody.innerHTML = inventory.map(i => ` 
                 <tr> 
                     <td>#${i.id}</td> 
                     <td><b>${esc(i.name)}</b></td> 
                     <td>${money(i.price)}</td> 
+                    <td>${money(getInventoryUnitBuyPrice(i))}</td> 
                     <td><b>${i.stock}</b></td> 
                     <td> 
                         <button class="btn-warning" onclick="editAdminItem(${i.id})"><i class="fa-solid fa-pen"></i> Edit</button> 
@@ -6651,11 +6659,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             e.preventDefault(); 
             const editId = document.getElementById('editItemId').value; 
             const name = document.getElementById('adminItemName').value.trim(); 
-            const price = parseFloat(document.getElementById('adminItemPrice').value); 
+            const price = parseFloat(document.getElementById('adminItemPrice').value);
+            const buyPrice = parseFloat(document.getElementById('adminItemBuyPrice').value);
             const stock = parseInt(document.getElementById('adminItemQty').value, 10); 
  
             if (!name) { showToast_('Give the item a name.', 'warn'); return; } 
-            if (isNaN(price) || price < 0) { showToast_('Enter a valid price.', 'warn'); return; } 
+            if (isNaN(price) || price < 0) { showToast_('Enter a valid sale price.', 'warn'); return; }
+            if (isNaN(buyPrice) || buyPrice < 0) { showToast_('Enter a valid unit buy price.', 'warn'); return; } 
             if (isNaN(stock) || stock < 0) { showToast_('Enter a valid stock quantity.', 'warn'); return; } 
  
             if (editId) { 
@@ -6663,12 +6673,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (item) { 
                     item.name = name; 
                     item.price = price; 
+                    item.buyPrice = buyPrice; 
                     item.stock = stock; 
                     orders.forEach(o => { if (o.itemId == editId) o.itemName = name; }); 
                     showToast_(`Item #${item.id} updated.`, 'ok'); 
                 } 
             } else { 
-                const item = { id: nextItemId(), name, price, stock }; 
+                const item = { id: nextItemId(), name, price, buyPrice, stock }; 
                 inventory.push(item); 
                 showToast_(`${name} added to inventory.`, 'ok'); 
             } 
@@ -6684,6 +6695,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             document.getElementById('editItemId').value = item.id; 
             document.getElementById('adminItemName').value = item.name; 
             document.getElementById('adminItemPrice').value = item.price; 
+            document.getElementById('adminItemBuyPrice').value = getInventoryUnitBuyPrice(item);
             document.getElementById('adminItemQty').value = item.stock; 
  
             document.getElementById('adminFormHeading').innerText = `Edit Inventory Item #${item.id}`; 
@@ -6705,6 +6717,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function resetAdminForm() { 
             document.getElementById('editItemId').value = ""; 
             document.getElementById('adminItemForm').reset(); 
+            document.getElementById('adminItemBuyPrice').value = '1';
             document.getElementById('adminFormHeading').innerText = "Add New Inventory Item"; 
             document.getElementById('adminSubmitBtn').innerText = "Save Item"; 
             document.getElementById('adminCancelBtn').style.display = "none"; 
