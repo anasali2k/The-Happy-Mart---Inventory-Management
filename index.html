@@ -2601,7 +2601,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                                 <div class="profit-rule"><b>1%</b> is calculated from the total delivered sale amount.</div>
                                 <div class="profit-rule"><b>OMR 0.20</b> is deducted once for every delivered order.</div>
                                 <div class="profit-rule"><b>OMR 1.90</b> is deducted once for every delivered order.</div>
-                                <div class="profit-rule"><b>Item cost</b> is multiplied by the quantity delivered. The calculator uses the order's saved item cost when available, otherwise the current inventory item price.</div>
+                                <div class="profit-rule"><b>Item cost</b> is multiplied by the quantity delivered. The calculator uses the matching inventory item's BUY / PURCHASE PRICE as item cost. This is never the customer sale price.</div>
                                 <div class="profit-rule"><b>OMR 0.50</b> is deducted once for every returned order, after the delivered-profit calculation; it does not reduce item cost.</div>
                                 <div class="profit-rule"><b>PKR</b> = final OMR profit × the exchange rate entered above.</div>
                             </div>
@@ -2615,7 +2615,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="profit-table-wrap">
                         <table class="profit-table">
                             <thead><tr>
-                                <th>Order</th><th>Item</th><th>Qty</th><th>Sale / Item</th><th>Total Sale</th><th>After 1%</th><th>After 0.20</th><th>After 1.90 Delivery</th><th>Item Cost / Pc</th><th>Total Item Cost</th><th>Final Order Profit</th>
+                                <th>Order</th><th>Item</th><th>Qty</th><th>Sale Price</th><th>1% COD</th><th>Fulfilment 0.2</th><th>1.90 Delivery</th><th>Item Cost / Pc (Buy Price)</th><th>Total Item Cost</th><th>Final Order Profit</th>
                             </tr></thead>
                             <tbody id="profitDeliveredTableBody"></tbody>
                         </table>
@@ -5604,16 +5604,30 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
 
         function getProfitItemCost(order) {
+            /*
+             * INVENTORY PRICE = BUY / PURCHASE COST.
+             * It is NOT the customer sale price.
+             * The Profit Calculator therefore always reads the matching
+             * inventory item's purchase price first.
+             */
+            const itemId = Number(order && order.itemId);
+            const item = inventory.find(i => Number(i.id) === itemId);
+
+            if (item) {
+                if (Number.isFinite(Number(item.cost)) && Number(item.cost) >= 0) {
+                    return Number(item.cost);
+                }
+                if (Number.isFinite(Number(item.price)) && Number(item.price) >= 0) {
+                    return Number(item.price);
+                }
+            }
+
+            /* Historical fallback only when the inventory item can no longer
+             * be found. Never use the customer's sale price as item cost. */
             const savedCost = profitNumber(order && order.itemCost, NaN);
             if (Number.isFinite(savedCost) && savedCost >= 0) return savedCost;
 
-            const itemId = Number(order && order.itemId);
-            const item = inventory.find(i => Number(i.id) === itemId);
-            if (item && Number.isFinite(Number(item.cost))) return Math.max(0, Number(item.cost));
-            if (item && Number.isFinite(Number(item.price))) return Math.max(0, Number(item.price));
-
-            const unitSale = profitNumber(order && order.price);
-            return unitSale >= 0 ? unitSale : 0;
+            return 0;
         }
 
         function getProfitCalculatorRate() {
@@ -5701,8 +5715,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     deliveredBody.innerHTML = delivered.map(o => {
                         const qty = Math.max(0, profitNumber(o.qty));
                         const saleTotal = Math.max(0, profitNumber(orderTotal(o)));
-                        const saleUnit = qty > 0 ? saleTotal / qty : 0;
-
                         const one = saleTotal * 0.01;
                         const afterOne = saleTotal - one;
                         const afterPointTwo = afterOne - 0.20;
@@ -5716,7 +5728,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <td><b>#${esc(o.id)}</b></td>
                             <td>${esc(o.itemName || '-')}</td>
                             <td>${qty}</td>
-                            <td>${profitMoney(saleUnit)}</td>
                             <td><b>${profitMoney(saleTotal)}</b></td>
                             <td class="profit-positive">${profitMoney(afterOne)}</td>
                             <td class="profit-positive">${profitMoney(afterPointTwo)}</td>
