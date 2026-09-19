@@ -5510,23 +5510,31 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
         function getInventoryUnitBuyPrice(item) {
             if (!item) return 0;
-            const explicit = Number(item.buyPrice ?? item.purchasePrice ?? item.cost);
-            if (Number.isFinite(explicit) && explicit >= 0) return explicit;
+            // Profit Calculator uses the item's actual Inventory Price as the
+            // UNIT buy price. It must NOT reuse an old order snapshot or a
+            // legacy cost/buyPrice field when the current Inventory Price exists.
             const price = Number(item.price);
-            return Number.isFinite(price) && price >= 0 ? price : 0;
+            if (Number.isFinite(price) && price >= 0) return price;
+
+            // Legacy fallback only when the Inventory Price is genuinely absent.
+            const explicit = Number(item.buyPrice ?? item.purchasePrice ?? item.cost);
+            return Number.isFinite(explicit) && explicit >= 0 ? explicit : 0;
         }
 
         function getProfitItemCost(order) {
-            // Always prefer the buy/cost price saved with this order.
-            // Inventory price is only a fallback, so later price edits cannot
-            // change the historical buy price used by the Profit Calculator.
-            const historical = Number(order && (order.itemCost ?? order.buyPrice ?? order.purchasePrice));
-            if (Number.isFinite(historical) && historical >= 0) return historical;
-
+            // IMPORTANT: Always resolve the current Inventory item's UNIT PRICE
+            // first. Existing orders may contain an older itemCost (for example 6),
+            // but the Profit Calculator must follow the item's current Inventory
+            // Price (for example 1) and then multiply it by the order quantity.
             const inv = Array.isArray(inventory) ? inventory : [];
             const byId = inv.find(i => Number(i.id) === Number(order && order.itemId));
             const byName = inv.find(i => String(i.name || '').trim().toLowerCase() === String(order && order.itemName || '').trim().toLowerCase());
-            return getInventoryUnitBuyPrice(byId || byName);
+            const item = byId || byName;
+            if (item) return getInventoryUnitBuyPrice(item);
+
+            // Only use the order's saved value if the inventory item cannot be found.
+            const historical = Number(order && (order.itemCost ?? order.buyPrice ?? order.purchasePrice));
+            return Number.isFinite(historical) && historical >= 0 ? historical : 0;
         }
 
         function profitMoney(value) {
