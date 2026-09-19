@@ -1698,17 +1698,19 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
         .admin-order-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;width:100%;min-width:0;}
         .admin-order-actions button{flex:0 1 auto;min-height:40px;min-width:104px;padding:9px 12px;justify-content:center;white-space:nowrap;}
         .approval-row-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
-        .admin-order-sticky-scroll{position:sticky;bottom:8px;z-index:50;width:100%;height:20px;margin-top:6px;border:1px solid rgba(148,163,184,.22);border-radius:999px;background:rgba(7,13,29,.98);box-shadow:0 -6px 18px rgba(0,0,0,.24);overflow:hidden;}
-        .admin-order-sticky-scroll-inner{display:block;width:100%;height:100%;min-width:0;margin:0;padding:0;}
-        .admin-order-sticky-range{display:block;width:100%;height:18px;margin:0;padding:0;cursor:grab;touch-action:none;accent-color:#64748b;}
-        .admin-order-sticky-range:active{cursor:grabbing;}
-        .admin-order-sticky-range::-webkit-slider-runnable-track{height:10px;background:rgba(15,23,42,.95);border-radius:999px;}
-        .admin-order-sticky-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:78px;height:14px;margin-top:-2px;border:2px solid rgba(15,23,42,.95);border-radius:999px;background:linear-gradient(90deg,#64748b,#94a3b8);box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:grab;}
-        .admin-order-sticky-range:active::-webkit-slider-thumb{cursor:grabbing;}
-        .admin-order-sticky-range::-moz-range-track{height:10px;background:rgba(15,23,42,.95);border-radius:999px;}
-        .admin-order-sticky-range::-moz-range-thumb{width:78px;height:14px;border:2px solid rgba(15,23,42,.95);border-radius:999px;background:linear-gradient(90deg,#64748b,#94a3b8);box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:grab;}
+        .admin-order-sticky-scroll{display:none!important;}
+        #admin-global-horizontal-scroll{position:fixed;left:14px;right:14px;bottom:10px;z-index:2147483000;height:28px;padding:4px 8px;border:1px solid rgba(148,163,184,.30);border-radius:999px;background:rgba(7,13,29,.98);box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 0 1px rgba(34,211,238,.06);backdrop-filter:blur(10px);display:none;align-items:center;}
+        #admin-global-horizontal-scroll.is-visible{display:flex;}
+        #admin-global-horizontal-scroll .admin-global-range{display:block;width:100%;height:20px;margin:0;padding:0;cursor:grab;touch-action:none;accent-color:#64748b;}
+        #admin-global-horizontal-scroll .admin-global-range:active{cursor:grabbing;}
+        #admin-global-horizontal-scroll .admin-global-range::-webkit-slider-runnable-track{height:12px;background:rgba(15,23,42,.98);border:1px solid rgba(148,163,184,.18);border-radius:999px;}
+        #admin-global-horizontal-scroll .admin-global-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:86px;height:16px;margin-top:-3px;border:2px solid #0f172a;border-radius:999px;background:linear-gradient(90deg,#64748b,#cbd5e1);box-shadow:0 2px 7px rgba(0,0,0,.45);cursor:grab;}
+        #admin-global-horizontal-scroll .admin-global-range:active::-webkit-slider-thumb{cursor:grabbing;}
+        #admin-global-horizontal-scroll .admin-global-range::-moz-range-track{height:12px;background:rgba(15,23,42,.98);border:1px solid rgba(148,163,184,.18);border-radius:999px;}
+        #admin-global-horizontal-scroll .admin-global-range::-moz-range-thumb{width:86px;height:16px;border:2px solid #0f172a;border-radius:999px;background:linear-gradient(90deg,#64748b,#cbd5e1);box-shadow:0 2px 7px rgba(0,0,0,.45);cursor:grab;}
+        @media(max-width:760px){#admin-global-horizontal-scroll{left:8px;right:8px;bottom:8px;height:30px;padding:4px 7px}}
         @media(max-width:1100px){.admin-action-cell{min-width:360px!important;width:360px}.admin-order-actions{gap:7px}.admin-order-actions button{min-width:100px;padding:9px 11px;font-size:12px;}}
-        @media(max-width:760px){.admin-order-scroll{border-radius:11px}.admin-action-cell{min-width:230px!important;width:230px}.admin-order-actions{gap:6px}.admin-order-actions button{min-width:100px;flex:1 1 100px;min-height:42px}.admin-order-sticky-scroll{height:18px;margin-top:7px;bottom:5px;}}
+        @media(max-width:760px){.admin-order-scroll{border-radius:11px}.admin-action-cell{min-width:230px!important;width:230px}.admin-order-actions{gap:6px}.admin-order-actions button{min-width:100px;flex:1 1 100px;min-height:42px}}
         @media(max-width:480px){.admin-action-cell{min-width:215px!important;width:215px}.admin-order-actions button{flex:1 1 100%;width:100%;}}
 
         /* ===== EXCEL ORDER IMPORT ADD-ON ===== */
@@ -1986,7 +1988,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <li class="nav-item" id="nav-ofd" onclick="switchView('ofd')"><i class="fa-solid fa-truck-fast"></i> Out For Delivery <span class="nav-count" id="count-ofd">0</span></li>
             <li class="nav-item" id="nav-delivered" onclick="switchView('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Orders <span class="nav-count" id="count-delivered">0</span></li>
             <li class="nav-item" id="nav-returns" onclick="switchView('returns')"><i class="fa-solid fa-rotate-left"></i> Returns <span class="nav-count" id="count-returns">0</span></li>
-            <li class="nav-item" id="nav-cancelled" onclick="switchView('cancelled')"><i class="fa-solid fa-ban"></i> Cancelled Orders <span class="nav-count" id="count-cancelled">0</span></li>
             <li class="nav-item" id="nav-history" onclick="switchView('history')"><i class="fa-solid fa-clock-rotate-left"></i> History <span class="nav-count" id="count-history">0</span></li>
             <li class="nav-item" id="nav-inventory" onclick="switchView('inventory')"><i class="fa-solid fa-warehouse"></i> Inventory Stock <span class="nav-count" id="count-inventory">0</span></li>
             <li class="nav-item" id="nav-admin" onclick="openAdminModal()"><i class="fa-solid fa-user-gear"></i> Admin Panel <span class="nav-count" id="count-approval">0</span></li>
@@ -2177,67 +2178,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             </div>
         </section>
 
-        <!-- VIEW 5: CANCELLED ORDERS (SECTION 2 FROM REFERENCE) -->
-        <section id="view-cancelled" class="view-section">
-            <div class="card">
-                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Cancelled Orders Report</h3>
-                <form onsubmit="generateCancelledReport(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>From Date</label>
-                            <input type="date" id="cancelledStartDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label>To Date</label>
-                            <input type="date" id="cancelledEndDate" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-submit"><i class="fa-solid fa-filter"></i> Generate Report</button>
-                </form>
-
-                <div id="cancelledReportContainer" style="display:none; margin-top: 24px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <h4 style="color: var(--accent-warning);"><i class="fa-solid fa-ban"></i> Date-Wise Cancelled Orders Report Results</h4>
-                        <button class="btn-excel" onclick="downloadCancelledExcel()"><i class="fa-solid fa-file-excel"></i> Download XLS Excel Report</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr>
-<th>Order ID</th><th>Product Code</th><th>Customer Name</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th>
-</tr></thead>
-                            <tbody id="cancelledReportTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="report-summary-box">
-                        <span class="report-summary-title">Total Cancelled Value:</span>
-                        <span class="report-summary-val" id="cancelledReportTotalVal" style="color: var(--accent-warning);">OMR 0</span>
-                    </div>
-                </div>
-            </div>
-
-            <h3 style="margin-bottom: 16px;">All Cancelled Orders Sheet</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer Name</th>
-                            <th>Phone</th>
-                            <th>Item Name</th>
-                            <th>Qty</th>
-                            <th>Amount</th>
-                            <th>Cancellation Reason</th>
-                            <th>Cancel Date</th>
-                            <th>Time</th>
-                            <th>Day</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cancelledTableBody"></tbody>
-                </table>
-            </div>
-        </section>
-
         <!-- VIEW 6: HISTORY (SECTION 3 FROM REFERENCE) -->
         <section id="view-history" class="view-section">
             <div class="card">
@@ -2386,7 +2326,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <button class="admin-tab-btn" id="tab-btn-ord" onclick="switchAdminSubTab('orders')"><i class="fa-solid fa-list-check"></i> Master Control</button>
                 <button class="admin-tab-btn" id="tab-btn-del" onclick="switchAdminSubTab('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Control</button>
                 <button class="admin-tab-btn" id="tab-btn-ret" onclick="switchAdminSubTab('returns')"><i class="fa-solid fa-rotate-left"></i> Returns Control</button>
-                <button class="admin-tab-btn" id="tab-btn-can" onclick="switchAdminSubTab('cancelled')"><i class="fa-solid fa-ban"></i> Cancelled Control</button>
                 <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
                 <button class="admin-tab-btn" id="tab-btn-emp" onclick="switchAdminSubTab('employees')"><i class="fa-solid fa-users"></i> Employee Management</button>
                 <button class="admin-tab-btn" id="tab-btn-meta-ads" onclick="switchAdminSubTab('metaAds'); hkInit()"><i class="fa-solid fa-bullhorn"></i> Meta Ads Expense</button>
@@ -2399,7 +2338,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
+                    </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button type="button" class="btn-submit" style="background-color: var(--accent-success);" onclick="approveAllOrders()"><i class="fa-solid fa-check-double"></i> Approve All Pending Orders</button>
                         <button type="button" class="btn-back" onclick="rejectAllOrders()"><i class="fa-solid fa-rotate-left"></i> Send All Back to Draft</button>
@@ -2419,7 +2358,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
+                    </div>
                 </div>
             </div>
 
@@ -2473,7 +2412,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
                     </div>
-                    <div class="admin-order-sticky-scroll"><div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div></div>
+                    </div>
                 </div>
             </div>
 
@@ -2490,14 +2429,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-rotate-left" style="color:var(--accent-danger)"></i> Admin Control: Returned Orders</h3>
                     <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminReturnsTableBody"></tbody></table></div>
-                </div>
-            </div>
-
-            <!-- SUB TAB 5: CANCELLED CONTROL -->
-            <div id="admin-sub-cancelled" style="display: none;">
-                <div class="card">
-                    <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-ban" style="color:#cbd5e1"></i> Admin Control: Cancelled Orders</h3>
-                    <div class="table-responsive admin-order-scroll"><table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCancelledTableBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -5461,7 +5392,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 ofd: 'Out For Delivery (OFD)', 
                 delivered: 'Delivered Orders', 
                 returns: 'Returned Orders', 
-                cancelled: 'Cancelled Orders', 
                 history: 'Complete History', 
                 inventory: 'Inventory Stock Sheet & Analytics', 
                 'employee-portal': 'Employee Portal', 
@@ -5495,7 +5425,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 orders: ['admin-sub-orders', 'tab-btn-ord'], 
                 delivered: ['admin-sub-delivered', 'tab-btn-del'], 
                 returns: ['admin-sub-returns', 'tab-btn-ret'], 
-                cancelled: ['admin-sub-cancelled', 'tab-btn-can'], 
                 history: ['admin-sub-history', 'tab-btn-his'], 
                 employees: ['admin-sub-employees', 'tab-btn-emp'],
                 metaAds: ['admin-sub-meta-ads', 'tab-btn-meta-ads'] 
@@ -5515,7 +5444,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             renderOFDTable(); 
             renderDeliveredTable(); 
             renderReturnsTable(); 
-            renderCancelledTable(); 
             renderHistoryTable(); 
             renderInventoryTable(); 
             renderApprovalTable(); 
@@ -5535,39 +5463,63 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             try {
                 if (typeof window !== 'undefined' && typeof window.hkRefresh === 'function') window.hkRefresh();
             } catch (e) {} 
+            requestAnimationFrame(syncAdminHorizontalScrollbars);
         } 
  
         function syncAdminHorizontalScrollbars() {
-            document.querySelectorAll('.admin-order-scroll').forEach(scrollBox => {
-                let bar = scrollBox.nextElementSibling;
-                if (!bar || !bar.classList.contains('admin-order-sticky-scroll')) {
-                    bar = document.createElement('div');
-                    bar.className = 'admin-order-sticky-scroll';
-                    bar.innerHTML = '<div class="admin-order-sticky-scroll-inner"><input class="admin-order-sticky-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table scroll"></div>';
-                    scrollBox.insertAdjacentElement('afterend', bar);
-                }
-                let inner = bar.querySelector('.admin-order-sticky-scroll-inner');
-                if (!inner) { inner = document.createElement('div'); inner.className='admin-order-sticky-scroll-inner'; bar.appendChild(inner); }
-                let range = bar.querySelector('.admin-order-sticky-range');
-                if (!range) {
-                    range = document.createElement('input');
-                    range.className='admin-order-sticky-range'; range.type='range'; range.min='0'; range.step='1'; range.value='0'; range.setAttribute('aria-label','Horizontal table scroll');
-                    inner.appendChild(range);
-                }
-                const maxScroll = Math.max(0, scrollBox.scrollWidth - scrollBox.clientWidth);
-                range.max = String(maxScroll);
-                range.value = String(Math.min(scrollBox.scrollLeft, maxScroll));
-                if (bar.dataset.hkBound !== '1') {
-                    bar.dataset.hkBound = '1';
-                    let lock = false;
-                    const syncRangeFromTable = () => { if(lock)return; lock=true; range.value=String(Math.min(scrollBox.scrollLeft, maxScroll)); requestAnimationFrame(()=>lock=false); };
-                    scrollBox.addEventListener('scroll', syncRangeFromTable, {passive:true});
-                    range.addEventListener('input', () => { if(lock)return; lock=true; scrollBox.scrollLeft=Number(range.value)||0; requestAnimationFrame(()=>lock=false); });
-                    range.addEventListener('change', () => { scrollBox.scrollLeft=Number(range.value)||0; });
-                }
+            const adminView = document.getElementById('view-admin');
+            const bars = Array.from(document.querySelectorAll('.admin-order-scroll'));
+            let active = bars.find(el => {
+                const r = el.getBoundingClientRect();
+                const style = getComputedStyle(el);
+                return style.display !== 'none' && style.visibility !== 'hidden' && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < window.innerHeight;
+            });
+            const visibleAdmin = adminView && getComputedStyle(adminView).display !== 'none';
+            let host = document.getElementById('admin-global-horizontal-scroll');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'admin-global-horizontal-scroll';
+                host.innerHTML = '<input class="admin-global-range" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal table drag scroll">';
+                document.body.appendChild(host);
+            }
+            const range = host.querySelector('.admin-global-range');
+            if (!visibleAdmin || !active) { host.classList.remove('is-visible'); range.max='0'; range.value='0'; host._target=null; return; }
+            const maxScroll = Math.max(0, active.scrollWidth - active.clientWidth);
+            host._target = active;
+            range.max = String(maxScroll);
+            range.value = String(Math.min(active.scrollLeft, maxScroll));
+            host.classList.toggle('is-visible', maxScroll > 0);
+            if (host.dataset.bound !== '1') {
+                host.dataset.bound='1';
+                let lock=false;
+                range.addEventListener('input',()=>{
+                    const target=host._target; if(!target||lock)return;
+                    target.scrollLeft=Number(range.value)||0;
+                });
+                range.addEventListener('change',()=>{
+                    const target=host._target; if(!target)return;
+                    target.scrollLeft=Number(range.value)||0;
+                });
+                document.addEventListener('scroll',()=>{
+                    const target=host._target; if(!target||lock)return;
+                    const max=Math.max(0,target.scrollWidth-target.clientWidth);
+                    range.max=String(max); range.value=String(Math.min(target.scrollLeft,max));
+                },true);
+            }
+            bars.forEach(box=>{
+                if(box.dataset.globalBound==='1') return;
+                box.dataset.globalBound='1';
+                box.addEventListener('scroll',()=>{
+                    if(host._target===box){
+                        const max=Math.max(0,box.scrollWidth-box.clientWidth);
+                        range.max=String(max); range.value=String(Math.min(box.scrollLeft,max));
+                    }
+                },{passive:true});
             });
         }
         window.addEventListener('resize', () => requestAnimationFrame(syncAdminHorizontalScrollbars));
+        document.addEventListener('click', (e) => { if (e.target.closest('.admin-tab-btn')) requestAnimationFrame(syncAdminHorizontalScrollbars); });
+        window.addEventListener('load', () => requestAnimationFrame(syncAdminHorizontalScrollbars));
 
         /* 
          * ONE workflow refresh point. 
@@ -5645,7 +5597,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             set('count-ofd', ofdCount); 
             set('count-delivered', deliveredCount); 
             set('count-returns', returnCount); 
-            set('count-cancelled', cancelledCount); 
             set('count-history', safeOrders.length); 
             set('count-inventory', safeInventory.length); 
  
@@ -5893,8 +5844,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
                     <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button> 
                     <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
-                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button> 
-                    <button class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button>
+                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
                     <button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>
                    </div>` 
                 : `<button type="button" class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`; 
@@ -6026,7 +5976,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <button type="button" class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
                     <button type="button" class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
                     <button type="button" class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button> 
-                    <button type="button" class="ofd-action ofd-cancel" onclick="processCancel(${o.id})"><i class="fa-solid fa-ban"></i> Cancel</button> 
                     <button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button> 
                 </div></td> 
             </tr>`).join(''); 
@@ -6538,7 +6487,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 ['adminOFDTableBody', STATUS.OFD, 'No orders are currently Out For Delivery.'], 
                 ['adminDeliveredTableBody', STATUS.DELIVERED, 'No delivered orders found.'], 
                 ['adminReturnsTableBody', STATUS.RETURNED, 'No returned orders found.'], 
-                ['adminCancelledTableBody', STATUS.CANCELLED, 'No cancelled orders found.'], 
                 ['adminHistoryTableBody', null, 'No history items found.'] 
             ]; 
             sections.forEach(([id,status,empty])=>{ 
