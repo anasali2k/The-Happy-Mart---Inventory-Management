@@ -2348,7 +2348,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
                 <button class="admin-tab-btn" id="tab-btn-emp" onclick="switchAdminSubTab('employees')"><i class="fa-solid fa-users"></i> Employee Management</button>
                 <button class="admin-tab-btn" id="tab-btn-meta-ads" onclick="switchAdminSubTab('metaAds'); hkInit()"><i class="fa-solid fa-bullhorn"></i> Meta Ads Expense</button>
-                <button class="admin-tab-btn" id="tab-btn-profit" onclick="switchAdminSubTab('profit'); renderProfitCalculator()"><i class="fa-solid fa-chart-line"></i> Profit Calculator</button>
             </div>
 
             <!-- SUB TAB 0: ORDER APPROVALS -->
@@ -2510,106 +2509,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
                 </div>
                 <div id="adminEmployeePortal"></div>
-            </div>
-
-            <!-- SUB TAB: PROFIT CALCULATOR -->
-            <div id="admin-sub-profit" style="display:none;">
-                <div class="profit-shell">
-                    <div class="profit-hero">
-                        <div class="profit-hero-left">
-                            <div class="profit-hero-icon"><i class="fa-solid fa-chart-line"></i></div>
-                            <div>
-                                <div class="profit-kicker">ADMIN • FINANCIAL CONTROL</div>
-                                <h2>Profit Calculator</h2>
-                                <p>Delivered & returned orders • Every deduction and remaining balance is calculated from live inventory/order data.</p>
-                            </div>
-                        </div>
-                        <div class="profit-rate-box">
-                            <label for="profitOmerPkrRate">1 OMR → PKR</label>
-                            <div class="profit-rate-row">
-                                <input id="profitOmerPkrRate" type="number" min="0" step="0.001" value="720.88186" inputmode="decimal" readonly title="Conversion rate: 1 OMR = 720.88186 PKR">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profit-date-toolbar"><div class="profit-date-left"><div class="profit-date-icon"><i class="fa-solid fa-calendar-days"></i></div><div class="profit-date-copy"><b>Profit Date Range</b><span id="profitDateRangeLabel">All dates — showing all delivered and returned orders</span></div></div><div class="profit-date-actions"><button type="button" class="profit-date-btn" onclick="openProfitCalendar()"><i class="fa-solid fa-calendar-days"></i> Select Date Range</button><button type="button" class="profit-date-btn secondary" onclick="clearProfitDateFilter()">All Data</button></div></div>
-<div id="profitCalendarOverlay" class="profit-calendar-overlay" aria-hidden="true"><div class="profit-calendar-3d" role="dialog" aria-modal="true" aria-labelledby="profitCalendarTitle"><div class="profit-calendar-head"><div><h3 id="profitCalendarTitle">3D Profit Calendar</h3><p>Select a From date and a To date. Years 2000–3000 are available.</p></div><button type="button" class="profit-calendar-close" onclick="closeProfitCalendar()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><div class="profit-calendar-pickers"><button type="button" id="profitPickFrom" onclick="setProfitCalendarPart('from')"><small>From Date</small><strong id="profitCalendarFromText">Not selected</strong></button><button type="button" id="profitPickTo" onclick="setProfitCalendarPart('to')"><small>To Date</small><strong id="profitCalendarToText">Not selected</strong></button></div><div class="profit-calendar-nav"><button type="button" onclick="profitCalendarMoveMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button><select id="profitCalendarMonth" onchange="renderProfitCalendarGrid()"></select><select id="profitCalendarYear" onchange="renderProfitCalendarGrid()"></select><button type="button" onclick="profitCalendarMoveMonth(1)"><i class="fa-solid fa-chevron-right"></i></button></div><div class="profit-calendar-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="profitCalendarDays" class="profit-calendar-days"></div><div class="profit-calendar-footer"><span id="profitCalendarHint">Choose the From date first.</span><div class="profit-calendar-footer-actions"><button type="button" onclick="closeProfitCalendar()">Cancel</button><button type="button" class="primary" onclick="applyProfitCalendar()">Apply Range</button></div></div></div></div>
-                    <div class="profit-summary-grid">
-                        <div class="profit-metric"><span>Delivered Orders</span><strong id="profitDeliveredOrders">0</strong></div>
-                        <div class="profit-metric"><span>Items Sold</span><strong id="profitItemsSold">0</strong></div>
-                        <div class="profit-metric"><span>Returned Orders</span><strong id="profitReturnedOrders">0</strong></div>
-                        <div class="profit-metric"><span>Returned Items</span><strong id="profitReturnedItems">0</strong></div>
-                        <div class="profit-metric"><span>TOTAL SALE</span><strong id="profitSaleTotalOmr">OMR 0.00</strong></div>
-                        <div class="profit-metric"><span>ITEM PRICE TOTAL</span><strong id="profitItemPriceTotalOmr">OMR 0.00</strong><small id="profitItemPriceTotalPkr">PKR 0.00</small></div>
-                        <div class="profit-metric profit-metric-main"><span>PROFIT OMR</span><strong id="profitFinalOmr">OMR 0.00</strong><small id="profitFinalPkr">PKR 0.00</small></div>
-                        <div class="profit-metric profit-metric-main"><span>PROFIT + ITEM PRICE</span><strong id="profitProfitPlusItemOmr">OMR 0.00</strong><small id="profitProfitPlusItemPkr">PKR 0.00</small></div>
-                    </div>
-
-                    <div class="profit-sale-split-card">
-                        <div>
-                            <div class="profit-kicker">SALE SPLIT</div>
-                            <h3>Total Sale = Profit + Item Price</h3>
-                            <p>Item Price is calculated at OMR 1.00 per sold piece. Profit is Total Sale minus the total item price.</p>
-                        </div>
-                        <div class="profit-sale-split-values">
-                            <div class="profit-total-pill"><span>Total Sale</span><strong id="profitSaleSplitTotal">OMR 0.00</strong></div>
-                            <div class="profit-total-pill"><span>Item Price</span><strong id="profitSaleSplitItem">OMR 0.00</strong></div>
-                            <div class="profit-total-pill"><span>Profit</span><strong id="profitSaleSplitProfit">OMR 0.00</strong></div>
-                            <div class="profit-total-pill"><span>Profit + Item Price</span><strong id="profitSaleSplitCheck">OMR 0.00</strong></div>
-                        </div>
-                    </div>
-
-                    <div class="profit-breakdown-card">
-                        <div class="profit-card-head"><div><div class="profit-kicker">MASTER CALCULATION</div><h3>Profit & Loss Breakdown</h3></div><span class="profit-live-badge"><i class="fa-solid fa-circle"></i> Live</span></div>
-                        <div class="profit-breakdown-grid">
-                            <div><span>Total Sale Price</span><strong id="profitGrossSales">OMR 0.00</strong></div>
-                            <div><span>Less 1% COD</span><strong id="profitLessOne">− OMR 0.00</strong></div>
-                            <div><span>Balance After 1% COD</span><strong id="profitAfterOne">OMR 0.00</strong></div>
-                            <div><span>Less Fulfilment 0.2 × Delivered Orders</span><strong id="profitLessPointTwo">− OMR 0.00</strong></div>
-                            <div><span>Balance After Fulfilment 0.2</span><strong id="profitAfterPointTwo">OMR 0.00</strong></div>
-                            <div><span>Less 1.90 Delivery × Delivered Orders</span><strong id="profitLessDelivery">− OMR 0.00</strong></div>
-                            <div><span>Balance After 1.90 Delivery</span><strong id="profitAfterDelivery">OMR 0.00</strong></div>
-                            <div><span>Less Buy Price</span><strong id="profitLessItemCost">− OMR 0.00</strong></div>
-                            <div><span>Balance After Item Cost = Profit Before Returns</span><strong id="profitBeforeReturns">OMR 0.00</strong></div>
-                            <div><span>Less OMR 0.50 × Returned Orders</span><strong id="profitLessReturns">− OMR 0.00</strong></div>
-                            <div class="profit-breakdown-final"><span>Balance After Return Charges = FINAL PROFIT</span><strong id="profitFinalBreakdown">OMR 0.00</strong></div>
-                        </div>
-                    </div>
-
-                    <div class="profit-table-card">
-                        <div class="profit-card-head"><div><div class="profit-kicker">DELIVERED ORDERS</div><h3>Delivered Order Profit</h3><p>Buy Price = item buy price × ordered quantity; OMR Profit is the remaining balance after the full Buy Price is deducted.</p></div></div>
-                        <div class="table-responsive">
-                            <table class="profit-table">
-                                <thead><tr><th>Order</th><th>Item</th><th>Qty</th><th>Sale Price</th><th>1% COD</th><th>Fulfilment 0.2</th><th>1.90 Delivery</th><th>Buy Price</th><th>OMR Profit</th><th>PKR Profit</th></tr></thead>
-                                <tbody id="profitDeliveredTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="profit-delivered-total"><div><div class="kicker">DELIVERED ORDERS TOTAL PROFIT</div><h3>All displayed delivered profits added together</h3></div><div class="profit-delivered-total-values"><div class="profit-total-pill"><span>Total Profit OMR</span><strong id="profitDeliveredTotalOmr">OMR 0.00</strong></div><div class="profit-total-pill"><span>Total Profit PKR</span><strong id="profitDeliveredTotalPkr">PKR 0.00</strong></div></div></div>
-
-                    <div class="profit-table-card">
-                        <div class="profit-card-head"><div><div class="profit-kicker">RETURNS</div><h3>Returned Orders — Separate Records</h3><p>Returned orders are shown separately and do not change the main Profit OMR calculation.</p></div></div>
-                        <div class="table-responsive">
-                            <table class="profit-table return-table">
-                                <thead><tr><th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Less From Profit</th><th>Profit Before Return Charge</th><th>Balance After 0.50</th></tr></thead>
-                                <tbody id="profitReturnedTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="profit-return-final">
-                        <div><div class="kicker">RETURNS FINAL CALCULATION</div><h3>Profit OMR Reference</h3><p>Profit OMR remains Total Sale minus Item Price (1 OMR per sold piece).</p></div>
-                        <div class="profit-return-final-values">
-                            <div class="profit-total-pill"><span>Total Return Charges</span><strong id="profitReturnChargesTotal">OMR 0.00</strong></div>
-                            <div class="profit-total-pill"><span>Final Profit OMR</span><strong id="profitReturnsFinalOmr">OMR 0.00</strong></div>
-                            <div class="profit-total-pill"><span>Final Profit PKR</span><strong id="profitReturnsFinalPkr">PKR 0.00</strong></div>
-                        </div>
-                    </div>
-
-                    <div class="profit-rules">
-                        <b>Applied rules:</b> Total Sale − (1 OMR × total sold pieces) = Profit OMR. Profit + Item Price = Total Sale. COD, fulfilment and delivery values remain informational and are not deducted from the main Profit OMR figure.</div>
-                </div>
             </div>
 
             <!-- SUB TAB: META ADS EXPENSE -->
@@ -5756,7 +5655,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 history: ['admin-sub-history', 'tab-btn-his'], 
                 employees: ['admin-sub-employees', 'tab-btn-emp'],
                 metaAds: ['admin-sub-meta-ads', 'tab-btn-meta-ads'],
-                profit: ['admin-sub-profit', 'tab-btn-profit'] 
             }; 
             Object.keys(map).forEach(k => { 
                 const item = map[k]; 
