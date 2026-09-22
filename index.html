@@ -2589,7 +2589,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="profit-delivered-total"><div><div class="kicker">DELIVERED ORDERS TOTAL PROFIT</div><h3>All displayed delivered profits added together</h3></div><div class="profit-delivered-total-values"><div class="profit-total-pill"><span>Total Profit OMR</span><strong id="profitDeliveredTotalOmr">OMR 0.00</strong></div><div class="profit-total-pill"><span>Total Profit PKR</span><strong id="profitDeliveredTotalPkr">PKR 0.00</strong></div></div></div>
 
                     <div class="profit-table-card">
-                        <div class="profit-card-head"><div><div class="profit-kicker">RETURNS</div><h3>Returned Orders — OMR 0.50 From Profit</h3><p>The OMR 0.50 return charge is taken from profit, not from item buy cost.</p></div></div>
+                        <div class="profit-card-head"><div><div class="profit-kicker">RETURNS</div><h3>Returned Orders — Separate Records</h3><p>Returned orders are shown separately and do not change the main Profit OMR calculation.</p></div></div>
                         <div class="table-responsive">
                             <table class="profit-table return-table">
                                 <thead><tr><th>Order</th><th>Item</th><th>Qty Returned</th><th>Sale Amount</th><th>Less From Profit</th><th>Profit Before Return Charge</th><th>Balance After 0.50</th></tr></thead>
@@ -2599,7 +2599,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
 
                     <div class="profit-return-final">
-                        <div><div class="kicker">RETURNS FINAL CALCULATION</div><h3>Final Profit After All Return Charges</h3><p>All displayed delivered profits minus OMR 0.50 for every returned order.</p></div>
+                        <div><div class="kicker">RETURNS FINAL CALCULATION</div><h3>Profit OMR Reference</h3><p>Profit OMR remains Total Sale minus Item Price (1 OMR per sold piece).</p></div>
                         <div class="profit-return-final-values">
                             <div class="profit-total-pill"><span>Total Return Charges</span><strong id="profitReturnChargesTotal">OMR 0.00</strong></div>
                             <div class="profit-total-pill"><span>Final Profit OMR</span><strong id="profitReturnsFinalOmr">OMR 0.00</strong></div>
@@ -2608,8 +2608,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </div>
 
                     <div class="profit-rules">
-                        <b>Applied rules:</b> Total sale → less 1% COD → less OMR 0.20 per delivered order → less OMR 1.90 delivery per delivered order → less inventory Item Buy Price × delivered quantity → profit before returns → less OMR 0.50 per returned order. Final PKR = final OMR × selected OMR/PKR rate.
-                    </div>
+                        <b>Applied rules:</b> Total Sale − (1 OMR × total sold pieces) = Profit OMR. Profit + Item Price = Total Sale. COD, fulfilment and delivery values remain informational and are not deducted from the main Profit OMR figure.</div>
                 </div>
             </div>
 
@@ -5623,13 +5622,18 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const deliveredRows = delivered.map(o => {
                 const qty = Math.max(0, Number(o.qty) || 0);
                 const saleTotal = Math.max(0, Number(orderTotal(o)) || 0);
+                // FINAL REQUESTED PROFIT FORMULA:
+                // Total Sale - (1 OMR × every sold piece) = Profit.
+                // The other charges remain informational only and MUST NOT be
+                // deducted from the main Profit OMR figure.
+                const itemPrice = Math.round((qty * 1.00) * 100) / 100;
+                const omrProfit = Math.round((saleTotal - itemPrice) * 100) / 100;
                 const afterOne = saleTotal - (saleTotal * 0.01);
                 const afterPointTwo = afterOne - 0.20;
                 const afterDelivery = afterPointTwo - 1.90;
-                const unitBuyPrice = Math.max(0, Number(getProfitItemCost(o)) || 0);
-                const buyPrice = unitBuyPrice * qty;
-                const omrProfit = afterDelivery - buyPrice;
-                return { o, qty, saleTotal, afterOne, afterPointTwo, afterDelivery, buyPrice, omrProfit };
+                const unitBuyPrice = 1.00;
+                const buyPrice = itemPrice;
+                return { o, qty, saleTotal, afterOne, afterPointTwo, afterDelivery, buyPrice, itemPrice, omrProfit };
             });
 
             const grossSales = deliveredRows.reduce((sum, r) => sum + r.saleTotal, 0);
@@ -5639,12 +5643,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const afterPointTwo = afterOne - fulfilment;
             const deliveryCharges = deliveredRows.length * 1.90;
             const afterDelivery = afterPointTwo - deliveryCharges;
-            const totalBuyPrice = deliveredRows.reduce((sum, r) => sum + r.buyPrice, 0);
-            const beforeReturns = afterDelivery - totalBuyPrice;
-            const returnCharges = returned.length * 0.50;
-            const finalProfit = beforeReturns - returnCharges;
-            const deliveredTotalProfit = deliveredRows.reduce((sum, r) => sum + r.omrProfit, 0);
             const itemsSold = deliveredRows.reduce((sum, r) => sum + r.qty, 0);
+            const totalBuyPrice = Math.round((itemsSold * 1.00) * 100) / 100;
+            // Main Profit OMR is ALWAYS Total Sale - Item Price.
+            const finalProfit = Math.round((grossSales - totalBuyPrice) * 100) / 100;
+            const beforeReturns = finalProfit;
+            const returnCharges = 0;
+            const deliveredTotalProfit = finalProfit;
             const returnedItems = returned.reduce((sum, o) => sum + Math.max(0, Number(o.qty) || 0), 0);
 
             const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
@@ -5723,8 +5728,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 } else {
                     returnedBody.innerHTML = returned.slice().sort((a,b) => Number(a.id||0)-Number(b.id||0)).map((o, index) => {
                         const sale = Math.max(0, Number(orderTotal(o)) || 0);
-                        const before = index === 0 ? beforeReturns : beforeReturns - (index * 0.50);
-                        const after = before - 0.50;
+                        const before = finalProfit;
+                        const after = finalProfit;
                         return `<tr>
                             <td><b>#${esc(o.id)}</b></td>
                             <td><b>${esc(o.itemName || '-')}</b></td>
