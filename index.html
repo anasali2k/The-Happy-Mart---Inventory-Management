@@ -5656,9 +5656,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             // Total Sale = Profit + Item Price.
             // Item Price = OMR 1.00 per sold piece.
             // Therefore the displayed split profit is gross sale minus item price.
-            const saleSplitItemPrice = itemsSold * 1.00;
-            const saleSplitProfit = grossSales - saleSplitItemPrice;
-            const saleSplitTotal = saleSplitProfit + saleSplitItemPrice;
+            // The dashboard sale amount is split into exactly two parts:
+            // Item Price = 1 OMR × every sold piece
+            // Profit = Total Sale − Item Price
+            // Therefore, when Total Sale is 94.30 OMR and 28 pcs were sold:
+            // Item Price = 28.00 OMR and Profit = 66.30 OMR.
+            const saleSplitItemPrice = Math.round((itemsSold * 1.00) * 100) / 100;
+            const saleSplitProfit = Math.round((grossSales - saleSplitItemPrice) * 100) / 100;
+            const saleSplitTotal = Math.round((saleSplitProfit + saleSplitItemPrice) * 100) / 100;
 
             setText('profitFinalOmr', profitMoney(saleSplitProfit));
             setText('profitFinalPkr', profitPkr(saleSplitProfit, rate));
@@ -5670,7 +5675,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             setText('profitSaleSplitTotal', profitMoney(saleSplitTotal));
             setText('profitSaleSplitItem', profitMoney(saleSplitItemPrice));
             setText('profitSaleSplitProfit', profitMoney(saleSplitProfit));
-            setText('profitSaleSplitCheck', profitMoney(saleSplitProfit + saleSplitItemPrice));
+            setText('profitSaleSplitCheck', profitMoney(saleSplitTotal));
             setText('profitGrossSales', profitMoney(grossSales));
             setText('profitLessOne', '− ' + profitMoney(onePercent));
             setText('profitAfterOne', profitMoney(afterOne));
