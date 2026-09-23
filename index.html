@@ -7085,207 +7085,41 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const d=new Date(String(v));
             return isNaN(d.getTime())?null:d;
         }
-        /* ---------------- Smart Excel Order Mapping ----------------
-         * Excel files from different sources can contain correct headers, shifted
-         * columns, renamed headers, or completely mismatched headers.  The importer
-         * therefore uses BOTH header meaning and the actual cell content.  Exact
-         * inventory item matches, dates, phone-like values, map URLs, quantities,
-         * COD values and country codes are detected from the row itself.
-         */
-        function excelText(v){
-            return String(v ?? '').replace(/\u00a0/g,' ').trim();
-        }
-        function excelCompact(v){
-            return excelText(v).toLowerCase().replace(/[^a-z0-9]+/g,'');
-        }
-        function excelLooksLikeUrl(v){
-            const s=excelText(v).toLowerCase();
-            return /^(https?:\/\/|www\.)/.test(s) || /maps\.app\.goo\.gl|google\.com\/maps|goo\.gl\//.test(s);
-        }
-        function excelLooksLikeDate(v){
-            if(v instanceof Date && !isNaN(v.getTime())) return true;
-            if(typeof v==='number' && window.XLSX && XLSX.SSF){
-                try { const d=XLSX.SSF.parse_date_code(v); return !!(d&&d.y&&d.m&&d.d); } catch(e){}
-            }
-            const s=excelText(v);
-            if(!s) return false;
-            if(/^\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4}$/.test(s)) return true;
-            if(/^\d{1,2}[-\/]?[A-Za-z]{3,9}[-\/]?\d{2,4}$/.test(s)) return true;
-            if(/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(s)) return true;
-            const t=Date.parse(s);
-            return !isNaN(t) && /[A-Za-z]/.test(s);
-        }
-        function excelLooksLikePhone(v){
-            const s=excelText(v);
-            if(!s || excelLooksLikeDate(v) || excelLooksLikeUrl(v)) return false;
-            const digits=s.replace(/\D/g,'');
-            return digits.length>=7 && digits.length<=15;
-        }
-        function excelLooksLikeCountryCode(v){
-            const s=excelText(v).replace(/\D/g,'');
-            return /^\d{1,4}$/.test(s) && ['968','92','971','966','974','973','965','98','91'].includes(s);
-        }
-        function excelLooksLikeQuantity(v){
-            const n=excelNumber(v);
-            return Number.isInteger(n) && n>=1 && n<=999 && !excelLooksLikePhone(v) && !excelLooksLikeDate(v);
-        }
-        function excelLooksLikeName(v){
-            const s=excelText(v);
-            if(!s || excelLooksLikeUrl(v) || excelLooksLikeDate(v)) return false;
-            if(/\d/.test(s)) return false;
-            const words=s.split(/\s+/).filter(Boolean);
-            return words.length>=1 && s.length>=2 && /^[A-Za-zÀ-ÿ.'’\- ]+$/.test(s);
-        }
-        function excelHeaderIndex(headers, aliases){
-            const wanted=aliases.map(excelNormHeader);
-            for(let i=0;i<headers.length;i++) if(wanted.includes(excelNormHeader(headers[i]))) return i;
-            return -1;
-        }
-        function excelRowCells(row){
-            const keys=Object.keys(row||{});
-            return keys.map((key,index)=>({key,index,value:row[key],header:key}));
-        }
-        function excelFindInventoryItemInRow(cells){
-            const byName=[];
-            for(const c of cells){
-                const value=excelText(c.value);
-                if(!value) continue;
-                const compact=excelCompact(value);
-                for(const item of inventory){
-                    const name=excelText(item.name);
-                    if(name && excelCompact(name)===compact){
-                        byName.push({cell:c,item});
-                    }
-                }
-            }
-            return byName[0] || null;
-        }
-        function excelPickValue(cells, used, predicate, headerAliases=[]){
-            const headerWanted=headerAliases.map(excelNormHeader);
-            // A header is only trusted when the value under it also passes the
-            // semantic test. This is what protects against shifted/misaligned
-            // Excel columns (for example a URL sitting under Customer Name).
-            for(const c of cells){
-                if(used.has(c.index)) continue;
-                if(headerWanted.length && headerWanted.includes(excelNormHeader(c.header))){
-                    if(!predicate || predicate(c.value,c)){
-                        used.add(c.index); return c.value;
-                    }
-                }
-            }
-            for(const c of cells){
-                if(used.has(c.index)) continue;
-                if(!predicate || predicate(c.value,c)) { used.add(c.index); return c.value; }
-            }
-            return '';
-        }
         function buildImportedOrder(row, index){
-            const cells=excelRowCells(row);
-            const headers=cells.map(c=>c.header);
-            const used=new Set();
-
-            // 1) Detect the inventory item from the actual value first. This is
-            //    the strongest signal and prevents a shifted Item Name column
-            //    from turning a quantity/number into the product name.
-            const itemHit=excelFindInventoryItemInRow(cells);
-            let item=itemHit ? itemHit.item : null;
-            if(itemHit) used.add(itemHit.cell.index);
-
-            // 2) Order ID: header first, then the first positive integer-like cell.
-            let orderIdRaw=excelPickValue(cells,used,v=>{
-                const n=excelNumber(v); return Number.isInteger(n)&&n>0&&n<100000000;
-            },['Order ID','OrderId','ID','Order Number']);
-
-            // 3) Created date can be anywhere in a shifted spreadsheet.
-            const createdRaw=excelPickValue(cells,used,v=>excelLooksLikeDate(v),['Created Date','Creation Date','Date','Created On','Order Date']);
-
-            // 4) Customer name: prefer explicit header, then human-name text.
-            const customer=excelText(excelPickValue(cells,used,v=>excelLooksLikeName(v),['Customer Name','Customer','Name']));
-
-            // 5) Address: map links are unambiguous. If no map URL exists, use
-            //    explicit address header or the longest non-name text value.
-            let address=excelText(excelPickValue(cells,used,v=>excelLooksLikeUrl(v),['Address','Customer Address','Delivery Address']));
-            if(!address){
-                const addrHeader=excelPickValue(cells,used,()=>false,['Address','Customer Address','Delivery Address']);
-                if(addrHeader) address=excelText(addrHeader);
-            }
-
-            // 6) Customer number: phone-like value, while country code is kept separate.
-            const phone=excelText(excelPickValue(cells,used,v=>excelLooksLikePhone(v),['Customer Number','Phone','Customer Phone','Mobile','Contact']));
-
-            // 7) Quantity: when an inventory item is detected, prefer the nearest
-            //    small integer to that item. This handles rows where the source
-            //    columns were shifted (e.g. Spray followed by quantity 1).
-            let qtyRaw='';
-            if(itemHit){
-                const itemIndex=itemHit.cell.index;
-                const candidates=cells.filter(c=>!used.has(c.index)&&excelLooksLikeQuantity(c.value))
-                    .sort((a,b)=>{
-                        const da=Math.abs(a.index-itemIndex), db=Math.abs(b.index-itemIndex);
-                        const aAfter=a.index>itemIndex?0:1, bAfter=b.index>itemIndex?0:1;
-                        return da-db || aAfter-bAfter || a.index-b.index;
-                    });
-                if(candidates.length){qtyRaw=candidates[0].value;used.add(candidates[0].index);}
-            }
-            if(qtyRaw==='') qtyRaw=excelPickValue(cells,used,v=>excelLooksLikeQuantity(v),['Quantity','Qty','Order Quantity']);
-            let qty=excelNumber(qtyRaw);
-
-            // 8) Country code: exact known dialing-code pattern, then header.
-            let countryCode=excelText(excelPickValue(cells,used,v=>excelLooksLikeCountryCode(v),['Country Code','CountryCode','Dial Code']));
-            if(!countryCode) countryCode='968';
-
-            // 9) COD: numeric value not already consumed. Header wins when valid.
-            let codRaw=excelPickValue(cells,used,v=>{
-                const n=excelNumber(v);
-                return Number.isFinite(n)&&n>=0&&!excelLooksLikePhone(v)&&!excelLooksLikeDate(v);
-            },['COD Amount (OMR)','COD Amount','COD','Total Amount','Amount','Price']);
-            let cod=excelNumber(codRaw);
-
-            // 11) Client Order ID: only take it when an explicit client-order
-            //     header exists. Never steal a city/address/name as a guess.
-            const clientOrderId=excelText(excelPickValue(cells,used,()=>true,['Client Order ID','ClientOrderId','Client ID','Client Order']));
-
-            // 12) Deliver To: explicit header first. If the source header is
-            //     shifted onto the inventory item, that value is already used, so
-            //     fall back to the remaining short location-like text.
-            let deliverTo=excelText(excelPickValue(cells,used,v=>{
-                const s=excelText(v);
-                return !!s && !excelLooksLikeUrl(s) && !excelLooksLikeDate(s) && !excelLooksLikePhone(s) && !/\d/.test(s) && s.length<=60;
-            },['Deliver To','Country','Delivery Country']));
-            if(!deliverTo) deliverTo='Oman';
-
-            // Remarks are never guessed from arbitrary leftover cells.
-            const remarks=excelText(excelPickValue(cells,used,()=>true,['Remarks','Remark','Notes','Special Instructions']));
-
-            // The application uses its own inventory product code. We do not let
-            // a shifted/date column overwrite it.
-            const productCode='VIGA 50000';
-
-            // If a source row has a correctly labelled item name but no exact
-            // inventory match, retain the supplied name so the preview explains
-            // the problem instead of silently attaching the wrong product.
-            const itemName=excelText(item ? item.name : excelPickValue(cells,used,()=>true,['Item Name','Item','Product Name','Product']));
-
+            const orderIdRaw=excelCell(row,['Order ID','OrderId','ID','Order Number']);
+            const productCode=String(excelCell(row,['Product Code','ProductCode','SKU','Code'])||'VIGA 50000').trim();
+            const customer=String(excelCell(row,['Customer Name','Customer','Name'])||'').trim();
+            const phone=String(excelCell(row,['Customer Number','Phone','Customer Phone','Mobile','Contact'])||'').trim();
+            const address=String(excelCell(row,['Address','Customer Address','Delivery Address'])||'').trim();
+            const itemName=String(excelCell(row,['Item Name','Item','Product Name','Product'])||'').trim();
+            const qtyRaw=excelCell(row,['Quantity','Qty','Order Quantity']);
+            const qty=excelNumber(qtyRaw);
+            const codRaw=excelCell(row,['COD Amount (OMR)','COD Amount','COD','Total Amount','Amount','Price']);
+            const cod=excelNumber(codRaw);
+            const clientOrderId=String(excelCell(row,['Client Order ID','ClientOrderId','Client ID','Client Order'])||'').trim();
+            const countryCode=String(excelCell(row,['Country Code','CountryCode','Dial Code'])||'968').trim()||'968';
+            const deliverTo=String(excelCell(row,['Deliver To','Country','Delivery Country'])||'Oman').trim()||'Oman';
+            const remarks=String(excelCell(row,['Remarks','Remark','Notes','Special Instructions'])||'').trim();
+            const createdRaw=excelCell(row,['Created Date','Creation Date','Date','Created On','Order Date']);
+            const item=itemName ? inventory.find(i=>String(i.name||'').trim().toLowerCase()===itemName.toLowerCase()) : null;
             const errors=[];
-            if(!customer) errors.push('Customer Name could not be detected from the Excel row.');
-            if(!phone) errors.push('Customer Number could not be detected from the Excel row.');
-            if(!address) errors.push('Address could not be detected from the Excel row.');
-            if(!itemName) errors.push('Item Name could not be detected from the Excel row.');
+            if(!customer) errors.push('Customer Name is required.');
+            if(!phone) errors.push('Customer Number is required.');
+            if(!address) errors.push('Address is required.');
+            if(!itemName) errors.push('Item Name is required.');
             else if(!item) errors.push(`Item not found in Inventory: ${itemName}`);
-            if(!Number.isInteger(qty)||qty<1) errors.push('Quantity could not be detected as a whole number greater than 0.');
-            if(!Number.isFinite(cod)||cod<0) errors.push('COD Amount could not be detected as a valid number.');
+            if(!Number.isInteger(qty)||qty<1) errors.push('Quantity must be a whole number greater than 0.');
+            if(!Number.isFinite(cod)||cod<0) errors.push('COD Amount must be a valid number.');
             if(item && Number(item.stock||0)<qty) errors.push(`Insufficient stock: ${item.name} has ${Number(item.stock||0)} available.`);
-
             const fallbackId=nextOrderId()+index;
             const id=excelOrderId(orderIdRaw,fallbackId);
             if(orders.some(o=>Number(o.id)===id)) errors.push(`Order ID ${id} already exists in the system.`);
-
             const stampDate=excelDateStamp(createdRaw);
             const stamp=stampDate?makeStamp(stampDate):makeStamp();
             return {ok:errors.length===0,errors,row,order:{
-                _key:makeOrderRecordKey(),id,productCode,customer,phone,address,
+                _key:makeOrderRecordKey(),id,productCode:'VIGA 50000',customer,phone,address,
                 itemId:item?Number(item.id):0,itemName:item?item.name:itemName,qty,codAmount:cod,
-                price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo,remarks,
+                price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo:'Oman',remarks,
                 status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,submittedStamp:null,
                 approvedStamp:null,deliveredStamp:null,returnStamp:null,cancelStamp:null,deliveryDate:'',
                 returnDate:'',cancelDate:'',returnReason:'',cancelReason:'',isSubmitted:false,isApproved:false
