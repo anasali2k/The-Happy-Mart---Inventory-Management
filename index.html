@@ -2686,12 +2686,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         <div class="order-edit-field">
                             <label for="editStatus">Order Status</label>
                             <select id="editStatus" required>
-                                <option value="Draft">Draft</option>
-                                <option value="Pending Approval">Pending Approval</option>
-                                <option value="OFD">OFD</option>
                                 <option value="Delivered">Delivered</option>
-                                <option value="Returned">Returned</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="Returned">Return</option>
                             </select>
                         </div>
 
@@ -6819,7 +6815,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             const statusSelect = document.getElementById('editStatus');
             if (statusSelect) {
-                statusSelect.value = Object.values(STATUS).includes(order.status) ? order.status : STATUS.DRAFT;
+                /* Returns -> Edit is intentionally limited to only Delivered / Return. */
+                statusSelect.innerHTML = `
+                    <option value="${STATUS.DELIVERED}">Delivered</option>
+                    <option value="${STATUS.RETURNED}">Return</option>
+                `;
+                statusSelect.value = order.status === STATUS.DELIVERED
+                    ? STATUS.DELIVERED
+                    : STATUS.RETURNED;
             }
 
             const productField = document.getElementById('editProductCode');
@@ -6979,11 +6982,25 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     order.isApproved = true;
                     order.deliveredStamp = stamp;
                     order.deliveryDate = stamp.display;
+
+                    /* If this order came from Returns, remove its Returns entry
+                       after the status is changed to Delivered. */
+                    returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
                 } else if (newStatus === STATUS.RETURNED) {
                     order.isSubmitted = true;
                     order.isApproved = true;
                     order.returnStamp = stamp;
                     order.returnDate = stamp.display;
+
+                    /* Keep the Returns list synchronized with the edited order. */
+                    const existingReturn = returns.find(r => Number(r.orderId) === Number(order.id));
+                    if (existingReturn) {
+                        existingReturn.customer = order.customer;
+                        existingReturn.phone = order.phone;
+                        existingReturn.itemName = order.itemName;
+                        existingReturn.qty = order.qty;
+                        existingReturn.amount = orderTotal(order);
+                    }
                 } else if (newStatus === STATUS.CANCELLED) {
                     order.isSubmitted = true;
                     order.isApproved = true;
