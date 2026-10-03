@@ -1075,6 +1075,34 @@
         .employee-order-form .form-group{margin:0}
         .employee-order-card{border:1px solid rgba(148,163,184,.18);background:linear-gradient(145deg,rgba(15,35,55,.88),rgba(8,22,37,.88));border-radius:18px;padding:18px;margin-top:18px;box-shadow:0 15px 42px rgba(0,0,0,.18)}
         .employee-order-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+        .employee-history-entry-row{display:grid;grid-template-columns:minmax(0,1fr) 145px 145px;align-items:end;gap:10px;margin-top:14px;}
+        .employee-history-entry-row .employee-order-form{display:contents;}
+        .employee-history-open-btn{min-height:42px;padding:10px 14px;border:1px solid rgba(103,232,249,.42);border-radius:11px;background:linear-gradient(135deg,rgba(14,116,144,.32),rgba(30,64,175,.26));color:#dff9ff;font-weight:900;white-space:nowrap;cursor:pointer;transition:.2s ease;box-shadow:0 8px 22px rgba(8,145,178,.12);}
+        .employee-history-entry-row .btn-submit,.employee-history-open-btn{width:145px;min-width:145px;height:42px;min-height:42px;padding:10px 8px;font-size:12px;line-height:1.1;justify-content:center;white-space:nowrap;}.employee-history-open-btn{width:145px;height:42px;}.employee-history-open-btn:hover{transform:translateY(-2px);border-color:#67e8f9;box-shadow:0 12px 28px rgba(8,145,178,.28);}.employee-order-actions button:disabled{opacity:.42;cursor:not-allowed;filter:saturate(.45);}
+        .employee-history-modal{display:none;position:fixed;inset:0;z-index:1200;padding:24px;background:rgba(2,6,23,.78);backdrop-filter:blur(9px);align-items:center;justify-content:center;}
+        .employee-history-modal.open{display:flex;animation:employeeHistoryFade .2s ease-out;}
+        .employee-history-dialog{width:min(680px,100%);max-height:min(84vh,760px);overflow:auto;border:1px solid rgba(103,232,249,.35);border-radius:20px;background:linear-gradient(145deg,rgba(10,30,49,.98),rgba(7,18,33,.98));box-shadow:0 24px 80px rgba(0,0,0,.55);padding:18px;}
+        .employee-history-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+        .employee-history-title{display:flex;align-items:center;gap:8px;font-weight:900;color:#e0f2fe;}
+        .employee-history-top-actions{display:flex;align-items:center;gap:8px;}
+        .employee-calendar-toggle{min-height:34px;padding:7px 10px;border:1px solid rgba(103,232,249,.42);border-radius:10px;background:linear-gradient(135deg,rgba(14,116,144,.35),rgba(30,64,175,.3));color:#dff9ff;font-size:11px;font-weight:900;cursor:pointer;}
+        .employee-range-calendar-panel{display:none;margin-top:14px;}
+        .employee-range-calendar-panel.open{display:block;animation:employeeHistoryFade .2s ease-out;}
+        .employee-history-search{width:100%;margin-top:14px;min-height:40px;padding:9px 12px;border:1px solid rgba(103,232,249,.28);border-radius:10px;background:rgba(2,6,23,.62);color:#e0f2fe;outline:none;}
+        .employee-history-search:focus{border-color:#67e8f9;box-shadow:0 0 0 3px rgba(103,232,249,.1);}
+        .employee-history-close{border:1px solid rgba(248,113,113,.45);border-radius:9px;background:rgba(127,29,29,.22);color:#fecaca;padding:7px 10px;cursor:pointer;}
+        .employee-history-date{min-height:38px;padding:8px 11px;border-radius:10px;border:1px solid rgba(103,232,249,.35);background:rgba(2,6,23,.58);color:#e0f2fe;color-scheme:dark;}
+        .employee-range-calendar{display:flex;align-items:center;gap:9px;padding:16px 14px;border:1px solid rgba(103,232,249,.48);border-radius:16px;background:linear-gradient(145deg,rgba(30,64,175,.52),rgba(8,47,73,.72));box-shadow:inset 0 2px 0 rgba(255,255,255,.13),inset 0 -5px 0 rgba(2,6,23,.2),0 14px 30px rgba(2,132,199,.3);transform:perspective(900px) rotateX(7deg) rotateY(-2deg) translateZ(8px);}
+        .employee-range-calendar label{font-size:10px;font-weight:800;color:#bae6fd;white-space:nowrap;}
+.employee-range-calendar-caption{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:1000;letter-spacing:.7px;color:#67e8f9;white-space:nowrap;}
+        .employee-range-calendar .employee-history-date{min-height:38px;padding:8px 9px;font-size:11px;border-color:rgba(147,197,253,.55);box-shadow:inset 0 2px 5px rgba(2,6,23,.42),0 4px 0 rgba(2,6,23,.28);}
+        .employee-range-separator{color:#67e8f9;font-size:11px;font-weight:900;white-space:nowrap;}
+        .employee-history-empty{padding:18px 10px;text-align:center;color:var(--text-muted);font-size:12px;}
+        .employee-new-tag{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:3px 7px;border-radius:999px;color:#fef08a;background:rgba(245,158,11,.16);border:1px solid rgba(250,204,21,.7);font-size:9px;font-weight:1000;letter-spacing:.8px;animation:employeeNewGlow 1.35s ease-in-out infinite;}
+        @keyframes employeeNewGlow{0%,100%{box-shadow:0 0 4px rgba(250,204,21,.35);transform:translateY(0)}50%{box-shadow:0 0 16px rgba(250,204,21,.85);transform:translateY(-1px)}}
+        .employee-history-modal .employee-order-list{max-height:55vh;overflow:auto;}
+        @keyframes employeeHistoryFade{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+        @media(max-width:650px){.employee-history-toolbar{align-items:stretch;flex-direction:column}.employee-history-date{width:100%}.employee-history-entry-row{grid-template-columns:1fr}.employee-history-entry-row .btn-submit,.employee-history-open-btn{width:100%;min-width:0}.employee-history-open-btn{height:42px}}
         .employee-order-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:13px 14px;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(2,6,23,.28);animation:employeeOrderIn .28s ease-out}
         .employee-order-number{font-weight:900;color:#f8fafc;letter-spacing:.3px;word-break:break-word}.employee-order-date{font-size:11px;color:var(--text-muted);margin-top:4px}
         .employee-order-status{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.employee-order-status.pending{color:#fde68a;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.38)}.employee-order-status.delivered{color:#6ee7b7;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.38)}.employee-order-status.returned{color:#fca5a5;background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.38)}
@@ -2848,7 +2876,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="employee-live-clock" id="employeePortalLiveClock">Live · --</div>
             </div>
             <div class="employee-self-top">
-                <div><div class="employee-self-brand">Employee Portal</div><div class="employee-profile-meta" id="employeeSelfSubtitle"></div></div>
+                <div><div class="employee-self-brand" id="employeeSelfPortalBrand">Employee Portal</div><div class="employee-profile-meta" id="employeeSelfSubtitle"></div></div>
                 <div class="employee-inline-actions"><button class="btn-back" onclick="employeeSelfLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div>
             </div>
             <div id="employeeSelfContent"></div>
@@ -3867,9 +3895,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const d=presenceDisplay(emp);
             const day=makeStamp().date;
             const session=activePresenceSession(emp);
-            const action=(!adminMode && loggedInEmployeeId===emp.id)
-                ? employeeBreakButtonMarkup(emp)
-                : '';
+            const action='';
 
             return `<div class="employee-presence-card" id="employeePresenceCard-${emp.id}">
                 <div class="employee-presence-head">
@@ -3914,10 +3940,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 const st=document.getElementById(`employeePresenceStatusText-${emp.id}`);
                 if(st) st.innerText=d.statusLabel;
 
-                const breakAction=document.getElementById(`employeePresenceBreakAction-${emp.id}`);
-                if(breakAction && loggedInEmployeeId===emp.id){
-                    breakAction.innerHTML=employeeBreakButtonMarkup(emp);
-                }
+                // Employee Portal intentionally has no Start Break control.
+                // Admin attendance controls remain available in the admin view.
                 const sessions=document.getElementById(`employeePresenceSessions-${emp.id}`);
                 if(sessions) sessions.innerHTML=presenceSessionHistoryMarkup(emp);
             });
@@ -4175,7 +4199,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function normalizeEmployeeOrder(order){
             if(!order || !String(order.number||'').trim()) return null;
             const status=['Pending','Delivered','Return'].includes(order.status)?order.status:'Pending';
-            return {id:String(order.id||(`${Date.now()}-${Math.random().toString(36).slice(2,8)}`)),number:String(order.number).trim(),status,addedAt:order.addedAt||makeStamp().display,deliveredAt:order.deliveredAt||null,commissionCredited:status==='Delivered'||!!order.commissionCredited};
+            return {id:String(order.id||(`${Date.now()}-${Math.random().toString(36).slice(2,8)}`)),number:String(order.number).trim(),status,addedAt:order.addedAt||makeStamp().display,addedDate:order.addedDate||((String(order.addedAt||'').match(/\d{4}-\d{2}-\d{2}/)||[])[0]||makeStamp().date),deliveredAt:order.deliveredAt||null,commissionCredited:status==='Delivered'||!!order.commissionCredited,newTag:!!order.newTag};
         }
 
         function normalizeEmployee(e) {
@@ -4467,23 +4491,60 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const orders=Array.isArray(emp.orders)?emp.orders:[];
             return {total:orders.length,delivered:orders.filter(o=>o.status==='Delivered').length,returned:orders.filter(o=>o.status==='Return').length,pending:orders.filter(o=>o.status==='Pending').length,earned:orders.filter(o=>o.status==='Delivered'&&o.commissionCredited!==false).length*(50)};
         }
-        function employeeOrderRows(emp, adminMode=false){
-            const orders=Array.isArray(emp.orders)?emp.orders:[];
-            if(!orders.length) return '<div class="employee-mini-note">No order numbers submitted yet.</div>';
+        function employeeOrderDateKey(order){
+            const direct=String(order?.addedDate||'').match(/^\d{4}-\d{2}-\d{2}$/);
+            if(direct) return direct[0];
+            const fromStamp=String(order?.addedAt||'').match(/\d{4}-\d{2}-\d{2}/);
+            return fromStamp?fromStamp[0]:'';
+        }
+        function employeeOrderRows(emp, adminMode=false, dateFrom=null, dateTo=null, searchTerm=''){
+            const allOrders=Array.isArray(emp.orders)?emp.orders:[];
+            const from=dateFrom||null, to=dateTo||dateFrom||null;
+            const query=String(searchTerm||'').trim().toLowerCase();
+            const orders=allOrders.filter(o=>{const d=employeeOrderDateKey(o);const inRange=(!from||d>=from)&&(!to||d<=to);const matches=!query||String(o.number||'').toLowerCase().includes(query);return d&&inRange&&matches;});
+            const rangeLabel=from&&to&&from!==to?`${from} to ${to}`:(from||to||'selected range');
+            if(!orders.length) return `<div class="employee-history-empty">No orders found for ${esc(rangeLabel)}.</div>`;
             return orders.map(o=>{
                 const status=o.status||'Pending';
                 const safeId=esc(o.id);
-                const employeeActions=status==='Pending'?`<button class="deliver" type="button" onclick="setEmployeeOrderStatus('${safeId}','Delivered')"><i class="fa-solid fa-check"></i> Delivered</button><button class="return" type="button" onclick="setEmployeeOrderStatus('${safeId}','Return')"><i class="fa-solid fa-rotate-left"></i> Return</button>`:'';
+                const employeeActions=`<button class="deliver" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Delivered')"><i class="fa-solid fa-check"></i> Delivered</button><button class="return" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Return')"><i class="fa-solid fa-rotate-left"></i> Return</button>`;
                 const adminActions=adminMode?`<button class="btn-warning" type="button" onclick="adminEditEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" type="button" onclick="adminRemoveEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-trash"></i> Remove</button>`:employeeActions;
-                return `<div class="employee-order-row"><div><div class="employee-order-number"><i class="fa-solid fa-hashtag" style="color:#67e8f9"></i> ${esc(o.number)}</div><div class="employee-order-date">Submitted ${esc(o.addedAt||'-')}${o.deliveredAt?` · Updated ${esc(o.deliveredAt)}`:''}</div></div><span class="employee-order-status ${status==='Delivered'?'delivered':status==='Return'?'returned':'pending'}"><i class="fa-solid ${status==='Delivered'?'fa-circle-check':status==='Return'?'fa-rotate-left':'fa-hourglass-half'}"></i> ${status}</span><div class="employee-order-actions">${status==='Delivered'?`<b style="color:#6ee7b7;font-size:12px;white-space:nowrap">+${employeeMoney(50)}</b>`:''}${adminActions}</div></div>`;
+                const newTag=(!adminMode&&o.newTag)?'<span class="employee-new-tag"><i class="fa-solid fa-sparkles"></i> NEW</span>':'';
+                return `<div class="employee-order-row"><div><div class="employee-order-number"><i class="fa-solid fa-hashtag" style="color:#67e8f9"></i> ${esc(o.number)}${newTag}</div><div class="employee-order-date">Submitted ${esc(o.addedAt||'-')}${o.deliveredAt?` · Updated ${esc(o.deliveredAt)}`:''}</div></div><span class="employee-order-status ${status==='Delivered'?'delivered':status==='Return'?'returned':'pending'}"><i class="fa-solid ${status==='Delivered'?'fa-circle-check':status==='Return'?'fa-rotate-left':'fa-hourglass-half'}"></i> ${status}</span><div class="employee-order-actions">${status==='Delivered'?`<b style="color:#6ee7b7;font-size:12px;white-space:nowrap">+${employeeMoney(50)}</b>`:''}${adminActions}</div></div>`;
             }).join('');
         }
-        function renderEmployeeOrdersSection(emp, adminMode=false){
+        function renderEmployeeOrderHistory(emp,dateFrom,dateTo,isOpen=false,calendarOpen=false){
+            const from=dateFrom||makeStamp().date, to=dateTo||makeStamp().date;
+            return `<div class="employee-history-modal ${isOpen?'open':''}" id="employeeOrderHistoryModal" onclick="if(event.target===this)closeEmployeeOrderHistory()"><div class="employee-history-dialog"><div class="employee-history-toolbar"><div class="employee-history-title"><i class="fa-solid fa-clock-rotate-left" style="color:#67e8f9"></i> See Order History</div><div class="employee-history-top-actions"><button class="employee-calendar-toggle" type="button" onclick="toggleEmployeeRangeCalendar()"><i class="fa-solid fa-calendar-days"></i> Date Range</button><button class="employee-history-close" type="button" onclick="closeEmployeeOrderHistory()"><i class="fa-solid fa-xmark"></i></button></div></div><div class="employee-range-calendar-panel ${calendarOpen?'open':''}" id="employeeRangeCalendarPanel"><div class="employee-range-calendar"><span class="employee-range-calendar-caption"><i class="fa-solid fa-calendar-days"></i> 3D DATE RANGE</span><label>From</label><input class="employee-history-date" id="employeeOrderHistoryFrom" type="date" value="${esc(from)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"><span class="employee-range-separator">to</span><label>To</label><input class="employee-history-date" id="employeeOrderHistoryTo" type="date" value="${esc(to)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"></div></div><input class="employee-history-search" id="employeeOrderHistorySearch" type="search" placeholder="Search order number..." autocomplete="off" oninput="filterEmployeeOrderHistory()"><div class="employee-order-list" id="employeeOrderHistoryResults">${employeeOrderRows(emp,false,from,to,'')}</div></div></div>`;
+        }
+        function openEmployeeOrderHistory(){
+            const modal=document.getElementById('employeeOrderHistoryModal');
+            if(modal) modal.classList.add('open');
+        }
+        function closeEmployeeOrderHistory(){
+            const modal=document.getElementById('employeeOrderHistoryModal');
+            if(modal) modal.classList.remove('open');
+        }
+        function toggleEmployeeRangeCalendar(){
+            const panel=document.getElementById('employeeRangeCalendarPanel');
+            if(panel) panel.classList.toggle('open');
+        }
+        function filterEmployeeOrderHistory(){
+            const emp=employees.find(x=>x.id===Number(loggedInEmployeeId));
+            const from=document.getElementById('employeeOrderHistoryFrom')?.value||makeStamp().date;
+            const to=document.getElementById('employeeOrderHistoryTo')?.value||from;
+            const search=document.getElementById('employeeOrderHistorySearch')?.value||'';
+            const results=document.getElementById('employeeOrderHistoryResults');
+            if(emp&&results) results.innerHTML=from<=to?employeeOrderRows(emp,false,from,to,search):'<div class="employee-history-empty">Please choose a valid date range.</div>';
+        }
+        function changeEmployeeOrderHistoryRange(){ filterEmployeeOrderHistory(); }
+        function renderEmployeeOrdersSection(emp, adminMode=false, historyFrom=null, historyTo=null, historyOpen=false, historyCalendarOpen=false){
             const t=employeeOrderTotals(emp);
             const adminForm=adminMode?`<form class="employee-order-form" onsubmit="adminSaveEmployeeOrder(event,${emp.id})"><div class="form-group"><label>Admin Order Number</label><input id="adminOrderNumber-${emp.id}" type="text" required maxlength="80" placeholder="Add or edit order number"><input id="adminOrderId-${emp.id}" type="hidden"></div><div class="form-group"><label>Status</label><select id="adminOrderStatus-${emp.id}" class="attendance-status-select"><option value="Pending">Pending</option><option value="Delivered">Delivered</option><option value="Return">Return</option></select></div><button class="btn-submit" id="adminOrderSave-${emp.id}" type="submit"><i class="fa-solid fa-plus"></i> Add Order</button><button class="btn-back" id="adminOrderCancel-${emp.id}" type="button" style="display:none" onclick="adminResetEmployeeOrderForm(${emp.id})">Cancel</button></form>`:'';
             const adminSummary=adminMode?`<div class="employee-detail-grid employee-admin-order-summary"><div class="employee-detail-box"><div class="label">Per Order Rate</div><div class="value employee-salary-total">${employeeMoney(50)}</div></div><div class="employee-detail-box"><div class="label">Total Orders</div><div class="value">${t.total}</div></div><div class="employee-detail-box"><div class="label">Total Earnings</div><div class="value employee-earning-total">${employeeMoney(t.earned)}</div></div></div>`:'';
-            const employeeForm=adminMode?'':`<div class="employee-commission-hero" style="padding:14px 16px;margin-bottom:14px"><div class="employee-commission-label"><i class="fa-solid fa-lock"></i> Submitted orders are locked</div><div class="employee-commission-note">After submission, only Admin can edit or remove an order.</div></div><form class="employee-order-form" onsubmit="addEmployeeOrder(event)"><div class="form-group"><label>Add Order</label><input id="employeeOrderNumber" type="text" required maxlength="80" placeholder="Enter order number"></div><button class="btn-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Order</button></form>`;
-            return `<div class="employee-order-card ${adminMode?'admin-order-view':''}"><div class="employee-card-header" style="margin-bottom:8px"><div class="employee-card-title"><i class="fa-solid fa-box-open" style="color:#67e8f9"></i> ${adminMode?'Employee Order Management':'Add Order'}</div><div class="employee-mini-note">${t.delivered} delivered · ${t.returned} returned · ${t.pending} pending · Earning ${employeeMoney(t.earned)}</div></div>${adminMode?adminSummary+adminForm:employeeForm}<div class="employee-order-list">${employeeOrderRows(emp,adminMode)}</div></div>`;
+            const employeeForm=adminMode?'':`<div class="employee-commission-hero" style="padding:14px 16px;margin-bottom:14px"><div class="employee-commission-label"><i class="fa-solid fa-lock"></i> Submitted orders are locked</div><div class="employee-commission-note">After submission, only Admin can edit or remove an order.</div></div><div class="employee-history-entry-row"><form class="employee-order-form" onsubmit="addEmployeeOrder(event)"><div class="form-group"><label>Add Order</label><input id="employeeOrderNumber" type="text" required maxlength="80" placeholder="Enter order number"></div><button class="btn-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Order</button></form><button class="employee-history-open-btn" type="button" onclick="openEmployeeOrderHistory()"><i class="fa-solid fa-clock-rotate-left"></i> See Order History</button></div>`;
+            const employeeHistory=adminMode?'':renderEmployeeOrderHistory(emp,historyFrom||makeStamp().date,historyTo||makeStamp().date,historyOpen,historyCalendarOpen);
+            return `${`<div class="employee-order-card ${adminMode?'admin-order-view':''}"><div class="employee-card-header" style="margin-bottom:8px"><div class="employee-card-title"><i class="fa-solid fa-box-open" style="color:#67e8f9"></i> ${adminMode?'Employee Order Management':'Add Order'}</div><div class="employee-mini-note">${t.delivered} delivered · ${t.returned} returned · ${t.pending} pending · Earning ${employeeMoney(t.earned)}</div></div>${adminMode?adminSummary+adminForm:employeeForm}${adminMode?`<div class="employee-order-list">${employeeOrderRows(emp,true)}</div>`:''}</div>`}${employeeHistory}`;
         }
         function addEmployeeOrder(e){
             e.preventDefault();
@@ -4493,7 +4554,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!emp||!number)return;
             if(!Array.isArray(emp.orders))emp.orders=[];
             if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase())){showToast_('This order number has already been submitted.','warn');return;}
-            emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:makeStamp().display,deliveredAt:null,commissionCredited:false});
+            emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:makeStamp().display,addedDate:makeStamp().date,deliveredAt:null,commissionCredited:false,newTag:true});
             saveEmployees();renderEmployeeSelfPortal();showToast_('Order submitted. Delivered and Return options are now available.','ok');
         }
         function setEmployeeOrderStatus(orderId,status){
@@ -4514,12 +4575,32 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!number)return;
             if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase()&&String(o.id)!==String(editId))){showToast_('This order number already exists for this employee.','warn');return;}
             if(editId){const o=emp.orders.find(x=>String(x.id)===String(editId));if(o){o.number=number;o.status=status;o.commissionCredited=status==='Delivered';o.deliveredAt=status==='Pending'?null:(o.deliveredAt||makeStamp().display);}}
-            else emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status,addedAt:makeStamp().display,deliveredAt:status==='Pending'?null:makeStamp().display,commissionCredited:status==='Delivered'});
+            else emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status,addedAt:makeStamp().display,addedDate:makeStamp().date,deliveredAt:status==='Pending'?null:makeStamp().display,commissionCredited:status==='Delivered',newTag:true});
             saveEmployees();renderAllEmployeeViews();adminSelectedEmployeeId=emp.id;renderAdminEmployeePortal(emp.id);showToast_('Employee order saved by Admin.','ok');
         }
         function adminEditEmployeeOrder(employeeId,orderId){const emp=employees.find(x=>x.id===Number(employeeId));const o=emp&&(emp.orders||[]).find(x=>String(x.id)===String(orderId));if(!o)return;const n=document.getElementById(`adminOrderNumber-${employeeId}`),s=document.getElementById(`adminOrderStatus-${employeeId}`),h=document.getElementById(`adminOrderId-${employeeId}`),b=document.getElementById(`adminOrderSave-${employeeId}`),c=document.getElementById(`adminOrderCancel-${employeeId}`);if(n)n.value=o.number;if(s)s.value=o.status||'Pending';if(h)h.value=o.id;if(b)b.innerHTML='<i class="fa-solid fa-pen"></i> Update Order';if(c)c.style.display='inline-flex';n?.focus();}
         function adminResetEmployeeOrderForm(employeeId){['adminOrderNumber','adminOrderId'].forEach(x=>{const el=document.getElementById(`${x}-${employeeId}`);if(el)el.value='';});const s=document.getElementById(`adminOrderStatus-${employeeId}`);if(s)s.value='Pending';const b=document.getElementById(`adminOrderSave-${employeeId}`);if(b)b.innerHTML='<i class="fa-solid fa-plus"></i> Add Order';const c=document.getElementById(`adminOrderCancel-${employeeId}`);if(c)c.style.display='none';}
         function adminRemoveEmployeeOrder(employeeId,orderId){const emp=employees.find(x=>x.id===Number(employeeId));if(!emp)return;const o=(emp.orders||[]).find(x=>String(x.id)===String(orderId));if(!o)return;if(!confirm(`Are you sure you want to remove order number ${o.number} from ${emp.name}?\n\nClick OK for Yes or Cancel for No.`))return;emp.orders=emp.orders.filter(x=>String(x.id)!==String(orderId));saveEmployees();renderAllEmployeeViews();adminSelectedEmployeeId=emp.id;renderAdminEmployeePortal(emp.id);showToast_('Order removed by Admin.','ok');}
+
+        function removeEmployeePortalSalaryColumns(root){
+            if(!root) return;
+            root.querySelectorAll('.employee-attendance-table').forEach(table=>{
+                const head=table.querySelector('thead tr');
+                if(!head) return;
+                const removeIndexes=[];
+                Array.from(head.children).forEach((cell,index)=>{
+                    const label=(cell.textContent||'').trim().toLowerCase();
+                    if(label==='daily salary' || label==='daily earned' || label==='monthly salary') removeIndexes.push(index);
+                });
+                if(!removeIndexes.length) return;
+                Array.from(table.rows).forEach(row=>{
+                    removeIndexes.slice().reverse().forEach(index=>{
+                        if(row.children[index]) row.removeChild(row.children[index]);
+                    });
+                });
+            });
+            root.querySelectorAll('[data-employee-salary-column]').forEach(node=>node.remove());
+        }
 
         function renderEmployeeSelfPortal(){
             const emp=employees.find(e=>e.id===Number(loggedInEmployeeId));
@@ -4527,9 +4608,21 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const subtitle=document.getElementById('employeeSelfSubtitle');
             if(!emp||!content){ employeeSelfLogout(); return; }
             const existingMonth=document.getElementById('employeeSelfMonth');
+            const existingHistoryFrom=document.getElementById('employeeOrderHistoryFrom');
+            const existingHistoryTo=document.getElementById('employeeOrderHistoryTo');
+            const existingHistoryModal=document.getElementById('employeeOrderHistoryModal');
+            const existingRangeCalendar=document.getElementById('employeeRangeCalendarPanel');
+            const existingHistorySearch=document.getElementById('employeeOrderHistorySearch');
+            const historyFrom=(existingHistoryFrom&&existingHistoryFrom.value)||makeStamp().date;
+            const historyTo=(existingHistoryTo&&existingHistoryTo.value)||historyFrom;
+            const historyOpen=!!(existingHistoryModal&&existingHistoryModal.classList.contains('open'));
+            const historyCalendarOpen=!!(existingRangeCalendar&&existingRangeCalendar.classList.contains('open'));
+            const historySearch=(existingHistorySearch&&existingHistorySearch.value)||'';
             const monthKey=(existingMonth&&existingMonth.value)?existingMonth.value:currentAttendanceMonth();
             const s=getEmployeeMonthStats(emp,monthKey);
             if(subtitle) subtitle.innerText=`${emp.name} · Employee #${emp.id} · ${monthKey}`;
+            const portalBrand=document.getElementById('employeeSelfPortalBrand');
+            if(portalBrand) portalBrand.innerText=`${emp.name} Portal`;
             const welcomeName=document.getElementById('employeeWelcomeName');
             if(welcomeName) welcomeName.innerText=emp.name;
             const liveClock=document.getElementById('employeePortalLiveClock');
@@ -4546,10 +4639,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="employee-portal-head"><div><div class="employee-profile-title">${esc(emp.name)}</div><div class="employee-profile-meta">Contact: ${esc(emp.phone||'Not provided')} · Email: ${esc(emp.email||'Not provided')}</div></div><div class="employee-inline-actions"><label class="employee-mini-note" style="display:flex;align-items:center;gap:8px;">Month <span id="employeeSelfMonthPicker"></span><input type="month" id="employeeSelfMonth" value="${esc(monthKey)}" min="1980-01" max="${esc(latestMonthKey())}" onchange="renderEmployeeSelfPortal()" class="employee-month-hidden"></label></div></div>
                 <div class="employee-detail-grid">
                     <div class="employee-detail-box"><div class="label">Present</div><div class="value">${s.present}</div></div><div class="employee-detail-box"><div class="label">Leaves</div><div class="value">${s.leaves}</div></div><div class="employee-detail-box"><div class="label">Absent</div><div class="value">${s.absent}</div></div><div class="employee-detail-box"><div class="label">Sundays</div><div class="value">${s.sundays}</div></div><div class="employee-detail-box"><div class="label">Salary Paid</div><div class="value">${isSalaryPaid(emp,monthKey)?'Done':'Pending'}</div></div>
-                </div><div class="employee-detail-grid employee-earning-row"><div class="employee-detail-box employee-commission-hero"><div class="employee-commission-label">Per Delivered Order</div><div class="employee-commission-amount">${employeeMoney(50)}</div><div class="employee-commission-note">Fixed commission set by Admin</div></div><div class="employee-detail-box"><div class="label">Total Earned</div><div class="value employee-earning-total">${employeeMoney(employeeOrderTotals(emp).earned)}</div></div></div></div>${renderEmployeeOrdersSection(emp,false)}
+                </div><div class="employee-detail-grid employee-earning-row"><div class="employee-detail-box employee-commission-hero"><div class="employee-commission-label">Per Delivered Order</div><div class="employee-commission-amount">${employeeMoney(50)}</div><div class="employee-commission-note">Fixed commission set by Admin</div></div><div class="employee-detail-box"><div class="label">Total Earned</div><div class="value employee-earning-total">${employeeMoney(employeeOrderTotals(emp).earned)}</div></div></div></div>${renderEmployeeOrdersSection(emp,false,historyFrom,historyTo,historyOpen,historyCalendarOpen)}
             <div class="employee-card"><div class="employee-card-title" style="font-size:16px;margin-bottom:12px;"><i class="fa-solid fa-calendar-days"></i> Daily Attendance</div><div class="employee-calendar-note">Sunday is automatically included as a paid day. Attendance controls are view-only in the employee portal.</div><div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,monthKey,false,true,true,true)}</tbody></table></div></div>
             <div class="employee-card"><div class="employee-card-title" style="font-size:16px;margin-bottom:12px;"><i class="fa-solid fa-file-circle-exclamation"></i> Warning Letters</div><div class="employee-warning-list">${warnings.length?warnings.map(w=>`<div class="employee-warning-item"><div class="employee-warning-item-title">${esc(w.title||'Warning Letter')}</div><div class="employee-warning-item-date">${esc(w.sentAt||w.date||'-')}</div><div class="employee-warning-item-text">${esc(w.details||'')}</div></div>`).join(''):'<div class="employee-mini-note">No warning letters have been sent to you.</div>'}</div></div>`;
       ;
+            const historySearchInput=document.getElementById('employeeOrderHistorySearch');
+            if(historySearchInput) historySearchInput.value=historySearch;
+            if(historySearchInput && historySearch) filterEmployeeOrderHistory();
+            removeEmployeePortalSalaryColumns(content);
             enhanceMonthPickers();
         }
 
