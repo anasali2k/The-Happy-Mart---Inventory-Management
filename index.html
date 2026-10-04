@@ -1323,6 +1323,15 @@
         }
         @media(max-width:700px){.employee-self-overlay{padding:8px;}}
         @media(max-width:400px){.employee-self-overlay{padding:6px;}}
+        /* FINAL READ-ONLY 3D ORDER HISTORY */
+        .employee-history-only-card{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+        .employee-history-main-btn{margin-left:auto;}
+        .employee-history-dialog{perspective:1200px;transform:perspective(1200px) rotateX(1deg);}
+        .employee-history-dialog .employee-history-toolbar{padding:10px 12px;border-radius:12px;background:linear-gradient(135deg,rgba(14,116,144,.24),rgba(79,70,229,.22));box-shadow:inset 0 1px rgba(255,255,255,.10),0 8px 18px rgba(0,0,0,.18);}
+        .employee-history-dialog .employee-order-row{grid-template-columns:minmax(0,1fr) auto;}
+        .employee-history-dialog .employee-order-actions:empty{display:none;}
+        .employee-history-dialog .employee-order-status{justify-self:end;}
+        .employee-history-dialog .employee-history-close{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:34px;}
         /* FINAL ATTENDANCE TABLE ALIGNMENT — equal columns and equal left-to-right spacing */
         .employee-attendance-table{
             width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;
@@ -4666,13 +4675,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return orders.map(o=>{
                 const status=o.status||'Pending';
                 const safeId=esc(o.id);
-                const employeeActions=`<button class="deliver" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Delivered')"><i class="fa-solid fa-check"></i> Delivered</button><button class="return" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Return')"><i class="fa-solid fa-rotate-left"></i> Return</button>`;
-                const adminActions=adminMode?`<button class="btn-warning" type="button" onclick="adminEditEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" type="button" onclick="adminRemoveEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-trash"></i> Remove</button>`:employeeActions;
+                /* History is read-only in both Employee Sign In and Admin Employee Management. */
+                const adminActions='';
                 const newTag=(!adminMode&&employeeOrderIsNew(o))?'<span class="employee-new-tag"><i class="fa-solid fa-sparkles"></i> NEW</span>':'';
-                return `<div class="employee-order-row"><div><div class="employee-order-number"><i class="fa-solid fa-hashtag" style="color:#67e8f9"></i> ${esc(o.number)}${newTag}</div><div class="employee-order-date">Submitted ${esc(o.addedAt||'-')}${o.deliveredAt?` · Updated ${esc(o.deliveredAt)}`:''}</div></div><span class="employee-order-status ${status==='Delivered'?'delivered':status==='Return'?'returned':'pending'}"><i class="fa-solid ${status==='Delivered'?'fa-circle-check':status==='Return'?'fa-rotate-left':'fa-hourglass-half'}"></i> ${status}</span><div class="employee-order-actions">${status==='Delivered'?`<b style="color:#6ee7b7;font-size:12px;white-space:nowrap">+${employeeMoney(50)}</b>`:''}${adminActions}</div></div>`;
+                const statusBadge=status==='Pending'?'':`<span class="employee-order-status ${status==='Delivered'?'delivered':'returned'}"><i class="fa-solid ${status==='Delivered'?'fa-circle-check':'fa-rotate-left'}"></i> ${status}</span>`;
+                return `<div class="employee-order-row"><div><div class="employee-order-number"><i class="fa-solid fa-hashtag" style="color:#67e8f9"></i> ${esc(o.number)}${newTag}</div><div class="employee-order-date">Submitted ${esc(o.addedAt||'-')}${o.deliveredAt?` · Updated ${esc(o.deliveredAt)}`:''}</div></div>${statusBadge}<div class="employee-order-actions">${status==='Delivered'?`<b style="color:#6ee7b7;font-size:12px;white-space:nowrap">+${employeeMoney(50)}</b>`:''}${adminActions}</div></div>`;
             }).join('');
         }
-        function renderEmployeeOrderHistory(emp,dateFrom,dateTo,isOpen=false,calendarOpen=false){
+        function renderEmployeeOrderHistory(emp,dateFrom,dateTo,isOpen=false,calendarOpen=false,adminMode=false){
             const from=dateFrom||'', to=dateTo||'';
             return `<div class="employee-history-modal ${isOpen?'open':''}" id="employeeOrderHistoryModal" onclick="if(event.target===this)closeEmployeeOrderHistory()"><div class="employee-history-dialog"><div class="employee-history-toolbar"><div class="employee-history-title"><i class="fa-solid fa-clock-rotate-left" style="color:#67e8f9"></i> See Order History <span class="employee-history-count">${employeeOrderTotals(emp).total} total</span></div><div class="employee-history-top-actions"><button class="employee-calendar-toggle" type="button" onclick="toggleEmployeeRangeCalendar()"><i class="fa-solid fa-calendar-days"></i> Date Range</button><button class="employee-history-close" type="button" onclick="closeEmployeeOrderHistory()"><i class="fa-solid fa-xmark"></i></button></div></div><div class="employee-range-calendar-panel ${calendarOpen?'open':''}" id="employeeRangeCalendarPanel"><div class="employee-range-calendar"><span class="employee-range-calendar-caption"><i class="fa-solid fa-calendar-days"></i> 3D DATE RANGE</span><label>From</label><input class="employee-history-date" id="employeeOrderHistoryFrom" type="date" value="${esc(from)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"><span class="employee-range-separator">to</span><label>To</label><input class="employee-history-date" id="employeeOrderHistoryTo" type="date" value="${esc(to)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"></div></div><input class="employee-history-search" id="employeeOrderHistorySearch" type="search" placeholder="Search order number..." autocomplete="off" oninput="filterEmployeeOrderHistory()"><div class="employee-order-list" id="employeeOrderHistoryResults">${employeeOrderRows(emp,false,from,to,'')}</div></div></div>`;
         }
@@ -4698,12 +4708,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
         function changeEmployeeOrderHistoryRange(){ filterEmployeeOrderHistory(); }
         function renderEmployeeOrdersSection(emp, adminMode=false, historyFrom=null, historyTo=null, historyOpen=false, historyCalendarOpen=false){
-            const t=employeeOrderTotals(emp);
-            const adminForm=adminMode?`<form class="employee-order-form" onsubmit="adminSaveEmployeeOrder(event,${emp.id})"><div class="form-group"><label>Admin Order Number</label><input id="adminOrderNumber-${emp.id}" type="text" required maxlength="80" placeholder="Add or edit order number"><input id="adminOrderId-${emp.id}" type="hidden"></div><div class="form-group"><label>Status</label><select id="adminOrderStatus-${emp.id}" class="attendance-status-select"><option value="Pending">Pending</option><option value="Delivered">Delivered</option><option value="Return">Return</option></select></div><button class="btn-submit" id="adminOrderSave-${emp.id}" type="submit"><i class="fa-solid fa-plus"></i> Add Order</button><button class="btn-back" id="adminOrderCancel-${emp.id}" type="button" style="display:none" onclick="adminResetEmployeeOrderForm(${emp.id})">Cancel</button></form>`:'';
-            const adminSummary=adminMode?`<div class="employee-detail-grid employee-admin-order-summary"><div class="employee-detail-box"><div class="label">Per Order Rate</div><div class="value employee-salary-total">${employeeMoney(50)}</div></div><div class="employee-detail-box"><div class="label">Total Orders</div><div class="value">${t.total}</div></div><div class="employee-detail-box"><div class="label">Total Earnings</div><div class="value employee-earning-total">${employeeMoney(t.earned)}</div></div></div>`:'';
-            const employeeForm=adminMode?'':`<div class="employee-commission-hero" style="padding:14px 16px;margin-bottom:14px"><div class="employee-commission-label"><i class="fa-solid fa-lock"></i> Submitted orders are locked</div><div class="employee-commission-note">After submission, only Admin can edit or remove an order.</div></div><div class="employee-history-entry-row"><form class="employee-order-form" onsubmit="addEmployeeOrder(event)"><div class="form-group"><label>Add Order</label><input id="employeeOrderNumber" type="text" required maxlength="80" placeholder="Enter order number"></div><button class="btn-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Order</button></form><button class="employee-history-open-btn" type="button" onclick="openEmployeeOrderHistory()"><i class="fa-solid fa-clock-rotate-left"></i> See Order History</button></div>`;
-            const employeeHistory=adminMode?'':renderEmployeeOrderHistory(emp,historyFrom,historyTo,historyOpen,historyCalendarOpen);
-            return `${`<div class="employee-order-card ${adminMode?'admin-order-view':''}"><div class="employee-card-header" style="margin-bottom:8px"><div class="employee-card-title"><i class="fa-solid fa-box-open" style="color:#67e8f9"></i> ${adminMode?'Employee Order Management':'Add Order'}</div><div class="employee-mini-note">${t.delivered} delivered · ${t.returned} returned · ${t.pending} pending · Earning ${employeeMoney(t.earned)}</div></div>${adminMode?adminSummary+adminForm:employeeForm}${adminMode?`<div class="employee-order-list">${employeeOrderRows(emp,true)}</div>`:''}</div>`}${employeeHistory}`;
+            const employeeHistory=renderEmployeeOrderHistory(emp,historyFrom,historyTo,historyOpen,historyCalendarOpen,adminMode);
+            return `<div class="employee-order-card employee-history-only-card ${adminMode?'admin-order-view':''}">
+                <div class="employee-card-header" style="margin-bottom:8px">
+                    <div class="employee-card-title"><i class="fa-solid fa-clock-rotate-left" style="color:#67e8f9"></i> See Order History</div>
+                    <div class="employee-mini-note">All submitted orders are shown here.</div>
+                </div>
+                <button class="employee-history-open-btn employee-history-main-btn" type="button" onclick="openEmployeeOrderHistory()"><i class="fa-solid fa-clock-rotate-left"></i> See Order History</button>
+            </div>${employeeHistory}`;
         }
         function addEmployeeOrder(e){
             e.preventDefault();
