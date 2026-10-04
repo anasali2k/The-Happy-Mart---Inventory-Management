@@ -366,7 +366,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            padding: 32px;
+            padding: 16px 18px;
             position: relative;
         }
 
@@ -485,8 +485,12 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 700px) {
+            .main-content { padding: 12px; }
+            .card { padding: 14px; margin-bottom: 12px; }
         }
 
         .form-grid {
@@ -1083,7 +1087,7 @@
         .employee-history-modal.open{display:flex;animation:employeeHistoryFade .2s ease-out;}
         .employee-history-dialog{width:min(680px,100%);max-height:min(84vh,760px);overflow:auto;border:1px solid rgba(103,232,249,.35);border-radius:20px;background:linear-gradient(145deg,rgba(10,30,49,.98),rgba(7,18,33,.98));box-shadow:0 24px 80px rgba(0,0,0,.55);padding:18px;}
         .employee-history-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-        .employee-history-title{display:flex;align-items:center;gap:8px;font-weight:900;color:#e0f2fe;}
+        .employee-history-title{display:flex;align-items:center;gap:8px;font-weight:900;color:#e0f2fe;}.employee-history-count{font-size:10px;color:#67e8f9;background:rgba(103,232,249,.10);border:1px solid rgba(103,232,249,.28);border-radius:999px;padding:3px 7px;}
         .employee-history-top-actions{display:flex;align-items:center;gap:8px;}
         .employee-calendar-toggle{min-height:34px;padding:7px 10px;border:1px solid rgba(103,232,249,.42);border-radius:10px;background:linear-gradient(135deg,rgba(14,116,144,.35),rgba(30,64,175,.3));color:#dff9ff;font-size:11px;font-weight:900;cursor:pointer;}
         .employee-range-calendar-panel{display:none;margin-top:14px;}
@@ -1370,7 +1374,7 @@
         @media (max-width: 900px) {
             body { flex-direction: column; height: auto; overflow: auto; }
             .sidebar { width: 100%; }
-            .main-content { padding: 20px; }
+            .main-content { padding: 12px; }
         }
 
         /* FINAL LOGIN VISUAL THEME — new live aurora / constellation backgrounds only */
@@ -4199,7 +4203,19 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function normalizeEmployeeOrder(order){
             if(!order || !String(order.number||'').trim()) return null;
             const status=['Pending','Delivered','Return'].includes(order.status)?order.status:'Pending';
-            return {id:String(order.id||(`${Date.now()}-${Math.random().toString(36).slice(2,8)}`)),number:String(order.number).trim(),status,addedAt:order.addedAt||makeStamp().display,addedDate:order.addedDate||((String(order.addedAt||'').match(/\d{4}-\d{2}-\d{2}/)||[])[0]||makeStamp().date),deliveredAt:order.deliveredAt||null,commissionCredited:status==='Delivered'||!!order.commissionCredited,newTag:!!order.newTag};
+            const addedAt=order.addedAt||makeStamp().display;
+            const addedDate=order.addedDate||((String(addedAt).match(/\d{4}-\d{2}-\d{2}/)||[])[0]||makeStamp().date);
+            const parsedCreated=Number(order.createdAtMs)||Date.parse(addedAt)||Date.parse(addedDate)||Date.now();
+            const createdAtMs=Number.isFinite(parsedCreated)?parsedCreated:Date.now();
+            const existingUntil=Number(order.newTagUntil);
+            const newTagUntil=Number.isFinite(existingUntil)&&existingUntil>0
+                ? existingUntil
+                : (order.newTag ? createdAtMs + 24*60*60*1000 : null);
+            return {id:String(order.id||(`${Date.now()}-${Math.random().toString(36).slice(2,8)}`)),number:String(order.number).trim(),status,addedAt,addedDate,createdAtMs,newTagUntil,deliveredAt:order.deliveredAt||null,commissionCredited:status==='Delivered'||!!order.commissionCredited,newTag:!!order.newTag};
+        }
+        function employeeOrderIsNew(order){
+            const until=Number(order?.newTagUntil);
+            return !!order?.newTag && Number.isFinite(until) && until > nowDate().getTime();
         }
 
         function normalizeEmployee(e) {
@@ -4501,21 +4517,30 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const allOrders=Array.isArray(emp.orders)?emp.orders:[];
             const from=dateFrom||null, to=dateTo||dateFrom||null;
             const query=String(searchTerm||'').trim().toLowerCase();
-            const orders=allOrders.filter(o=>{const d=employeeOrderDateKey(o);const inRange=(!from||d>=from)&&(!to||d<=to);const matches=!query||String(o.number||'').toLowerCase().includes(query);return d&&inRange&&matches;});
-            const rangeLabel=from&&to&&from!==to?`${from} to ${to}`:(from||to||'selected range');
+            const orders=allOrders.filter(o=>{
+                const d=employeeOrderDateKey(o);
+                const inRange=(!from||!d||d>=from)&&(!to||!d||d<=to);
+                const matches=!query||String(o.number||'').toLowerCase().includes(query);
+                return inRange&&matches;
+            }).sort((a,b)=>{
+                const am=Number(a.createdAtMs)||Date.parse(a.addedAt)||0;
+                const bm=Number(b.createdAtMs)||Date.parse(b.addedAt)||0;
+                return bm-am;
+            });
+            const rangeLabel=from&&to&&from!==to?`${from} to ${to}`:(from||to?'selected range':'all submitted orders');
             if(!orders.length) return `<div class="employee-history-empty">No orders found for ${esc(rangeLabel)}.</div>`;
             return orders.map(o=>{
                 const status=o.status||'Pending';
                 const safeId=esc(o.id);
                 const employeeActions=`<button class="deliver" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Delivered')"><i class="fa-solid fa-check"></i> Delivered</button><button class="return" type="button" ${status==='Pending'?'':'disabled'} onclick="setEmployeeOrderStatus('${safeId}','Return')"><i class="fa-solid fa-rotate-left"></i> Return</button>`;
                 const adminActions=adminMode?`<button class="btn-warning" type="button" onclick="adminEditEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn-danger" type="button" onclick="adminRemoveEmployeeOrder(${emp.id},'${safeId}')"><i class="fa-solid fa-trash"></i> Remove</button>`:employeeActions;
-                const newTag=(!adminMode&&o.newTag)?'<span class="employee-new-tag"><i class="fa-solid fa-sparkles"></i> NEW</span>':'';
+                const newTag=(!adminMode&&employeeOrderIsNew(o))?'<span class="employee-new-tag"><i class="fa-solid fa-sparkles"></i> NEW</span>':'';
                 return `<div class="employee-order-row"><div><div class="employee-order-number"><i class="fa-solid fa-hashtag" style="color:#67e8f9"></i> ${esc(o.number)}${newTag}</div><div class="employee-order-date">Submitted ${esc(o.addedAt||'-')}${o.deliveredAt?` · Updated ${esc(o.deliveredAt)}`:''}</div></div><span class="employee-order-status ${status==='Delivered'?'delivered':status==='Return'?'returned':'pending'}"><i class="fa-solid ${status==='Delivered'?'fa-circle-check':status==='Return'?'fa-rotate-left':'fa-hourglass-half'}"></i> ${status}</span><div class="employee-order-actions">${status==='Delivered'?`<b style="color:#6ee7b7;font-size:12px;white-space:nowrap">+${employeeMoney(50)}</b>`:''}${adminActions}</div></div>`;
             }).join('');
         }
         function renderEmployeeOrderHistory(emp,dateFrom,dateTo,isOpen=false,calendarOpen=false){
-            const from=dateFrom||makeStamp().date, to=dateTo||makeStamp().date;
-            return `<div class="employee-history-modal ${isOpen?'open':''}" id="employeeOrderHistoryModal" onclick="if(event.target===this)closeEmployeeOrderHistory()"><div class="employee-history-dialog"><div class="employee-history-toolbar"><div class="employee-history-title"><i class="fa-solid fa-clock-rotate-left" style="color:#67e8f9"></i> See Order History</div><div class="employee-history-top-actions"><button class="employee-calendar-toggle" type="button" onclick="toggleEmployeeRangeCalendar()"><i class="fa-solid fa-calendar-days"></i> Date Range</button><button class="employee-history-close" type="button" onclick="closeEmployeeOrderHistory()"><i class="fa-solid fa-xmark"></i></button></div></div><div class="employee-range-calendar-panel ${calendarOpen?'open':''}" id="employeeRangeCalendarPanel"><div class="employee-range-calendar"><span class="employee-range-calendar-caption"><i class="fa-solid fa-calendar-days"></i> 3D DATE RANGE</span><label>From</label><input class="employee-history-date" id="employeeOrderHistoryFrom" type="date" value="${esc(from)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"><span class="employee-range-separator">to</span><label>To</label><input class="employee-history-date" id="employeeOrderHistoryTo" type="date" value="${esc(to)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"></div></div><input class="employee-history-search" id="employeeOrderHistorySearch" type="search" placeholder="Search order number..." autocomplete="off" oninput="filterEmployeeOrderHistory()"><div class="employee-order-list" id="employeeOrderHistoryResults">${employeeOrderRows(emp,false,from,to,'')}</div></div></div>`;
+            const from=dateFrom||'', to=dateTo||'';
+            return `<div class="employee-history-modal ${isOpen?'open':''}" id="employeeOrderHistoryModal" onclick="if(event.target===this)closeEmployeeOrderHistory()"><div class="employee-history-dialog"><div class="employee-history-toolbar"><div class="employee-history-title"><i class="fa-solid fa-clock-rotate-left" style="color:#67e8f9"></i> See Order History <span class="employee-history-count">${employeeOrderTotals(emp).total} total</span></div><div class="employee-history-top-actions"><button class="employee-calendar-toggle" type="button" onclick="toggleEmployeeRangeCalendar()"><i class="fa-solid fa-calendar-days"></i> Date Range</button><button class="employee-history-close" type="button" onclick="closeEmployeeOrderHistory()"><i class="fa-solid fa-xmark"></i></button></div></div><div class="employee-range-calendar-panel ${calendarOpen?'open':''}" id="employeeRangeCalendarPanel"><div class="employee-range-calendar"><span class="employee-range-calendar-caption"><i class="fa-solid fa-calendar-days"></i> 3D DATE RANGE</span><label>From</label><input class="employee-history-date" id="employeeOrderHistoryFrom" type="date" value="${esc(from)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"><span class="employee-range-separator">to</span><label>To</label><input class="employee-history-date" id="employeeOrderHistoryTo" type="date" value="${esc(to)}" max="${esc(makeStamp().date)}" onchange="changeEmployeeOrderHistoryRange()"></div></div><input class="employee-history-search" id="employeeOrderHistorySearch" type="search" placeholder="Search order number..." autocomplete="off" oninput="filterEmployeeOrderHistory()"><div class="employee-order-list" id="employeeOrderHistoryResults">${employeeOrderRows(emp,false,from,to,'')}</div></div></div>`;
         }
         function openEmployeeOrderHistory(){
             const modal=document.getElementById('employeeOrderHistoryModal');
@@ -4531,8 +4556,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
         function filterEmployeeOrderHistory(){
             const emp=employees.find(x=>x.id===Number(loggedInEmployeeId));
-            const from=document.getElementById('employeeOrderHistoryFrom')?.value||makeStamp().date;
-            const to=document.getElementById('employeeOrderHistoryTo')?.value||from;
+            const from=document.getElementById('employeeOrderHistoryFrom')?.value||'';
+            const to=document.getElementById('employeeOrderHistoryTo')?.value||'';
             const search=document.getElementById('employeeOrderHistorySearch')?.value||'';
             const results=document.getElementById('employeeOrderHistoryResults');
             if(emp&&results) results.innerHTML=from<=to?employeeOrderRows(emp,false,from,to,search):'<div class="employee-history-empty">Please choose a valid date range.</div>';
@@ -4554,7 +4579,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!emp||!number)return;
             if(!Array.isArray(emp.orders))emp.orders=[];
             if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase())){showToast_('This order number has already been submitted.','warn');return;}
-            emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:makeStamp().display,addedDate:makeStamp().date,deliveredAt:null,commissionCredited:false,newTag:true});
+            const createdAtMs=nowDate().getTime(); const stamp=makeStamp();
+            emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:stamp.display,addedDate:stamp.date,createdAtMs,newTagUntil:createdAtMs+24*60*60*1000,deliveredAt:null,commissionCredited:false,newTag:true});
             saveEmployees();renderEmployeeSelfPortal();showToast_('Order submitted. Delivered and Return options are now available.','ok');
         }
         function setEmployeeOrderStatus(orderId,status){
@@ -4575,7 +4601,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(!number)return;
             if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase()&&String(o.id)!==String(editId))){showToast_('This order number already exists for this employee.','warn');return;}
             if(editId){const o=emp.orders.find(x=>String(x.id)===String(editId));if(o){o.number=number;o.status=status;o.commissionCredited=status==='Delivered';o.deliveredAt=status==='Pending'?null:(o.deliveredAt||makeStamp().display);}}
-            else emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status,addedAt:makeStamp().display,addedDate:makeStamp().date,deliveredAt:status==='Pending'?null:makeStamp().display,commissionCredited:status==='Delivered',newTag:true});
+            else { const createdAtMs=nowDate().getTime(); const stamp=makeStamp(); emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status,addedAt:stamp.display,addedDate:stamp.date,createdAtMs,newTagUntil:createdAtMs+24*60*60*1000,deliveredAt:status==='Pending'?null:stamp.display,commissionCredited:status==='Delivered',newTag:true}); }
             saveEmployees();renderAllEmployeeViews();adminSelectedEmployeeId=emp.id;renderAdminEmployeePortal(emp.id);showToast_('Employee order saved by Admin.','ok');
         }
         function adminEditEmployeeOrder(employeeId,orderId){const emp=employees.find(x=>x.id===Number(employeeId));const o=emp&&(emp.orders||[]).find(x=>String(x.id)===String(orderId));if(!o)return;const n=document.getElementById(`adminOrderNumber-${employeeId}`),s=document.getElementById(`adminOrderStatus-${employeeId}`),h=document.getElementById(`adminOrderId-${employeeId}`),b=document.getElementById(`adminOrderSave-${employeeId}`),c=document.getElementById(`adminOrderCancel-${employeeId}`);if(n)n.value=o.number;if(s)s.value=o.status||'Pending';if(h)h.value=o.id;if(b)b.innerHTML='<i class="fa-solid fa-pen"></i> Update Order';if(c)c.style.display='inline-flex';n?.focus();}
@@ -4613,8 +4639,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const existingHistoryModal=document.getElementById('employeeOrderHistoryModal');
             const existingRangeCalendar=document.getElementById('employeeRangeCalendarPanel');
             const existingHistorySearch=document.getElementById('employeeOrderHistorySearch');
-            const historyFrom=(existingHistoryFrom&&existingHistoryFrom.value)||makeStamp().date;
-            const historyTo=(existingHistoryTo&&existingHistoryTo.value)||historyFrom;
+            const historyFrom=(existingHistoryFrom&&existingHistoryFrom.value)||'';
+            const historyTo=(existingHistoryTo&&existingHistoryTo.value)||'';
             const historyOpen=!!(existingHistoryModal&&existingHistoryModal.classList.contains('open'));
             const historyCalendarOpen=!!(existingRangeCalendar&&existingRangeCalendar.classList.contains('open'));
             const historySearch=(existingHistorySearch&&existingHistorySearch.value)||'';
