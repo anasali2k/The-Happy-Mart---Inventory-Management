@@ -4029,7 +4029,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         <button class="btn-back" onclick="${adminMode ? `adminSelectedEmployeeId=null; renderAdminEmployeeManagement();` : `document.getElementById('employeePortalCard').scrollIntoView({behavior:'smooth',block:'start'})`} "><i class="fa-solid fa-xmark"></i> Close</button>
                     </div>
                 </div>
-                ${employeePresenceSummaryMarkup(emp,adminMode)}
+                ${adminMode ? '' : employeePresenceSummaryMarkup(emp,false)}
                 <div class="employee-detail-grid">
                     <div class="employee-detail-box"><div class="label">Monthly Salary</div><div class="value">${formatMoney2(emp.monthlySalary)}</div></div>
                     <div class="employee-detail-box"><div class="label">Daily Salary</div><div class="value">${formatMoney2(emp.dailySalary)}</div></div>
@@ -4218,6 +4218,49 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return !!order?.newTag && Number.isFinite(until) && until > nowDate().getTime();
         }
 
+        /*
+         * One canonical employee-order source.
+         * Older builds used different property names, so never render only
+         * emp.orders blindly. Every portal/admin view uses this collector.
+         */
+        function employeeOrderSources(emp){
+            if(!emp || typeof emp!=='object') return [];
+            const buckets=[];
+            ['orders','employeeOrders','orderHistory','submittedOrders','submittedOrderHistory'].forEach(key=>{
+                if(Array.isArray(emp[key])) buckets.push(...emp[key]);
+            });
+            return buckets;
+        }
+        function employeeOrderCanonicalKey(order){
+            const id=String(order?.id||order?._id||'').trim();
+            if(id) return 'id:'+id.toLowerCase();
+            const number=String(order?.number||order?.orderNumber||order?.orderId||order?.clientOrderId||'').trim().toLowerCase();
+            return number ? 'number:'+number : '';
+        }
+        function canonicalEmployeeOrders(emp){
+            const seen=new Set(), result=[];
+            employeeOrderSources(emp).forEach(raw=>{
+                const source=(raw&&typeof raw==='object')?raw:{number:String(raw||'')};
+                const candidate={...source,
+                    number:source.number||source.orderNumber||source.orderNo||source.orderId||source.clientOrderId||source.id,
+                    status:source.status==='Returned'?'Return':source.status
+                };
+                const normalized=normalizeEmployeeOrder(candidate);
+                if(!normalized) return;
+                const key=employeeOrderCanonicalKey(normalized);
+                if(key && seen.has(key)) return;
+                if(key) seen.add(key);
+                result.push(normalized);
+            });
+            return result;
+        }
+        function syncEmployeeOrderCollection(emp){
+            if(!emp) return [];
+            const merged=canonicalEmployeeOrders(emp);
+            emp.orders=merged;
+            return merged;
+        }
+
         function normalizeEmployee(e) {
             const monthly=Number(e.monthlySalary)||0;
             let daily=Number(e.dailySalary);
@@ -4225,7 +4268,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return {
                 id:Number(e.id)||nextEmployeeId(), name:e.name||'', phone:e.phone||'', email:e.email||'',
                 monthlySalary:monthly,dailySalary:daily,orderCommission:50,
-                orders:Array.isArray(e.orders)?e.orders.map(normalizeEmployeeOrder).filter(Boolean):[],
+                orders:canonicalEmployeeOrders(e),
                 attendance:(e.attendance&&typeof e.attendance==='object')?e.attendance:{},
                 months:(e.months&&typeof e.months==='object')?e.months:{},
                 warningLetters:Array.isArray(e.warningLetters)?e.warningLetters.map(w=>({
@@ -4248,6 +4291,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             try {
                 const raw=JSON.parse(localStorage.getItem(EMPLOYEE_DB_KEY));
                 employees=Array.isArray(raw)?raw.map(normalizeEmployee):[];
+                employees.forEach(syncEmployeeOrderCollection);
             } catch(e) { employees=[]; }
         }
         function saveEmployees() {
@@ -4504,7 +4548,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
 
         function employeeOrderTotals(emp){
-            const orders=Array.isArray(emp.orders)?emp.orders:[];
+            const orders=syncEmployeeOrderCollection(emp);
             return {total:orders.length,delivered:orders.filter(o=>o.status==='Delivered').length,returned:orders.filter(o=>o.status==='Return').length,pending:orders.filter(o=>o.status==='Pending').length,earned:orders.filter(o=>o.status==='Delivered'&&o.commissionCredited!==false).length*(50)};
         }
         function employeeOrderDateKey(order){
@@ -4514,7 +4558,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return fromStamp?fromStamp[0]:'';
         }
         function employeeOrderRows(emp, adminMode=false, dateFrom=null, dateTo=null, searchTerm=''){
-            const allOrders=Array.isArray(emp.orders)?emp.orders:[];
+            const allOrders=syncEmployeeOrderCollection(emp);
             const from=dateFrom||null, to=dateTo||dateFrom||null;
             const query=String(searchTerm||'').trim().toLowerCase();
             const orders=allOrders.filter(o=>{
@@ -4560,7 +4604,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const to=document.getElementById('employeeOrderHistoryTo')?.value||'';
             const search=document.getElementById('employeeOrderHistorySearch')?.value||'';
             const results=document.getElementById('employeeOrderHistoryResults');
-            if(emp&&results) results.innerHTML=from<=to?employeeOrderRows(emp,false,from,to,search):'<div class="employee-history-empty">Please choose a valid date range.</div>';
+            if(emp&&results){ const valid=(!from||!to||from<=to); results.innerHTML=valid?employeeOrderRows(emp,false,from,to,search):'<div class="employee-history-empty">Please choose a valid date range.</div>'; }
         }
         function changeEmployeeOrderHistoryRange(){ filterEmployeeOrderHistory(); }
         function renderEmployeeOrdersSection(emp, adminMode=false, historyFrom=null, historyTo=null, historyOpen=false, historyCalendarOpen=false){
@@ -4577,7 +4621,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const input=document.getElementById('employeeOrderNumber');
             const number=(input?.value||'').trim();
             if(!emp||!number)return;
-            if(!Array.isArray(emp.orders))emp.orders=[];
+            syncEmployeeOrderCollection(emp);
             if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase())){showToast_('This order number has already been submitted.','warn');return;}
             const createdAtMs=nowDate().getTime(); const stamp=makeStamp();
             emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:stamp.display,addedDate:stamp.date,createdAtMs,newTagUntil:createdAtMs+24*60*60*1000,deliveredAt:null,commissionCredited:false,newTag:true});
@@ -4594,7 +4638,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminSaveEmployeeOrder(e,employeeId){
             e.preventDefault();
             const emp=employees.find(x=>x.id===Number(employeeId)); if(!emp)return;
-            if(!Array.isArray(emp.orders))emp.orders=[];
+            syncEmployeeOrderCollection(emp);
             const number=(document.getElementById(`adminOrderNumber-${employeeId}`)?.value||'').trim();
             const status=document.getElementById(`adminOrderStatus-${employeeId}`)?.value||'Pending';
             const editId=document.getElementById(`adminOrderId-${employeeId}`)?.value||'';
@@ -5175,6 +5219,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             employees = Array.isArray(payload.employees) 
                 ? payload.employees.map(normalizeEmployee) 
                 : []; 
+            employees.forEach(syncEmployeeOrderCollection);
  
             normalizeAllOrdersInMemory(); 
  
