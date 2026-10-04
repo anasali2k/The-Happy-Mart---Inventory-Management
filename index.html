@@ -1901,6 +1901,53 @@ button:active,.btn-back:active,.btn-submit:active,.btn-warning:active,.btn-dange
 @keyframes deleteOverlayIn{from{opacity:0}to{opacity:1}}
 @keyframes deleteBoxIn{from{opacity:0;transform:rotateX(-10deg) translateY(24px) scale(.94)}to{opacity:1;transform:rotateX(0) translateY(0) scale(1)}}
 @media(max-width:520px){.delete-confirm-box{padding:23px 18px}.delete-confirm-actions{flex-direction:column}.delete-confirm-actions button{width:100%}}
+        /* FINAL PORTAL STABILITY FIX: the admin employee portal must never move on hover.
+           Global card hover transforms and decorative animations caused the warning,
+           create-warning and attendance sections to jump under the mouse. */
+        #adminEmployeePortal,
+        #adminEmployeePortal * {
+            animation: none !important;
+            transition: none !important;
+        }
+        #adminEmployeePortal .employee-card,
+        #adminEmployeePortal .employee-card:hover,
+        #adminEmployeePortal .employee-stat,
+        #adminEmployeePortal .employee-stat:hover,
+        #adminEmployeePortal .card,
+        #adminEmployeePortal .card:hover,
+        #adminEmployeePortal button,
+        #adminEmployeePortal button:hover,
+        #adminEmployeePortal a,
+        #adminEmployeePortal a:hover,
+        #adminEmployeePortal input,
+        #adminEmployeePortal textarea,
+        #adminEmployeePortal select,
+        #adminEmployeePortal select:hover,
+        #adminEmployeePortal .employee-order-row,
+        #adminEmployeePortal .employee-order-row:hover {
+            transform: none !important;
+        }
+        #adminEmployeePortal .employee-card:hover,
+        #adminEmployeePortal .employee-stat:hover,
+        #adminEmployeePortal .card:hover {
+            box-shadow: 0 20px 55px rgba(0,0,0,.22),
+                        inset 0 1px 0 rgba(255,255,255,.045),
+                        0 0 0 1px rgba(99,102,241,.025) !important;
+        }
+        #adminEmployeePortal .employee-warning-letter::before,
+        #adminEmployeePortal .employee-warning-letter::after,
+        #adminEmployeePortal .warning-alert-live::after,
+        #adminEmployeePortal .employee-commission-hero::after {
+            animation: none !important;
+            transform: none !important;
+        }
+        #adminEmployeePortal .employee-attendance-table,
+        #adminEmployeePortal .employee-attendance-table tbody,
+        #adminEmployeePortal .employee-attendance-table tr,
+        #adminEmployeePortal .employee-attendance-table td,
+        #adminEmployeePortal .employee-attendance-table th {
+            transform: none !important;
+        }
 </style>
 
 <style id="final-modern-theme">
