@@ -949,18 +949,26 @@
         .employee-attendance-table td, .employee-attendance-table th { white-space: nowrap; }
         .attendance-status-select {
             min-width: 120px;
+            height: 36px;
             background-color: var(--bg-dark);
             border: 1px solid var(--border-color);
             border-radius: 7px;
             padding: 7px 9px;
             color: white;
             outline:none;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
         }
+        .attendance-status-select:hover { border-color: var(--accent-primary); background-color: #172033; }
+        .attendance-status-select:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(99,102,241,.18); }
         .attendance-status-select:focus { border-color: var(--accent-primary); }
         .attendance-status-select:disabled { opacity:.6; cursor:not-allowed; }
         .attendance-sunday { opacity: .68; background: rgba(16,185,129,.07); }
         .attendance-sunday td { color: var(--text-muted); }
         .employee-mini-note { font-size:12px; color:var(--text-muted); line-height:1.6; }
+        .employee-post-badge { display:inline-flex; align-items:center; justify-content:center; min-width:64px; padding:4px 8px; border-radius:999px; background:rgba(99,102,241,.16); border:1px solid rgba(129,140,248,.28); color:#c7d2fe; font-size:11px; font-weight:800; }
         .employee-detail-grid {
             display:grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -2631,6 +2639,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         <input type="hidden" id="adminEditingEmployeeId" value="">
                         <div class="form-grid">
                             <div class="form-group"><label>Employee Name</label><input type="text" id="adminEmployeeName" required placeholder="Full Name"></div>
+                            <div class="form-group"><label>Post</label><select id="adminEmployeePost" required><option value="Sales">Sales</option><option value="OFD">OFD</option><option value="Manager">Manager</option></select></div>
                             <div class="form-group"><label>Contact Number (Required for Sign In)</label><input type="text" id="adminEmployeePhone" required placeholder="03XXXXXXXXX" autocomplete="tel" inputmode="tel"></div>
                             <div class="form-group"><label>Email Address (Optional)</label><input type="email" id="adminEmployeeEmail" placeholder="employee@email.com"></div>
                             <div class="form-group"><label>Employee Portal Password</label><input type="text" id="adminEmployeePassword" placeholder="Set password for employee portal" autocomplete="new-password"></div>
@@ -2654,7 +2663,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="table-responsive">
                         <table>
                             <thead><tr>
-                                <th>ID</th><th>Employee</th><th>Phone</th><th>Email</th><th>Password</th><th>Live Status</th><th>Today Hours</th><th>Monthly Salary</th><th>Daily Salary</th><th>Per Order Rate</th><th>Total Orders</th><th>Total Earnings</th><th>Present</th><th>Leaves</th><th>Absent</th><th>Break Violations</th><th>Salary Cut</th><th>Salary Paid</th><th>Actions</th>
+                                <th>ID</th><th>Employee</th><th>Post</th><th>Phone</th><th>Email</th><th>Password</th><th>Live Status</th><th>Today Hours</th><th>Monthly Salary</th><th>Daily Salary</th><th>Per Order Rate</th><th>Total Orders</th><th>Total Earnings</th><th>Present</th><th>Leaves</th><th>Absent</th><th>Break Violations</th><th>Salary Cut</th><th>Salary Paid</th><th>Actions</th>
                             </tr></thead>
                             <tbody id="adminEmployeesTableBody"></tbody>
                         </table>
@@ -3069,6 +3078,11 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         /* ---------------- Employee Management Engine ---------------- */
         let employees = [];
         const EMPLOYEE_DB_KEY = 'urbanhub_employees_v1';
+        const EMPLOYEE_POSTS = ['Sales', 'OFD', 'Manager'];
+        function normalizeEmployeePost(value) {
+            const post = String(value || '').trim();
+            return EMPLOYEE_POSTS.includes(post) ? post : 'Sales';
+        }
         let adminSelectedEmployeeId = null;
 
         function employeeMonthRecord(emp, monthKey) {
@@ -3273,6 +3287,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 return `<tr>
                     <td>#${emp.id}</td>
                     <td><a href="javascript:void(0)" class="employee-name-link" onclick="openAdminEmployeePortal(${emp.id})">${esc(emp.name)}</a></td>
+                    <td><span class="employee-post-badge">${esc(normalizeEmployeePost(emp.post))}</span></td>
                     <td>${esc(emp.phone || '-')}</td><td>${esc(emp.email || '-')}</td><td class="employee-password-cell">${esc(emp.loginPassword || 'Not created')}</td>
                     <td id="adminPresenceStatusCell-${emp.id}">${presenceStatusHtml(emp)}</td><td id="adminPresenceHoursCell-${emp.id}" class="presence-hours-live">${presenceDisplay(emp).todayLabel}</td>
                     <td>${formatMoney2(emp.monthlySalary)}</td><td>${formatMoney2(emp.dailySalary)}</td><td class="employee-salary-total">${employeeMoney(50)}</td><td>${employeeOrderTotals(emp).total}</td><td class="employee-earning-total">${employeeMoney(employeeOrderTotals(emp).earned)}</td>
@@ -3314,6 +3329,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const name = document.getElementById('adminEmployeeName').value.trim();
             const phoneRaw = document.getElementById('adminEmployeePhone').value.trim();
             const phone = phoneRaw ? normalizePhoneValue(phoneRaw) : '';
+            const post = normalizeEmployeePost(document.getElementById('adminEmployeePost').value);
             const email = document.getElementById('adminEmployeeEmail').value.trim();
             const password = document.getElementById('adminEmployeePassword').value.trim();
             const existingEmployee = idRaw ? employees.find(x => x.id === Number(idRaw)) : null;
@@ -3331,7 +3347,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!phone) { showToast_('Employee phone number is required for Employee Sign In.', 'warn'); return; }
                 const duplicate = employees.find(x => x.id !== emp.id && phone && normalizePhoneValue(x.phone) === phone);
                 if (duplicate) { showToast_('This phone number is already assigned to another employee.', 'warn'); return; }
-                emp.name = name; emp.phone = phone; emp.email = email; emp.monthlySalary = monthly; emp.dailySalary = daily; emp.orderCommission = commission;
+                emp.name = name; emp.post = post; emp.phone = phone; emp.email = email; emp.monthlySalary = monthly; emp.dailySalary = daily; emp.orderCommission = commission;
                 if(password) { emp.loginPassword = password; emp.accountCreatedAt = emp.accountCreatedAt || makeStamp().display; }
                 showToast_('Employee account updated successfully by Admin.', 'ok');
             } else {
@@ -3339,7 +3355,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!password) { showToast_('Set an Employee Portal Password before creating the account.', 'warn'); return; }
                 const duplicate = employees.find(x => normalizePhoneValue(x.phone) === phone);
                 if (duplicate) { showToast_('This phone number is already assigned to an employee.', 'warn'); return; }
-                employees.push({ id:nextEmployeeId(), name, phone, email, monthlySalary:monthly, dailySalary:daily, orderCommission:commission, orders:[], attendance:{}, months:{}, warningLetters:[], loginPassword:password, accountCreatedAt:makeStamp().display });
+                employees.push({ id:nextEmployeeId(), name, post, phone, email, monthlySalary:monthly, dailySalary:daily, orderCommission:commission, orders:[], attendance:{}, months:{}, warningLetters:[], loginPassword:password, accountCreatedAt:makeStamp().display });
                 showToast_('Employee account created successfully by Admin.', 'ok');
             }
             saveEmployees(); resetAdminEmployeeForm(); renderAllEmployeeViews();
@@ -3350,6 +3366,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!emp) return;
             document.getElementById('adminEditingEmployeeId').value = emp.id;
             document.getElementById('adminEmployeeName').value = emp.name;
+            document.getElementById('adminEmployeePost').value = normalizeEmployeePost(emp.post);
             document.getElementById('adminEmployeePhone').value = emp.phone || '';
             document.getElementById('adminEmployeeEmail').value = emp.email || '';
             document.getElementById('adminEmployeePassword').value = emp.loginPassword || '';
@@ -4111,7 +4128,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <div class="employee-portal-head">
                     <div>
                         <div class="employee-profile-title">${esc(emp.name)}</div>
-                        <div class="employee-profile-meta">Employee #${emp.id} · Contact: ${esc(emp.phone || 'Not provided')} · Email: ${esc(emp.email || 'Not provided')}</div>
+                        <div class="employee-profile-meta">Employee #${emp.id} · Post: ${esc(normalizeEmployeePost(emp.post))} · Contact: ${esc(emp.phone || 'Not provided')} · Email: ${esc(emp.email || 'Not provided')}</div>
                     </div>
                     <div class="employee-admin-actions">
                         ${adminMode ? `<button class="btn-warning" onclick="adminEditEmployee(${emp.id})"><i class="fa-solid fa-pen"></i> Edit Employee</button><button class="btn-danger" onclick="adminDeleteEmployee(${emp.id})"><i class="fa-solid fa-trash"></i> Delete Employee</button>` : ''}
@@ -4158,7 +4175,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 const breakViolation=breakSeconds>EMPLOYEE_BREAK_LIMIT_SECONDS;
                 rows.push(`<tr class="${sunday?'attendance-sunday':''}">
                     <td><b>${esc(key)}</b></td><td>${esc(getDayName(key))}</td>
-                    <td>${sunday ? '<span class="badge employee-paid-badge">Sunday</span>' : `<select class="attendance-status-select ${readOnly || (paid&&!adminMode)?'employee-locked-control':''}" ${readOnly || (paid&&!adminMode)?'disabled':''} onchange="setAttendance(${emp.id}, '${key}', this.value, ${adminMode})">
+                    <td>${sunday ? '<span class="badge employee-paid-badge">Sunday</span>' : `<select class="attendance-status-select ${readOnly || (paid&&!adminMode)?'employee-locked-control':''}" data-attendance-date="${key}" aria-label="Attendance for ${key}" ${readOnly || (paid&&!adminMode)?'disabled':''} onchange="setAttendance(${emp.id}, '${key}', this.value, ${adminMode})">
                         <option value="" ${status===''?'selected':''}>Empty</option>
                         <option value="Present" ${status==='Present'?'selected':''}>Present</option>
                         <option value="Leave" ${status==='Leave'?'selected':''}>Leave</option>
@@ -4220,8 +4237,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!['','Present','Leave','Absent'].includes(status)) return;
             employeeMonthRecord(emp,monthKey).attendance[dateKey]=status;
             saveEmployees();
-            renderAllEmployeeViews();
-            if (adminMode) renderAdminEmployeePortal(emp.id); else renderEmployeeAttendance();
+            // Refresh only the affected employee view and restore the exact scroll/focus
+            // position so selecting Present, Leave or Absent never jumps the page.
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+            if (adminMode) {
+                renderAdminEmployeeManagement();
+            } else {
+                renderEmployeeAttendance();
+            }
+            requestAnimationFrame(() => {
+                window.scrollTo(scrollX, scrollY);
+                const nextSelect = document.querySelector(`select[data-attendance-date="${dateKey}"]`);
+                if (nextSelect && document.activeElement && document.activeElement.tagName === 'SELECT') {
+                    nextSelect.focus({preventScroll:true});
+                }
+            });
         }
 
         function getDaysInMonth(monthKey) {
@@ -4355,7 +4386,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             let daily=Number(e.dailySalary);
             if(!isFinite(daily)||daily<0) daily=defaultDailySalary(monthly);
             return {
-                id:Number(e.id)||nextEmployeeId(), name:e.name||'', phone:e.phone||'', email:e.email||'',
+                id:Number(e.id)||nextEmployeeId(), name:e.name||'', post:normalizeEmployeePost(e.post), phone:e.phone||'', email:e.email||'',
                 monthlySalary:monthly,dailySalary:daily,orderCommission:50,
                 orders:canonicalEmployeeOrders(e),
                 attendance:(e.attendance&&typeof e.attendance==='object')?e.attendance:{},
@@ -4501,7 +4532,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const wb=XLSX.utils.book_new();
             const summary=employees.map(emp=>{
                 const s=getEmployeeMonthStats(emp,monthKey), rec=employeeMonthRecord(emp,monthKey);
-                return {'Employee ID':emp.id,'Employee Name':emp.name,'Contact':emp.phone,'Email':emp.email,'Month':monthKey,'Monthly Salary':emp.monthlySalary,'Daily Salary':emp.dailySalary,'Order Commission':emp.orderCommission||0,'Delivered Order Earning':employeeOrderTotals(emp).earned,'Working Days':s.workingDays,'Sunday Days':s.sundays,'Present Days':s.present,'Leaves':s.leaves,'Absent Days':s.absent,'Salary Earned':s.earned,'Break Violations (>60m)':s.breakViolationCount,'Break Penalty Days':s.breakPenaltyDays,'Break Salary Cut':s.breakSalaryCut,'Total Break Time':formatWorkDuration(s.totalBreakSeconds),'Total Overtime':formatWorkDuration(s.totalOvertimeSeconds),'Salary Paid':isSalaryPaid(emp,monthKey)?'Yes':'No','Paid At':rec.paidAt||'','Warning Letters':Array.isArray(emp.warningLetters)?emp.warningLetters.length:0};
+                return {'Employee ID':emp.id,'Employee Name':emp.name,'Post':normalizeEmployeePost(emp.post),'Contact':emp.phone,'Email':emp.email,'Month':monthKey,'Monthly Salary':emp.monthlySalary,'Daily Salary':emp.dailySalary,'Order Commission':emp.orderCommission||0,'Delivered Order Earning':employeeOrderTotals(emp).earned,'Working Days':s.workingDays,'Sunday Days':s.sundays,'Present Days':s.present,'Leaves':s.leaves,'Absent Days':s.absent,'Salary Earned':s.earned,'Break Violations (>60m)':s.breakViolationCount,'Break Penalty Days':s.breakPenaltyDays,'Break Salary Cut':s.breakSalaryCut,'Total Break Time':formatWorkDuration(s.totalBreakSeconds),'Total Overtime':formatWorkDuration(s.totalOvertimeSeconds),'Salary Paid':isSalaryPaid(emp,monthKey)?'Yes':'No','Paid At':rec.paidAt||'','Warning Letters':Array.isArray(emp.warningLetters)?emp.warningLetters.length:0};
             });
             XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary.length?summary:[{'Employee ID':'No records'}]),'Employees');
             const attendanceRows=[];
