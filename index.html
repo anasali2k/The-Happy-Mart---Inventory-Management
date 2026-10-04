@@ -3367,8 +3367,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 // lose focus, and become impossible to select. The portal is rendered once
                 // when opened and only explicitly refreshed after a real portal change.
                 const portal = document.getElementById('adminEmployeePortal');
-                const portalCard = document.getElementById(`employeePresenceCard-${adminSelectedEmployeeId}`);
-                if (portal && !portalCard) renderAdminEmployeePortal(adminSelectedEmployeeId);
+                // Admin portal intentionally does not render employeePresenceCard.
+                // Use the actual stable portal wrapper as the guard; checking the
+                // employee self-portal presence card here caused a false miss and
+                // rebuilt the whole portal on every presence timer tick.
+                const portalContent = portal && portal.querySelector('.employee-portal');
+                if (portal && !portalContent) renderAdminEmployeePortal(adminSelectedEmployeeId);
             } else {
                 const portal = document.getElementById('adminEmployeePortal');
                 if (portal) portal.innerHTML = '<div class="employee-card"><div class="employee-mini-note">Click an employee name or Portal button to open the complete employee record.</div></div>';
@@ -4112,8 +4116,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const selected=document.getElementById('adminEmployeePortal');
             if(selected && adminSelectedEmployeeId){
                 const emp=employees.find(e=>e.id===Number(adminSelectedEmployeeId));
-                const box=document.getElementById(`employeePresenceCard-${adminSelectedEmployeeId}`);
-                if(emp && !box) renderAdminEmployeePortal(adminSelectedEmployeeId);
+                // The admin portal has no employeePresenceCard by design. Only
+                // render it if the actual admin portal wrapper is missing.
+                const portalContent=selected.querySelector('.employee-portal');
+                if(emp && !portalContent) renderAdminEmployeePortal(adminSelectedEmployeeId);
             }
         }
 
