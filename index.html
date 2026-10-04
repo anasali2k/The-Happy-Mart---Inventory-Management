@@ -1107,7 +1107,9 @@
         .employee-history-modal .employee-order-list{max-height:55vh;overflow:auto;}
         @keyframes employeeHistoryFade{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
         @media(max-width:650px){.employee-history-toolbar{align-items:stretch;flex-direction:column}.employee-history-date{width:100%}.employee-history-entry-row{grid-template-columns:1fr}.employee-history-entry-row .btn-submit,.employee-history-open-btn{width:100%;min-width:0}.employee-history-open-btn{height:42px}}
-        .employee-order-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:13px 14px;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(2,6,23,.28);animation:employeeOrderIn .28s ease-out}
+        .employee-order-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:13px 14px;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(2,6,23,.28);animation:none!important}
+        /* Admin employee portal: redraws must never replay a fade/slide animation. */
+        .admin-order-view .employee-order-row,.admin-order-view .employee-order-row *{animation:none!important;opacity:1!important;transform:none!important;}
         .employee-order-number{font-weight:900;color:#f8fafc;letter-spacing:.3px;word-break:break-word}.employee-order-date{font-size:11px;color:var(--text-muted);margin-top:4px}
         .employee-order-status{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.employee-order-status.pending{color:#fde68a;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.38)}.employee-order-status.delivered{color:#6ee7b7;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.38)}.employee-order-status.returned{color:#fca5a5;background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.38)}
         .employee-order-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.employee-order-actions button{padding:8px 10px;border-radius:8px;border:1px solid var(--border-color);color:#fff;font-weight:800;cursor:pointer;font-size:11px}.employee-order-actions button.deliver{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.48);color:#6ee7b7}.employee-order-actions button.return{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.45);color:#fca5a5}
@@ -1294,6 +1296,21 @@
             .employee-live-clock{position:static;display:inline-block;margin-top:14px}
         }
         .employee-self-shell { max-width:1200px; margin:0 auto; }
+
+        /* FINAL COMPACT EMPLOYEE PORTAL SPACING — small wall gap on every device */
+        .employee-self-overlay{padding:12px;box-sizing:border-box;}
+        .employee-self-shell{width:100%;max-width:none;margin:0;box-sizing:border-box;}
+        .employee-welcome-hero{margin-bottom:12px;padding:18px 20px;border-radius:16px;}
+        .employee-self-top{margin-bottom:12px;}
+        @media(max-width:700px){
+            .employee-self-overlay{padding:8px;}
+            .employee-welcome-hero{padding:16px 14px;margin-bottom:10px;border-radius:14px;}
+            .employee-self-top{margin-bottom:10px;}
+        }
+        @media(max-width:400px){
+            .employee-self-overlay{padding:6px;}
+            .employee-welcome-hero{padding:14px 12px;}
+        }
         .employee-self-top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
         .employee-self-brand { font-size:24px; font-weight:800; }
         .employee-warning-alert { background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.65); border-left:5px solid var(--accent-danger); border-radius:12px; padding:14px 16px; margin-bottom:18px; cursor:pointer; }
@@ -4559,6 +4576,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
         function employeeOrderRows(emp, adminMode=false, dateFrom=null, dateTo=null, searchTerm=''){
             const allOrders=syncEmployeeOrderCollection(emp);
+            /* No date is selected by default, so every order is shown. The 3D calendar applies a filter only after the employee chooses dates. */
             const from=dateFrom||null, to=dateTo||dateFrom||null;
             const query=String(searchTerm||'').trim().toLowerCase();
             const orders=allOrders.filter(o=>{
@@ -4622,7 +4640,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const number=(input?.value||'').trim();
             if(!emp||!number)return;
             syncEmployeeOrderCollection(emp);
-            if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase())){showToast_('This order number has already been submitted.','warn');return;}
+            /* Duplicate order numbers are allowed; each submission gets its own unique record. */
             const createdAtMs=nowDate().getTime(); const stamp=makeStamp();
             emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status:'Pending',addedAt:stamp.display,addedDate:stamp.date,createdAtMs,newTagUntil:createdAtMs+24*60*60*1000,deliveredAt:null,commissionCredited:false,newTag:true});
             saveEmployees();renderEmployeeSelfPortal();showToast_('Order submitted. Delivered and Return options are now available.','ok');
@@ -4643,7 +4661,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const status=document.getElementById(`adminOrderStatus-${employeeId}`)?.value||'Pending';
             const editId=document.getElementById(`adminOrderId-${employeeId}`)?.value||'';
             if(!number)return;
-            if(emp.orders.some(o=>String(o.number).toLowerCase()===number.toLowerCase()&&String(o.id)!==String(editId))){showToast_('This order number already exists for this employee.','warn');return;}
             if(editId){const o=emp.orders.find(x=>String(x.id)===String(editId));if(o){o.number=number;o.status=status;o.commissionCredited=status==='Delivered';o.deliveredAt=status==='Pending'?null:(o.deliveredAt||makeStamp().display);}}
             else { const createdAtMs=nowDate().getTime(); const stamp=makeStamp(); emp.orders.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,number,status,addedAt:stamp.display,addedDate:stamp.date,createdAtMs,newTagUntil:createdAtMs+24*60*60*1000,deliveredAt:status==='Pending'?null:stamp.display,commissionCredited:status==='Delivered',newTag:true}); }
             saveEmployees();renderAllEmployeeViews();adminSelectedEmployeeId=emp.id;renderAdminEmployeePortal(emp.id);showToast_('Employee order saved by Admin.','ok');
