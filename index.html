@@ -3315,7 +3315,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const salaryPaidEl=document.getElementById('employeeTotalSalariesPaid'); if(salaryPaidEl) salaryPaidEl.innerText=formatMoney2(totalSalariesPaid);
 
             if (adminSelectedEmployeeId && employees.some(e => e.id === adminSelectedEmployeeId)) {
-                renderAdminEmployeePortal(adminSelectedEmployeeId);
+                // IMPORTANT: Do not rebuild the open portal on routine dashboard refreshes.
+                // Replacing its innerHTML repeatedly caused the attendance controls to blink,
+                // lose focus, and become impossible to select. The portal is rendered once
+                // when opened and only explicitly refreshed after a real portal change.
+                const portal = document.getElementById('adminEmployeePortal');
+                const portalCard = document.getElementById(`employeePresenceCard-${adminSelectedEmployeeId}`);
+                if (portal && !portalCard) renderAdminEmployeePortal(adminSelectedEmployeeId);
             } else {
                 const portal = document.getElementById('adminEmployeePortal');
                 if (portal) portal.innerHTML = '<div class="employee-card"><div class="employee-mini-note">Click an employee name or Portal button to open the complete employee record.</div></div>';
@@ -4200,10 +4206,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (portal) portal.scrollIntoView({behavior:'smooth',block:'start'});
         }
 
+        let adminPortalRenderInProgress = false;
         function renderAdminEmployeePortal(id) {
+            if (adminPortalRenderInProgress) return;
             const container=document.getElementById('adminEmployeePortal');
             const emp=employees.find(e=>e.id===Number(id));
             if (!container || !emp) return;
+            adminPortalRenderInProgress = true;
             const month=getEmployeeMonthForAdmin();
             container.innerHTML = buildEmployeePortalMarkup(emp,month,true) + renderEmployeeOrdersSection(emp,true) + renderWarningLetters(emp,true) + `<div class="employee-card employee-admin-warning-form">
                 <div class="employee-card-title" style="font-size:16px; margin-bottom:12px;"><i class="fa-solid fa-pen-to-square"></i> Create Warning Letter</div>
@@ -4223,6 +4232,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 </div>
                 <div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,month,true)}</tbody></table></div>
             </div>`;
+            adminPortalRenderInProgress = false;
         }
 
         function setAttendance(employeeId, dateKey, status, adminMode=false) {
@@ -4242,7 +4252,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const scrollX = window.scrollX;
             const scrollY = window.scrollY;
             if (adminMode) {
+                // Update the summary row, then refresh this portal exactly once for the
+                // selected date. Routine background renders no longer touch this portal.
                 renderAdminEmployeeManagement();
+                renderAdminEmployeePortal(emp.id);
             } else {
                 renderEmployeeAttendance();
             }
