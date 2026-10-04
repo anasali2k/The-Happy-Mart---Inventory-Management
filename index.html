@@ -1323,6 +1323,17 @@
         }
         @media(max-width:700px){.employee-self-overlay{padding:8px;}}
         @media(max-width:400px){.employee-self-overlay{padding:6px;}}
+        /* FINAL BALANCED EMPLOYEE PORTAL GRID + WALLS */
+        .employee-self-overlay{padding:10px;}
+        .employee-self-shell{width:100%;max-width:none;margin-left:auto;margin-right:auto;box-sizing:border-box;}
+        .employee-welcome-hero{padding:18px 20px;margin:0 0 12px 0;}
+        .employee-detail-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch;}
+        .employee-detail-box{min-width:0;min-height:76px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;}
+        .employee-admin-order-summary{grid-template-columns:repeat(3,minmax(0,1fr));}
+        .employee-earning-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+        @media(max-width:900px){.employee-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+        @media(max-width:700px){.employee-self-overlay{padding:8px;}.employee-welcome-hero{padding:16px 14px;}.employee-detail-grid,.employee-admin-order-summary,.employee-earning-row{grid-template-columns:repeat(2,minmax(0,1fr));}}
+        @media(max-width:440px){.employee-self-overlay{padding:6px;}.employee-detail-grid,.employee-admin-order-summary,.employee-earning-row{grid-template-columns:1fr;}.employee-welcome-hero{padding:14px 12px;}}
         .employee-self-top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
         .employee-self-brand { font-size:24px; font-weight:800; }
         .employee-warning-alert { background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.65); border-left:5px solid var(--accent-danger); border-radius:12px; padding:14px 16px; margin-bottom:18px; cursor:pointer; }
@@ -2903,7 +2914,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         </div>
         <div class="employee-self-shell">
             <div class="employee-welcome-hero">
-                <div class="employee-welcome-kicker">THE HAPPY MART · PERSONAL SPACE</div>
                 <h1 class="employee-welcome-title">Welcome To Your Portal, <span class="employee-welcome-name" id="employeeWelcomeName">Employee</span></h1>
                 <div class="employee-welcome-sub">Your attendance, salary details and received notices are securely organized here. Your portal updates with the latest available attendance month.</div>
                 <div class="employee-live-clock" id="employeePortalLiveClock">Live · --</div>
