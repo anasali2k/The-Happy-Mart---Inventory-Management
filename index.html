@@ -2550,7 +2550,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 <button class="admin-tab-btn active" id="tab-btn-appr" onclick="switchAdminSubTab('approvals')"><i class="fa-solid fa-clipboard-check"></i> Approvals</button>
                 <button class="admin-tab-btn" id="tab-btn-ofd" onclick="switchAdminSubTab('ofd')"><i class="fa-solid fa-truck-fast"></i> Out For Delivery</button>
                 <button class="admin-tab-btn" id="tab-btn-inv" onclick="switchAdminSubTab('inventory')"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</button>
-                <button class="admin-tab-btn" id="tab-btn-ord" onclick="switchAdminSubTab('orders')"><i class="fa-solid fa-list-check"></i> Master Control</button>
                 <button class="admin-tab-btn" id="tab-btn-del" onclick="switchAdminSubTab('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered Control</button>
                 <button class="admin-tab-btn" id="tab-btn-ret" onclick="switchAdminSubTab('returns')"><i class="fa-solid fa-rotate-left"></i> Returns Control</button>
                 <button class="admin-tab-btn" id="tab-btn-his" onclick="switchAdminSubTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History Control</button>
@@ -2637,17 +2636,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 </div>
             </div>
 
-            <!-- SUB TAB 2: MASTER ORDERS CONTROL -->
-            <div id="admin-sub-orders" style="display: none;">
-                <div class="card">
-                    <h3 style="margin-bottom: 16px;">System Master Orders Control</h3>
-                    <div class="table-responsive admin-order-scroll">
-                        <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersTableBody"></tbody></table>
-                    </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- SUB TAB 3: DELIVERED ORDERS CONTROL -->
             <div id="admin-sub-delivered" style="display: none;">
                 <div class="card">
@@ -2676,8 +2664,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <div id="admin-sub-employees" style="display:none;">
                 <div class="employee-summary-grid">
                     <div class="employee-stat"><div class="employee-stat-label">Total Employees</div><div class="employee-stat-value" id="employeeTotalCount">0</div></div>
-                    <div class="employee-stat"><div class="employee-stat-label">Total Salaries</div><div class="employee-stat-value" id="employeeTotalSalaries">PKR 0.00</div></div>
-                    <div class="employee-stat"><div class="employee-stat-label">Total Salaries Paid</div><div class="employee-stat-value" id="employeeTotalSalariesPaid">PKR 0.00</div></div>
                 </div>
                 <div class="card">
                     <div class="section-heading"><i class="fa-solid fa-users-gear"></i> Admin Control: Employee Management</div>
@@ -2821,7 +2807,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
     <!-- PROFESSIONAL ADMIN ORDER EDIT PORTAL
          Kept outside all view sections so it works from Approvals, OFD,
-         Master Control and any other Admin order table. -->
+         Admin order tables. -->
     <div class="order-edit-overlay" id="orderEditModal"
          role="dialog" aria-modal="true" aria-labelledby="orderEditModalTitle"
          onclick="if(event.target===this) closeOrderEditModal()">
@@ -4283,7 +4269,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         <button class="btn-success" onclick="adminToggleSalaryLock(${emp.id})">${isSalaryPaid(emp,month)?'Allow Changes':'Mark Paid'}</button>
                     </div>
                 </div>
-                <div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Daily Salary</th><th>Daily Earned</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,month,true)}</tbody></table></div>
+                <div class="table-responsive"><table class="employee-attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Attendance</th><th>Working Time</th><th>Overtime</th><th>Break Time</th><th>Break Status</th></tr></thead><tbody>${buildAttendanceTable(emp,month,true,false,false,true)}</tbody></table></div>
             </div>`;
             adminPortalRenderInProgress = false;
         }
@@ -4377,6 +4363,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return getCurrency() + ' ' + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
         }
         function employeeMoney(n) {
+            // Employee commissions and total earnings are always displayed in PKR.
             return 'PKR ' + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
         }
 
@@ -4606,7 +4593,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 const days=getDaysInMonth(monthKey),s=getEmployeeMonthStats(emp,monthKey);
                 for(let day=1;day<=days;day++){
                     const key=getDateKey(monthKey,day),status=attendanceStatus(emp,key);
-                    attendanceRows.push({'Employee ID':emp.id,'Employee Name':emp.name,'Date':key,'Day':getDayName(key),'Attendance':status,'Daily Salary':emp.dailySalary,'Daily Earned':(status==='Present'||status==='Sunday')?s.daily:0,'Working Time':formatWorkDuration(getPresenceDaySeconds(emp,key)),'Overtime':formatWorkDuration(getPresenceDayOvertimeSeconds(emp,key)),'Break Time':formatWorkDuration(getPresenceDayBreakSeconds(emp,key)),'Break >60 Minutes':isBreakViolationDay(emp,key)?'Yes':'No'});
+                    attendanceRows.push({'Employee ID':emp.id,'Employee Name':emp.name,'Date':key,'Day':getDayName(key),'Attendance':status,'Working Time':formatWorkDuration(getPresenceDaySeconds(emp,key)),'Overtime':formatWorkDuration(getPresenceDayOvertimeSeconds(emp,key)),'Break Time':formatWorkDuration(getPresenceDayBreakSeconds(emp,key)),'Break >60 Minutes':isBreakViolationDay(emp,key)?'Yes':'No'});
                 }
             });
             XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(attendanceRows.length?attendanceRows:[{'Employee ID':'No records'}]),'Attendance');
@@ -6099,7 +6086,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 approvals: ['admin-sub-approvals', 'tab-btn-appr'], 
                 ofd: ['admin-sub-ofd', 'tab-btn-ofd'], 
                 inventory: ['admin-sub-inventory', 'tab-btn-inv'], 
-                orders: ['admin-sub-orders', 'tab-btn-ord'], 
                 delivered: ['admin-sub-delivered', 'tab-btn-del'], 
                 returns: ['admin-sub-returns', 'tab-btn-ret'], 
                 history: ['admin-sub-history', 'tab-btn-his'], 
@@ -7737,8 +7723,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         "Date": key, 
                         "Day": getDayName(key), 
                         "Attendance": status, 
-                        "Daily Salary": emp.dailySalary, 
-                        "Daily Earned": status === "Present" ? emp.dailySalary : 0 
                     }); 
                 } 
             }); 
