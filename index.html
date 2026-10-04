@@ -1323,6 +1323,28 @@
         }
         @media(max-width:700px){.employee-self-overlay{padding:8px;}}
         @media(max-width:400px){.employee-self-overlay{padding:6px;}}
+        /* FINAL ATTENDANCE TABLE ALIGNMENT — equal columns and equal left-to-right spacing */
+        .employee-attendance-table{
+            width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;
+            margin:0!important;text-align:center!important;
+        }
+        .employee-attendance-table thead th,
+        .employee-attendance-table tbody td{
+            width:auto!important;box-sizing:border-box!important;text-align:center!important;
+            vertical-align:middle!important;padding:12px 10px!important;white-space:normal!important;
+            overflow-wrap:anywhere;word-break:break-word;
+        }
+        .employee-attendance-table thead th{font-size:11px!important;letter-spacing:.2px;}
+        .employee-attendance-table tbody td{font-size:12px;}
+        .employee-attendance-table .attendance-status-select{
+            display:block;width:100%;max-width:130px;margin:0 auto;box-sizing:border-box;text-align:center;
+        }
+        .employee-self-overlay .employee-attendance-table{min-width:700px;}
+        .employee-self-overlay .table-responsive{width:100%;box-sizing:border-box;overflow-x:auto;}
+        @media(max-width:700px){
+            .employee-self-overlay .employee-attendance-table{min-width:700px;}
+            .employee-attendance-table thead th,.employee-attendance-table tbody td{padding:10px 8px!important;}
+        }
         /* FINAL CLEAN WELCOME TEXT: one stable layer, no gradient/animation overlap */
         .employee-welcome-kicker,#employeeWelcomeKicker{display:none!important;visibility:hidden!important;height:0!important;max-height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;}
         .employee-welcome-hero{overflow:visible!important;min-height:0!important;height:auto!important;}
