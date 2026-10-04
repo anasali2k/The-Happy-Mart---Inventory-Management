@@ -3305,6 +3305,18 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function renderAdminEmployeeManagement() {
             const body = document.getElementById('adminEmployeesTableBody');
             if (!body) return;
+            // Keep the Admin list synchronized with the same employee records used
+            // by Employee Sign In. If cloud hydration temporarily returns an empty
+            // snapshot, recover the browser's last saved employee list first.
+            if (!employees.length) {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(EMPLOYEE_DB_KEY));
+                    if (Array.isArray(saved) && saved.length) {
+                        employees = saved.map(normalizeEmployee);
+                        employees.forEach(syncEmployeeOrderCollection);
+                    }
+                } catch (e) {}
+            }
             const month = getEmployeeMonthForAdmin();
             const adminMonth = document.getElementById('adminAttendanceMonth');
             if (adminMonth && !adminMonth.value) adminMonth.value = month;
@@ -6098,7 +6110,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     document.getElementById(item[0]).style.display = (k === subTab) ? 'block' : 'none'; 
                     document.getElementById(item[1]).classList.toggle('active', k === subTab); 
                 } 
-            }); 
+            });
+            // Re-render at the moment Employee Management opens so its table
+            // cannot remain stale while Employee Sign In uses the same state.
+            if (subTab === 'employees') renderAdminEmployeeManagement();
         } 
  
         /* ---------------- Rendering ---------------- */ 
