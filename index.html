@@ -1323,6 +1323,22 @@
         }
         @media(max-width:700px){.employee-self-overlay{padding:8px;}}
         @media(max-width:400px){.employee-self-overlay{padding:6px;}}
+        /* FINAL CLEAN WELCOME TEXT: one stable layer, no gradient/animation overlap */
+        .employee-welcome-kicker,#employeeWelcomeKicker{display:none!important;visibility:hidden!important;height:0!important;max-height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;}
+        .employee-welcome-hero{overflow:visible!important;min-height:0!important;height:auto!important;}
+        .employee-welcome-title{
+            position:relative!important;z-index:2!important;display:block!important;margin:0!important;
+            height:auto!important;min-height:0!important;overflow:visible!important;white-space:normal!important;
+            font-size:clamp(28px,4vw,52px)!important;line-height:1.15!important;letter-spacing:-1px!important;
+            background:none!important;color:#f8fafc!important;-webkit-text-fill-color:#f8fafc!important;
+            text-shadow:none!important;filter:none!important;transform:none!important;animation:none!important;
+        }
+        .employee-welcome-name{
+            position:static!important;display:inline!important;white-space:normal!important;
+            background:none!important;color:#67e8f9!important;-webkit-text-fill-color:#67e8f9!important;
+            text-shadow:none!important;filter:none!important;transform:none!important;animation:none!important;
+        }
+        .employee-welcome-hero::after{pointer-events:none!important;z-index:0!important;}
         /* FINAL HARD FIX: remove legacy welcome kicker even if old markup is present */
         .employee-welcome-kicker,#employeeWelcomeKicker{display:none!important;visibility:hidden!important;height:0!important;max-height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important;}
         /* Exact equal spacing and centered text inside every employee data box */
