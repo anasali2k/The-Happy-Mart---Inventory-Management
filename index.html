@@ -4470,9 +4470,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function loadEmployees() {
             try {
                 const raw=JSON.parse(localStorage.getItem(EMPLOYEE_DB_KEY));
-                employees=Array.isArray(raw)?raw.map(normalizeEmployee):[];
+                const localEmployees=Array.isArray(raw)?raw.map(normalizeEmployee):[];
+                if (!Array.isArray(employees) || employees.length===0) employees=localEmployees;
                 employees.forEach(syncEmployeeOrderCollection);
-            } catch(e) { employees=[]; }
+            } catch(e) { if (!Array.isArray(employees)) employees=[]; }
         }
         function saveEmployees() {
             try { localStorage.setItem(EMPLOYEE_DB_KEY,JSON.stringify(employees)); }
@@ -5276,12 +5277,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     if (adsData && typeof adsData === 'object') safeMeta.metaAdsExpenses = adsData;
                 }
             } catch (e) {}
-            return { 
-                inventory: Array.isArray(inventory) ? inventory : [], 
-                orders: Array.isArray(orders) ? orders : [], 
-                returns: Array.isArray(returns) ? returns : [], 
-                meta: safeMeta,
-                employees: Array.isArray(employees) ? employees : [] 
+            return {
+                _schemaVersion: 3, _stateInitialized: true,
+                inventory: Array.isArray(inventory) ? inventory : [],
+                orders: Array.isArray(orders) ? orders : [],
+                returns: Array.isArray(returns) ? returns : [],
+                meta: safeMeta, employees: Array.isArray(employees) ? employees : []
             }; 
         };
         function persistLocalBackup() { 
@@ -5338,13 +5339,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!raw || typeof raw !== 'object') return null; 
  
             return { 
-                inventory: Array.isArray(raw.inventory) 
-                    ? raw.inventory.map(i => ({ 
-                        id: Number(i.id), 
-                        name: i.name || '', 
-                        price: Number(i.price) || 0, 
-                        stock: Number(i.stock) || 0 
-                    })) 
+                inventory: Array.isArray(raw.inventory)
+                    ? raw.inventory.map(i => ({
+                        id: Number(i.id), name: i.name || '', price: Number(i.price) || 0,
+                        buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : 1,
+                        purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
+                        cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
+                        stock: Number(i.stock) || 0
+                    }))
                     : [], 
  
                 orders: Array.isArray(raw.orders) 
@@ -5411,24 +5413,23 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return true; 
         } 
  
-        async function fetchLatestCloudState() { 
-            const result = await cloudRequest('GET'); 
- 
-            if (result && result.payload && typeof result.payload === 'object') { 
-                return { 
-                    hasPayload: true, 
-                    payload: result.payload, 
-                    updatedAt: result.updatedAt || null 
-                }; 
-            } 
- 
-            return { 
-                hasPayload: false, 
-                payload: null, 
-                updatedAt: null 
-            }; 
-        } 
- 
+        function isStatePayload(value) {
+            return !!(value && typeof value === 'object' &&
+                ['inventory','orders','returns','employees'].some(k => Array.isArray(value[k])));
+        }
+        function hasAnyLocalRecords() {
+            return (Array.isArray(inventory) && inventory.length > 0) ||
+                   (Array.isArray(orders) && orders.length > 0) ||
+                   (Array.isArray(returns) && returns.length > 0) ||
+                   (Array.isArray(employees) && employees.length > 0) ||
+                   !!(meta && meta.metaAdsExpenses && meta.metaAdsExpenses.days && Object.keys(meta.metaAdsExpenses.days).length);
+        }
+        async function fetchLatestCloudState() {
+            const result = await cloudRequest('GET');
+            const candidate = result && isStatePayload(result.payload) ? result.payload : null;
+            return {hasPayload: !!candidate, payload: candidate, updatedAt: result && result.updatedAt ? result.updatedAt : null};
+        }
+
         /* 
          * One writer at a time. Every save waits for the previous save to 
          * finish, then captures the latest CURRENT state. Therefore if the 
@@ -5570,29 +5571,31 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             try { 
                 const result = await fetchLatestCloudState(); 
  
-                if (result.hasPayload) { 
- 
-                    /* 
-                     * Cloud is authoritative, but NEVER destructively reset 
-                     * inventory on boot. Whatever inventory already exists 
-                     * remains exactly where it is. Orders, inventory, 
-                     * employees and their histories are hydrated together. 
-                     */ 
-                    const cloudPayload = result.payload && typeof result.payload === 'object' 
-                        ? JSON.parse(JSON.stringify(result.payload)) 
-                        : {}; 
- 
-                    applyCloudPayload(cloudPayload); 
- 
-                    cloudReady = true; 
-                    cloudLastUpdated = result.updatedAt || null; 
- 
-                    persistLocalBackup(); 
-                    renderAllTables(); 
- 
-                    return; 
-                } 
- 
+                if (result.hasPayload) {
+                    const cloudPayload = JSON.parse(JSON.stringify(result.payload));
+                    const cloudHasRecords =
+                        (Array.isArray(cloudPayload.inventory) && cloudPayload.inventory.length) ||
+                        (Array.isArray(cloudPayload.orders) && cloudPayload.orders.length) ||
+                        (Array.isArray(cloudPayload.returns) && cloudPayload.returns.length) ||
+                        (Array.isArray(cloudPayload.employees) && cloudPayload.employees.length) ||
+                        !!(cloudPayload.meta && cloudPayload.meta.metaAdsExpenses && cloudPayload.meta.metaAdsExpenses.days && Object.keys(cloudPayload.meta.metaAdsExpenses.days).length);
+                    if (!cloudHasRecords && hasAnyLocalRecords()) {
+                        cloudReady = true;
+                        cloudLastUpdated = result.updatedAt || null;
+                        persistLocalBackup();
+                        await pushCloudState('recover-local-state-from-empty-cloud');
+                        renderAllTables();
+                        renderEmployeeManagement();
+                        return;
+                    }
+                    applyCloudPayload(cloudPayload);
+                    cloudReady = true;
+                    cloudLastUpdated = result.updatedAt || null;
+                    persistLocalBackup();
+                    renderAllTables();
+                    return;
+                }
+
                 /* 
                  * First cloud initialization only: 
                  * migrate the currently existing browser data once. 
