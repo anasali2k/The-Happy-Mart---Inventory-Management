@@ -7680,13 +7680,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const overlay=document.getElementById('excelImportOverlay');
             const input=document.getElementById('excelOrderFile');
             if(input) input.value='';
-            if(overlay){ overlay.style.display='flex'; overlay.classList.add('open'); }
+            if(overlay){ overlay.style.setProperty('display','flex','important'); overlay.classList.add('open'); }
             const box=document.getElementById('excelImportContent');
             if(box) box.innerHTML='<div style="padding:28px;text-align:center;color:var(--text-muted)"><i class="fa-solid fa-file-circle-plus" style="font-size:30px;margin-bottom:10px"></i><br>Select an Excel file to preview orders.</div>';
         }
         function closeExcelImport(){
             const overlay=document.getElementById('excelImportOverlay');
-            if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
+            if(overlay){ overlay.classList.remove('open'); overlay.style.setProperty('display','none','important'); }
             pendingExcelOrders=[]; pendingExcelRows=[];
         }
         function excelNormHeader(v){
