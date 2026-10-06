@@ -900,6 +900,12 @@
         .toast.ok { border-left-color: var(--accent-success); }
         .toast.warn { border-left-color: var(--accent-warning); }
         .toast.err { border-left-color: var(--accent-danger); }
+        .section-export-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; padding:12px 14px; border:1px solid rgba(99,102,241,.22); border-radius:12px; background:rgba(30,41,59,.72); color:var(--text-muted); font-size:12px; font-weight:700; }
+        .section-export-bar span { display:flex; align-items:center; gap:8px; }
+        .section-export-bar span i { color:var(--accent-success); }
+        .import-success-toast { min-width:320px; padding:16px 18px; border:1px solid rgba(16,185,129,.45); border-left:4px solid var(--accent-success); background:linear-gradient(135deg,rgba(6,78,59,.96),rgba(15,23,42,.98)); }
+        .import-success-toast strong { display:block; color:#d1fae5; font-size:15px; margin-bottom:4px; }
+        .import-success-toast span { color:#a7f3d0; font-size:12px; font-weight:500; }
 
 
         /* ================= EMPLOYEE MANAGEMENT ADD-ON ================= */
@@ -2265,12 +2271,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <span class="clock-time" id="liveClock">--</span>
                     <span class="clock-status"><span class="dot" id="timeDot"></span><span id="timeStatusText">Syncing Oman time…</span></span>
                 </div>
-                <button class="btn-excel" onclick="exportOrderSectionToExcel('orders')"><i class="fa-solid fa-file-excel"></i> Export All to Excel</button>
+                <button class="btn-excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Export All to Excel</button>
             </div>
         </div>
 
         <!-- VIEW 1: DAILY ORDERS -->
         <section id="view-orders" class="view-section active">
+            <div class="section-export-bar"><span><i class="fa-solid fa-file-excel"></i> Daily Orders Export</span><button type="button" class="btn-excel" onclick="exportOrdersSection('daily')"><i class="fa-solid fa-file-excel"></i> Export Daily Orders</button></div>
             <div class="order-direct-search">
                 <div class="order-direct-search-head">
                     <div class="order-direct-search-title"><i class="fa-solid fa-magnifying-glass"></i> Search Order</div>
@@ -2343,7 +2350,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 2: OUT FOR DELIVERY (OFD) -->
         <section id="view-ofd" class="view-section">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn-excel" onclick="exportOrderSectionToExcel('ofd')"><i class="fa-solid fa-file-excel"></i> Export OFD to Excel</button></div>
+            <div class="section-export-bar"><span><i class="fa-solid fa-truck-fast"></i> Out For Delivery Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('ofd')"><i class="fa-solid fa-file-excel"></i> Export OFD Orders</button></div>
             <div class="table-responsive">
                 <table>
                     <thead><tr>
@@ -2356,7 +2363,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 3: DELIVERED ORDERS -->
         <section id="view-delivered" class="view-section">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn-excel" onclick="exportOrderSectionToExcel('delivered')"><i class="fa-solid fa-file-excel"></i> Export Delivered to Excel</button></div>
+            <div class="section-export-bar"><span><i class="fa-solid fa-circle-check"></i> Delivered Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('delivered')"><i class="fa-solid fa-file-excel"></i> Export Delivered Orders</button></div>
             <div class="table-responsive">
                 <table>
                     <thead><tr>
@@ -2373,7 +2380,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 4: RETURNS (SECTION 1 FROM REFERENCE) -->
         <section id="view-returns" class="view-section">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn-excel" onclick="exportOrderSectionToExcel('returned')"><i class="fa-solid fa-file-excel"></i> Export Returned to Excel</button></div>
+            <div class="section-export-bar"><span><i class="fa-solid fa-rotate-left"></i> Returned Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('returned')"><i class="fa-solid fa-file-excel"></i> Export Returned Orders</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Returns Report</h3>
                 <form onsubmit="generateReturnsReport(event)">
@@ -2434,7 +2441,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 6: HISTORY (SECTION 3 FROM REFERENCE) -->
         <section id="view-history" class="view-section">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn-excel" onclick="exportOrderSectionToExcel('history')"><i class="fa-solid fa-file-excel"></i> Export History to Excel</button></div>
+            <div class="section-export-bar"><span><i class="fa-solid fa-clock-rotate-left"></i> Complete Order History</span><button type="button" class="btn-excel" onclick="exportOrdersSection('history')"><i class="fa-solid fa-file-excel"></i> Export History</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate History Log Report</h3>
                 <form onsubmit="generateHistoryReport(event)">
@@ -2480,7 +2487,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 </div>
             </div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px"><h3 style="margin-bottom:0;">Master History Records</h3><button class="btn-excel" onclick="exportOrderSectionToExcel('cancelled')"><i class="fa-solid fa-file-excel"></i> Export Cancelled Orders</button></div>
+            <h3 style="margin-bottom: 16px;">Master History Records</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -2506,6 +2513,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 7: INVENTORY STOCK (SECTION 4 FROM REFERENCE) -->
         <section id="view-inventory" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-boxes-stacked"></i> Inventory Stock</span><button type="button" class="btn-excel" onclick="exportOrdersSection('inventory')"><i class="fa-solid fa-file-excel"></i> Export Inventory</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Delivery & Sales Report</h3>
                 <form onsubmit="generateReport(event)">
@@ -2588,7 +2596,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             <!-- SUB TAB 0: ORDER APPROVALS -->
             <div id="admin-sub-approvals">
                 <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div class="section-heading"><i class="fa-solid fa-clipboard-check"></i> Orders Waiting for Admin Approval</div><button type="button" class="btn-excel" onclick="exportOrderSectionToExcel('approval')"><i class="fa-solid fa-file-excel"></i> Export Approvals</button></div>
+                    <div class="section-heading"><i class="fa-solid fa-clipboard-check"></i> Orders Waiting for Admin Approval</div>
                     <div class="table-responsive admin-order-scroll">
                         <table class="admin-complete-orders-table"><thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="approvalTableBody"></tbody></table>
                     </div>
@@ -2611,7 +2619,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <thead><tr><th>Order ID</th><th>Product Code</th><th>Customer</th><th>Phone</th><th>Address</th><th>Client Order ID</th><th>Country Code</th><th>Deliver To</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>COD</th><th>Total</th><th>Created</th><th>Submitted</th><th>Approved / OFD</th><th>Delivered</th><th>Returned</th><th>Cancelled</th><th>Reason</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -4993,7 +5000,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(message) message.innerText=`${w.title || 'Warning Letter'}\n\n${w.details || ''}`;
             if(date) date.innerText=`Issued: ${w.sentAt || w.date || '-'}`;
             if(expiry) expiry.innerText=warningExpiryLabel(w);
-            if(overlay) overlay.classList.add('open');
+            if(overlay){ overlay.style.display='flex'; overlay.classList.add('open'); }
             renderEmployeeSelfPortal();
         }
 
@@ -5252,7 +5259,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return { 
                 _key: o._key || makeOrderRecordKey(), 
                 id: Number(o.id) || 1001, 
-                productCode: String(o.productCode || o.productCodeValue || 'VIGA 50000'), 
+                productCode: String(o.productCode || 'VIGA 50000'), 
                 customer: o.customer || o.customerName || '', 
                 phone: o.phone || o.customerNumber || '', 
                 address: o.address || o.customerAddress || '', 
@@ -5301,7 +5308,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
             if (raw && Array.isArray(raw.orders)) { 
                 inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
-                    id: Number(i.id), name: i.name || '', code: i.code || i.sku || i.productCode || '', sku: i.sku || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
+                    id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
                     buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : (Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : 1),
                     purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                     cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
@@ -5344,7 +5351,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         let cloudWriteChain = Promise.resolve(); 
         let cloudRetryTimer = null; 
         let cloudSaveVersion = 0; 
-        let cloudUnavailableNotified = false;
  
         function buildPayload() {
             const safeMeta = (meta && typeof meta === 'object') ? meta : { lastUpdated: null, device: '' };
@@ -5418,7 +5424,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return { 
                 inventory: Array.isArray(raw.inventory)
                     ? raw.inventory.map(i => ({
-                        id: Number(i.id), name: i.name || '', code: i.code || i.sku || i.productCode || '', sku: i.sku || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
+                        id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
                         buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : 1,
                         purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                         cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
@@ -5538,8 +5544,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                         }); 
  
                         if (result && result.ok) { 
-                            cloudReady = true;
-                            cloudUnavailableNotified = false;
+                            cloudReady = true; 
                             cloudLastUpdated = 
                                 result.updatedAt || 
                                 cloudLastUpdated || 
@@ -5694,11 +5699,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                  * local data and retain it safely for the next retry. 
                  */ 
                 cloudReady = false; 
-                persistLocalBackup();
-                if (!cloudUnavailableNotified) {
-                    cloudUnavailableNotified = true;
-                    showToast_('Cloud temporarily unavailable. Local safety copy retained; automatic retry is active.', 'warn');
-                } 
+                persistLocalBackup(); 
+ 
+                /* Keep the portal usable in local/offline mode. The automatic
+                   retry above remains active; do not interrupt users with a
+                   repeated boot toast for a transient API/network failure. */
+                console.info('Cloud temporarily unavailable; local safety copy retained and automatic retry scheduled.'); 
  
             } finally { 
                 cloudHydrating = false; 
@@ -6186,9 +6192,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     document.getElementById(item[1]).classList.toggle('active', k === subTab); 
                 } 
             });
-            // Re-render at the moment Employee Management opens so its table
-            // cannot remain stale while Employee Sign In uses the same state.
+            /* Always rebuild the control tables at tab-open time. This keeps
+               Delivered, OFD, Returns and History synchronized after cloud
+               hydration or an order action without requiring a page refresh. */
+            renderAdminSectionTables();
             if (subTab === 'employees') renderAdminEmployeeManagement();
+            requestAnimationFrame(syncAdminHorizontalScrollbars);
         } 
  
         /* ---------------- Rendering ---------------- */ 
@@ -6366,20 +6375,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             setTimeout(() => updateSidebarCounts(), 50); 
         } 
  
-        function populateDropdown() { 
-            const select = document.getElementById('orderItemSelect'); 
-            const keep = select.value; 
-            select.innerHTML = '<option value="">-- Select Inventory Item --</option>'; 
-            inventory.forEach(item => { 
-                select.innerHTML += `<option value="${item.id}">${esc(item.name)} (Stock: ${item.stock})</option>`; 
-            }); 
-            if (keep) select.value = keep; 
+        function populateDropdown() {
+            /* The live order form uses #orderItemName. Keep this legacy helper
+               safe because renderAllTables calls it during every refresh. */
+            const select = document.getElementById('orderItemName');
+            if (!select) return;
+            const keep = select.value;
+            populateProfessionalItemSelect('orderItemName', Number(keep) || 0, '');
+            if (keep) select.value = keep;
+            syncSelectedOrderItem();
         } 
  
-        function autoFillItemPrice() { 
-            const id = document.getElementById('orderItemSelect').value; 
-            const item = inventory.find(i => i.id == id); 
-            document.getElementById('orderPrice').value = item ? item.price : ''; 
+        function autoFillItemPrice() {
+            const select = document.getElementById('orderItemName');
+            const item = inventory.find(i => Number(i.id) === Number(select?.value));
+            const price = document.getElementById('orderPrice') || document.getElementById('codAmount');
+            if (price && item) price.value = item.price;
         } 
  
         /* ---------------- Daily Orders ---------------- */ 
@@ -6400,6 +6411,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }).join(''); 
         } 
  
+        function getInventoryProductCode(item) {
+            return item ? String(item.productCode || item.code || item.sku || 'VIGA 50000') : '';
+        }
+
         function findInventoryItemByProductCode(code) { 
             const value = String(code || '').trim(); 
             return inventory.find(i => String(i.id) === value || String(i.code || '').trim() === value || String(i.sku || '').trim() === value || String(i.productCode || '').trim() === value) || null; 
@@ -6481,7 +6496,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!result.ok) { showToast_(result.message, 'warn'); return; } 
  
                 order.id = orderId; 
-                order.productCode = inventoryProductCode(item); 
+                order.productCode = getInventoryProductCode(item); 
                 order.itemId = Number(item.id); 
                 order.itemName = item.name; 
                 Object.assign(order, fields); 
@@ -6505,7 +6520,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     ...fields, 
                     _key: makeOrderRecordKey(), 
                     id: orderId, 
-                    productCode: 'VIGA 50000', 
+                    productCode: getInventoryProductCode(item), 
                     itemId: Number(item.id), 
                     itemName: item.name, 
                     qty, 
@@ -6596,15 +6611,19 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminOrderCells(o, actionHtml='') { 
             const stamp = x => stampCell(x, '-'); 
             const reason = o.status === STATUS.RETURNED ? o.returnReason : (o.status === STATUS.CANCELLED ? o.cancelReason : ''); 
-            const defaultActions = o.status === STATUS.OFD 
-                ? `<div class="ofd-actions"> 
-                    <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
-                    <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button> 
-                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
-                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
-                    <button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                   </div>` 
-                : `<button type="button" class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`; 
+            const editButton = `<button type="button" class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`;
+            const deleteButton = `<button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`;
+            let defaultActions = `${editButton}${deleteButton}`;
+            if (o.status === STATUS.OFD) {
+                defaultActions = `<div class="ofd-actions">${editButton}
+                    <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button>
+                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
+                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>${deleteButton}</div>`;
+            } else if (o.status === STATUS.DELIVERED) {
+                defaultActions = `${editButton}<button class="ofd-action ofd-return" onclick="moveDeliveredToReturn('${esc(o._key)}')"><i class="fa-solid fa-rotate-left"></i> Move to Return</button>${deleteButton}`;
+            } else if (o.status === STATUS.RETURNED) {
+                defaultActions = `${editButton}<button class="ofd-action ofd-delivered" onclick="moveReturnedToDelivered('${esc(o._key)}')"><i class="fa-solid fa-check"></i> Move to Delivered</button>${deleteButton}`;
+            } 
             return `<td><b>#${esc(o.id)}</b></td> 
                 <td>${esc(o.productCode)||'-'}</td><td>${esc(o.customer)||'-'}</td><td>${esc(o.phone)||'-'}</td> 
                 <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td> 
@@ -6821,6 +6840,56 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             ); 
         } 
  
+        function moveDeliveredToReturn(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.DELIVERED) { showToast_('Only Delivered orders can be moved to Return.', 'warn'); return; }
+            openReasonModal(
+                `Return Order #${order.id}`,
+                'Why is this delivered order being returned? Stock will be restored.',
+                'Move to Return',
+                'fa-solid fa-rotate-left',
+                'linear-gradient(135deg, #ef4444, #f87171)',
+                function(reason) {
+                    const stamp = makeStamp();
+                    order.status = STATUS.RETURNED;
+                    order.returnStamp = stamp;
+                    order.returnDate = stamp.display;
+                    order.returnReason = reason;
+                    order.deliveredStamp = order.deliveredStamp || null;
+                    const item = inventory.find(i => Number(i.id) === Number(order.itemId));
+                    if (item) item.stock = Number(item.stock || 0) + Number(order.qty || 0);
+                    returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
+                    returns.push({ orderId: order.id, customer: order.customer, phone: order.phone, itemName: order.itemName, qty: order.qty, amount: orderTotal(order), reason, date: stamp.date, time: stamp.time, day: stamp.day });
+                    saveData('admin-delivered-moved-to-return');
+                    renderAllTables();
+                    syncOrderWorkflowUI();
+                    refreshWorkflowUI();
+                    showToast_(`Order #${order.id} moved to Returns. Stock restored.`, 'warn');
+                }
+            );
+        }
+
+        function moveReturnedToDelivered(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.RETURNED) { showToast_('Only Returned orders can be moved to Delivered.', 'warn'); return; }
+            const item = inventory.find(i => Number(i.id) === Number(order.itemId));
+            const qty = Number(order.qty || 0);
+            if (item && Number(item.stock || 0) < qty) { showToast_(`Cannot move order #${order.id}: only ${Number(item.stock || 0)} stock available.`, 'warn'); return; }
+            if (!confirm(`Move order #${order.id} from Return to Delivered? The stock will be deducted again.`)) return;
+            if (item) item.stock = Number(item.stock || 0) - qty;
+            const stamp = makeStamp();
+            order.status = STATUS.DELIVERED;
+            order.deliveredStamp = stamp;
+            order.deliveryDate = stamp.display;
+            order.returnStamp = order.returnStamp || null;
+            returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
+            saveData('admin-return-moved-to-delivered');
+            renderAllTables();
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} moved to Delivered. Stock synchronized.`, 'ok');
+        }
+
         /* ---------------- Delivered ---------------- */ 
         function renderDeliveredTable() { 
             const tbody = document.getElementById('deliveredTableBody'); 
@@ -7185,7 +7254,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (editId) { 
                 const item = inventory.find(i => i.id == editId); 
                 if (item) { 
-                    item.name = name; 
+                    item.name = name;
+                    item.productCode = item.productCode || '';
                     item.price = price; 
                     item.buyPrice = buyPrice; 
                     item.stock = stock; 
@@ -7193,7 +7263,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     showToast_(`Item #${item.id} updated.`, 'ok'); 
                 } 
             } else { 
-                const item = { id: nextItemId(), name, price, buyPrice, stock }; 
+                const item = { id: nextItemId(), name, productCode: '', price, buyPrice, stock }; 
                 inventory.push(item); 
                 showToast_(`${name} added to inventory.`, 'ok'); 
             } 
@@ -7260,11 +7330,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }); 
         } 
  
-        function inventoryProductCode(item) {
-            if (!item) return '';
-            return String(item.productCode || item.code || item.sku || item.itemCode || item.id || 'VIGA 50000').trim();
-        }
-
         function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) { 
             const select = document.getElementById(selectId); 
             if (!select) return; 
@@ -7286,7 +7351,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const field = document.getElementById('productCode'); 
             const item = inventory.find(i => Number(i.id) === Number(select?.value)); 
             if (!field) return; 
-            field.value = item ? inventoryProductCode(item) : ''; 
+            field.value = item ? getInventoryProductCode(item) : ''; 
             field.readOnly = true; 
             field.setAttribute('readonly', 'readonly'); 
         } 
@@ -7295,7 +7360,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const select = document.getElementById('editItemName'); 
             const item = inventory.find(i => Number(i.id) === Number(select.value)); 
             if (!item) return; 
-            document.getElementById('editProductCode').value = inventoryProductCode(item); 
+            document.getElementById('editProductCode').value = getInventoryProductCode(item); 
             document.getElementById('editProductCode').readOnly = true; 
         } 
  
@@ -7362,7 +7427,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
             const productField = document.getElementById('editProductCode');
             if (productField) {
-                productField.value = inventoryProductCode(item);
+                productField.value = 'VIGA 50000';
                 productField.readOnly = true;
                 productField.setAttribute('readonly', 'readonly');
             }
@@ -7483,7 +7548,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             order.id = newId;
             order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
             order.itemName = targetItem ? targetItem.name : (order.itemName || '');
-            order.productCode = inventoryProductCode(item);
+            order.productCode = getInventoryProductCode(targetItem);
             order.customer = getVal('editCustomer');
             order.phone = getVal('editPhone');
             order.qty = newQty;
@@ -7609,7 +7674,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
         function closeExcelImport(){
             const overlay=document.getElementById('excelImportOverlay');
-            if(overlay) overlay.classList.remove('open');
+            if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
             pendingExcelOrders=[]; pendingExcelRows=[];
         }
         function excelNormHeader(v){
@@ -7669,9 +7734,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const stampDate=excelDateStamp(createdRaw);
             const stamp=stampDate?makeStamp(stampDate):makeStamp();
             return {ok:errors.length===0,errors,row,order:{
-                _key:makeOrderRecordKey(),id,productCode:productCode || inventoryProductCode(item),customer,phone,address,
+                _key:makeOrderRecordKey(),id,productCode:getInventoryProductCode(item),customer,phone,address,
                 itemId:item?Number(item.id):0,itemName:item?item.name:itemName,qty,codAmount:cod,
-                price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo,remarks,
+                price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo:'Oman',remarks,
                 status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,submittedStamp:null,
                 approvedStamp:null,deliveredStamp:null,returnStamp:null,cancelStamp:null,deliveryDate:'',
                 returnDate:'',cancelDate:'',returnReason:'',cancelReason:'',isSubmitted:false,isApproved:false
@@ -7712,35 +7777,71 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             for(const x of validRows){const item=inventory.find(i=>Number(i.id)===Number(x.order.itemId));if(!item){showToast_(`Inventory item missing: ${x.order.itemName}`,'warn');return;}stockPlan.set(item.id,(stockPlan.get(item.id)||0)+Number(x.order.qty));}
             for(const [id,totalQty] of stockPlan){const item=inventory.find(i=>Number(i.id)===Number(id));if(!item||Number(item.stock||0)<totalQty){showToast_(`Import blocked: insufficient stock for ${item?.name||'an item'}. Need ${totalQty}, available ${Number(item?.stock||0)}.`,'warn');return;}}
             validRows.forEach(x=>{const item=inventory.find(i=>Number(i.id)===Number(x.order.itemId));item.stock=Number(item.stock||0)-Number(x.order.qty);orders.push(normalizeOrder(x.order));});
-            saveData('excel-orders-imported-as-drafts'); resetOrderForm(); renderAllTables(); closeExcelImport();
-            showToast_('Order Import Successfully','ok');
+            saveData('excel-orders-imported-as-drafts');
+            resetOrderForm();
+            renderAllTables();
+            closeExcelImport();
+            showImportSuccessBox(validRows.length);
         }
 
-        /* ---------------- Section-scoped Excel Export ---------------- */
-        function exportOrderSectionToExcel(section) {
-            if (!window.XLSX) { showToast_('Excel library is unavailable.','err'); return; }
-            const statusFor = { approval: STATUS.APPROVAL, ofd: STATUS.OFD, delivered: STATUS.DELIVERED, returned: STATUS.RETURNED, cancelled: STATUS.CANCELLED };
-            const source = Array.isArray(orders) ? orders : [];
-            let list = section === 'history' ? [...source] : source.filter(o => section === 'orders' ? (o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL) : o.status === statusFor[section]);
-            list.sort((a,b) => (Number(a.id)||0) - (Number(b.id)||0));
-            if (!list.length) { showToast_('No data available to export in this section.','warn'); return; }
-            const rows = list.map(order => {
-                const row = {};
-                Object.keys(order || {}).sort((a,b) => a.localeCompare(b)).forEach(key => {
-                    const value = order[key];
-                    if (value === null || value === undefined) row[key] = '';
-                    else if (typeof value === 'object') row[key] = JSON.stringify(value);
-                    else row[key] = value;
-                });
-                row['Total Amount'] = typeof orderTotal === 'function' ? orderTotal(order) : '';
-                return row;
-            });
+        /* ---------------- Section Excel Exports ---------------- */
+        function showImportSuccessBox(count) {
+            const stack = document.getElementById('toastStack');
+            if (!stack) return;
+            const box = document.createElement('div');
+            box.className = 'toast ok import-success-toast';
+            box.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Orders Imported Successfully</strong><span>${count} order(s) imported as Drafts. The import window has been closed.</span>`;
+            stack.appendChild(box);
+            setTimeout(() => box.remove(), 5200);
+        }
+
+        function exportCellValue(value) {
+            if (value && typeof value === 'object' && value.display) return value.display;
+            return value ?? '';
+        }
+        function completeOrderExportRow(o) {
+            return {
+                'Order ID': o.id, 'Product Code': o.productCode || 'VIGA 50000',
+                'Customer Name': o.customer || '', 'Phone': o.phone || '', 'Address': o.address || '',
+                'Client Order ID': o.clientOrderId || '', 'Country Code': o.countryCode || '968',
+                'Deliver To': o.deliverTo || 'Oman', 'Item Name': o.itemName || '', 'Quantity': Number(o.qty) || 0,
+                'Unit Price (OMR)': Number(o.price) || 0, 'COD Amount (OMR)': Number(o.codAmount) || 0,
+                'Total (OMR)': Number(orderTotal(o)) || 0, 'Created': exportCellValue(o.createdStamp) || o.creationDate || '',
+                'Submitted': exportCellValue(o.submittedStamp), 'Approved / OFD': exportCellValue(o.approvedStamp),
+                'Delivered': exportCellValue(o.deliveredStamp), 'Returned': exportCellValue(o.returnStamp),
+                'Cancelled': exportCellValue(o.cancelStamp), 'Status': o.status || '',
+                'Reason': o.returnReason || o.cancelReason || '', 'Remarks': o.remarks || ''
+            };
+        }
+        function downloadExcelRows(rows, filename, sheetName, emptyLabel) {
+            if (!window.XLSX) { showToast_('Excel library is unavailable. Please refresh the page.', 'err'); return; }
             const wb = XLSX.utils.book_new();
-            const sheet = XLSX.utils.json_to_sheet(rows);
-            const title = ({orders:'Daily Orders',approval:'Approvals',ofd:'Out For Delivery',delivered:'Delivered Orders',returned:'Returned Orders',cancelled:'Cancelled Orders',history:'History'})[section] || 'Orders';
-            XLSX.utils.book_append_sheet(wb, sheet, title.slice(0,31));
-            XLSX.writeFile(wb, `${title.replace(/\s+/g,'_')}_${makeStamp().date}.xlsx`);
-            showToast_(`${title} Excel file downloaded.`,'ok');
+            const safeRows = rows.length ? rows : [{ 'Result': emptyLabel || 'No records found' }];
+            const ws = XLSX.utils.json_to_sheet(safeRows);
+            const headers = Object.keys(safeRows[0] || {});
+            ws['!cols'] = headers.map((h, index) => {
+                const max = Math.max(String(h).length, ...safeRows.slice(0, 500).map(r => String(r[h] ?? '').length));
+                return { wch: Math.min(Math.max(max + 2, 12), index === 4 ? 42 : 30) };
+            });
+            ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+            XLSX.utils.book_append_sheet(wb, ws, String(sheetName).slice(0, 31));
+            XLSX.writeFile(wb, filename);
+            showToast_(`${sheetName} Excel file downloaded.`, 'ok');
+        }
+        function exportOrdersSection(section) {
+            const sorted = [...orders].sort((a,b) => Number(a.id) - Number(b.id));
+            let rows = []; let name = ''; let file = '';
+            if (section === 'daily') { rows = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL); name = 'Daily Orders'; file = 'Daily_Orders'; }
+            else if (section === 'ofd') { rows = sorted.filter(o => o.status === STATUS.OFD); name = 'Out For Delivery'; file = 'Out_For_Delivery'; }
+            else if (section === 'delivered') { rows = sorted.filter(o => o.status === STATUS.DELIVERED); name = 'Delivered Orders'; file = 'Delivered_Orders'; }
+            else if (section === 'returned') { rows = sorted.filter(o => o.status === STATUS.RETURNED); name = 'Returned Orders'; file = 'Returned_Orders'; }
+            else if (section === 'history') { rows = sorted; name = 'Order History'; file = 'Order_History'; }
+            else if (section === 'inventory') {
+                const inventoryRows = [...inventory].sort((a,b) => Number(a.id)-Number(b.id)).map(i => ({ 'Item ID': i.id, 'Item Name': i.name || '', 'Sale Price (OMR)': Number(i.price)||0, 'Unit Buy Price (OMR)': Number(getInventoryUnitBuyPrice(i))||0, 'Current Stock': Number(i.stock)||0, 'Stock Status': Number(i.stock)>5 ? 'In Stock' : 'Low Stock' }));
+                downloadExcelRows(inventoryRows, `Inventory_${makeStamp().date}.xlsx`, 'Inventory Stock', 'No inventory records found');
+                return;
+            } else return;
+            downloadExcelRows(rows.map(completeOrderExportRow), `${file}_${makeStamp().date}.xlsx`, name, `No ${name.toLowerCase()} records found`);
         }
 
         /* ---------------- Excel Export ---------------- */ 
