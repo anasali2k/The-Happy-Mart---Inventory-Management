@@ -2284,7 +2284,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="order-direct-search-hint">Order Number ya Customer Number enter karein</div>
                 </div>
                 <div class="order-direct-search-row">
-                    <input type="search" id="directOrderSearchInput" class="order-direct-search-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" inputmode="text" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
+                    <input type="search" id="directOrderSearchInput" class="order-direct-search-input" value="" placeholder="" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" inputmode="text" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOrderDirectly();}">
                     <button type="button" class="order-direct-search-btn" onclick="searchOrderDirectly()"><i class="fa-solid fa-search"></i> Search Order</button>
                     <button type="button" class="order-direct-search-clear" onclick="clearDirectOrderSearch()"><i class="fa-solid fa-xmark"></i> Clear</button>
                 </div>
@@ -2297,7 +2297,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
                         <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required value="" placeholder="Auto-filled from Inventory" readonly style="opacity:.8;cursor:not-allowed;"></div>
-                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="orderItemName" required onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
+                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="orderItemName" required onfocus="refreshOrderItemOptions()" onclick="refreshOrderItemOptions()" onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
@@ -5747,7 +5747,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
              * authoritative state without clearing existing inventory. 
              */ 
             loadLocalData(); 
-            loadEmployees(); 
+            loadEmployees();
+            const directSearch = document.getElementById('directOrderSearchInput');
+            if (directSearch) { directSearch.value = ''; directSearch.removeAttribute('value'); } 
             normalizeAllOrdersInMemory(); 
             persistLocalBackup(); 
             startWorkflowBadgeHeartbeat(); 
@@ -6202,6 +6204,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
         /* ---------------- Rendering ---------------- */ 
         function renderAllTables() { 
+            try { refreshOrderItemOptions(); } catch (e) { console.error('Inventory order dropdown refresh failed:', e); }
             renderOrdersTable(); 
             renderOFDTable(); 
             renderDeliveredTable(); 
@@ -6216,7 +6219,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             /* Keep Daily Orders Item Name directly synced with Admin Inventory. 
              * The old dropdown used a legacy element id (orderItemSelect), while 
              * the actual Daily Orders field is orderItemName. */ 
-            populateProfessionalItemSelect('orderItemName', 0, ''); 
+            refreshOrderItemOptions();
             const productCodeField = document.getElementById('productCode'); 
             if (productCodeField) productCodeField.readOnly = true; 
             updateSidebarCounts(); 
@@ -7330,6 +7333,15 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }); 
         } 
  
+        function refreshOrderItemOptions() {
+            const select = document.getElementById('orderItemName');
+            if (!select) return;
+            const selectedId = Number(select.value) || 0;
+            const selectedItem = inventory.find(i => Number(i.id) === selectedId);
+            populateProfessionalItemSelect('orderItemName', selectedId, selectedItem ? selectedItem.name : '');
+            syncSelectedOrderItem();
+        }
+
         function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) { 
             const select = document.getElementById(selectId); 
             if (!select) return; 
@@ -7668,7 +7680,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const overlay=document.getElementById('excelImportOverlay');
             const input=document.getElementById('excelOrderFile');
             if(input) input.value='';
-            if(overlay) overlay.classList.add('open');
+            if(overlay){ overlay.style.display='flex'; overlay.classList.add('open'); }
             const box=document.getElementById('excelImportContent');
             if(box) box.innerHTML='<div style="padding:28px;text-align:center;color:var(--text-muted)"><i class="fa-solid fa-file-circle-plus" style="font-size:30px;margin-bottom:10px"></i><br>Select an Excel file to preview orders.</div>';
         }
