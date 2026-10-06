@@ -7790,9 +7790,11 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             for(const [id,totalQty] of stockPlan){const item=inventory.find(i=>Number(i.id)===Number(id));if(!item||Number(item.stock||0)<totalQty){showToast_(`Import blocked: insufficient stock for ${item?.name||'an item'}. Need ${totalQty}, available ${Number(item?.stock||0)}.`,'warn');return;}}
             validRows.forEach(x=>{const item=inventory.find(i=>Number(i.id)===Number(x.order.itemId));item.stock=Number(item.stock||0)-Number(x.order.qty);orders.push(normalizeOrder(x.order));});
             saveData('excel-orders-imported-as-drafts');
+            /* Close immediately after the orders are committed. This must not
+               depend on a later table re-render succeeding. */
+            closeExcelImport();
             resetOrderForm();
             renderAllTables();
-            closeExcelImport();
             showImportSuccessBox(validRows.length);
         }
 
