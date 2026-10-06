@@ -5295,7 +5295,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function loadLocalData() { 
             let raw = null; 
             try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; } 
- 
+            let legacyInventory = null;
+            try { legacyInventory = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {}
+            if (raw && Array.isArray(raw.inventory) && raw.inventory.length === 0 && Array.isArray(legacyInventory) && legacyInventory.length) {
+                raw.inventory = legacyInventory;
+            }
+
             if (!raw) { 
                 let oldInv = null, oldOrd = null, oldRet = null; 
                 try { oldInv = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {} 
@@ -5475,7 +5480,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
              * exactly from the cloud payload; no boot-time reset or cleanup 
              * is performed. 
              */ 
-            inventory = Array.isArray(payload.inventory) ? payload.inventory : []; 
+            /* Never let an empty cloud inventory erase a non-empty local
+               inventory. Cloud snapshots can legitimately contain orders
+               while an older/partial inventory field is still empty. */
+            const incomingInventory = Array.isArray(payload.inventory) ? payload.inventory : [];
+            const localInventory = Array.isArray(inventory) ? inventory : [];
+            inventory = incomingInventory.length ? incomingInventory : localInventory;
             orders = Array.isArray(payload.orders) ? payload.orders.map(normalizeOrder) : []; 
             returns = Array.isArray(payload.returns) ? payload.returns : []; 
             meta = payload.meta && typeof payload.meta === 'object' 
