@@ -900,6 +900,12 @@
         .toast.ok { border-left-color: var(--accent-success); }
         .toast.warn { border-left-color: var(--accent-warning); }
         .toast.err { border-left-color: var(--accent-danger); }
+        .section-export-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; padding:12px 14px; border:1px solid rgba(99,102,241,.22); border-radius:12px; background:rgba(30,41,59,.72); color:var(--text-muted); font-size:12px; font-weight:700; }
+        .section-export-bar span { display:flex; align-items:center; gap:8px; }
+        .section-export-bar span i { color:var(--accent-success); }
+        .import-success-toast { min-width:320px; padding:16px 18px; border:1px solid rgba(16,185,129,.45); border-left:4px solid var(--accent-success); background:linear-gradient(135deg,rgba(6,78,59,.96),rgba(15,23,42,.98)); }
+        .import-success-toast strong { display:block; color:#d1fae5; font-size:15px; margin-bottom:4px; }
+        .import-success-toast span { color:#a7f3d0; font-size:12px; font-weight:500; }
 
 
         /* ================= EMPLOYEE MANAGEMENT ADD-ON ================= */
@@ -2271,6 +2277,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 1: DAILY ORDERS -->
         <section id="view-orders" class="view-section active">
+            <div class="section-export-bar"><span><i class="fa-solid fa-file-excel"></i> Daily Orders Export</span><button type="button" class="btn-excel" onclick="exportOrdersSection('daily')"><i class="fa-solid fa-file-excel"></i> Export Daily Orders</button></div>
             <div class="order-direct-search">
                 <div class="order-direct-search-head">
                     <div class="order-direct-search-title"><i class="fa-solid fa-magnifying-glass"></i> Search Order</div>
@@ -2343,6 +2350,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 2: OUT FOR DELIVERY (OFD) -->
         <section id="view-ofd" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-truck-fast"></i> Out For Delivery Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('ofd')"><i class="fa-solid fa-file-excel"></i> Export OFD Orders</button></div>
             <div class="table-responsive">
                 <table>
                     <thead><tr>
@@ -2355,6 +2363,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 3: DELIVERED ORDERS -->
         <section id="view-delivered" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-circle-check"></i> Delivered Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('delivered')"><i class="fa-solid fa-file-excel"></i> Export Delivered Orders</button></div>
             <div class="table-responsive">
                 <table>
                     <thead><tr>
@@ -2371,6 +2380,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 4: RETURNS (SECTION 1 FROM REFERENCE) -->
         <section id="view-returns" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-rotate-left"></i> Returned Orders</span><button type="button" class="btn-excel" onclick="exportOrdersSection('returned')"><i class="fa-solid fa-file-excel"></i> Export Returned Orders</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Returns Report</h3>
                 <form onsubmit="generateReturnsReport(event)">
@@ -2431,6 +2441,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 6: HISTORY (SECTION 3 FROM REFERENCE) -->
         <section id="view-history" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-clock-rotate-left"></i> Complete Order History</span><button type="button" class="btn-excel" onclick="exportOrdersSection('history')"><i class="fa-solid fa-file-excel"></i> Export History</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate History Log Report</h3>
                 <form onsubmit="generateHistoryReport(event)">
@@ -2502,6 +2513,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
 
         <!-- VIEW 7: INVENTORY STOCK (SECTION 4 FROM REFERENCE) -->
         <section id="view-inventory" class="view-section">
+            <div class="section-export-bar"><span><i class="fa-solid fa-boxes-stacked"></i> Inventory Stock</span><button type="button" class="btn-excel" onclick="exportOrdersSection('inventory')"><i class="fa-solid fa-file-excel"></i> Export Inventory</button></div>
             <div class="card">
                 <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> Generate Delivery & Sales Report</h3>
                 <form onsubmit="generateReport(event)">
@@ -5248,7 +5260,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return { 
                 _key: o._key || makeOrderRecordKey(), 
                 id: Number(o.id) || 1001, 
-                productCode: 'VIGA 50000', 
+                productCode: String(o.productCode || 'VIGA 50000'), 
                 customer: o.customer || o.customerName || '', 
                 phone: o.phone || o.customerNumber || '', 
                 address: o.address || o.customerAddress || '', 
@@ -5297,7 +5309,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
             if (raw && Array.isArray(raw.orders)) { 
                 inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
-                    id: Number(i.id), name: i.name || '', price: Number(i.price) || 0,
+                    id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
                     buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : (Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : 1),
                     purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                     cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
@@ -5413,7 +5425,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             return { 
                 inventory: Array.isArray(raw.inventory)
                     ? raw.inventory.map(i => ({
-                        id: Number(i.id), name: i.name || '', price: Number(i.price) || 0,
+                        id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
                         buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : 1,
                         purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                         cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
@@ -5690,10 +5702,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 cloudReady = false; 
                 persistLocalBackup(); 
  
-                showToast_( 
-                    'Cloud temporarily unavailable. Local safety copy retained.', 
-                    'warn' 
-                ); 
+                /* Keep the portal usable in local/offline mode. The automatic
+                   retry above remains active; do not interrupt users with a
+                   repeated boot toast for a transient API/network failure. */
+                console.info('Cloud temporarily unavailable; local safety copy retained and automatic retry scheduled.'); 
  
             } finally { 
                 cloudHydrating = false; 
@@ -6361,20 +6373,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             setTimeout(() => updateSidebarCounts(), 50); 
         } 
  
-        function populateDropdown() { 
-            const select = document.getElementById('orderItemSelect'); 
-            const keep = select.value; 
-            select.innerHTML = '<option value="">-- Select Inventory Item --</option>'; 
-            inventory.forEach(item => { 
-                select.innerHTML += `<option value="${item.id}">${esc(item.name)} (Stock: ${item.stock})</option>`; 
-            }); 
-            if (keep) select.value = keep; 
+        function populateDropdown() {
+            /* The live order form uses #orderItemName. Keep this legacy helper
+               safe because renderAllTables calls it during every refresh. */
+            const select = document.getElementById('orderItemName');
+            if (!select) return;
+            const keep = select.value;
+            populateProfessionalItemSelect('orderItemName', Number(keep) || 0, '');
+            if (keep) select.value = keep;
+            syncSelectedOrderItem();
         } 
  
-        function autoFillItemPrice() { 
-            const id = document.getElementById('orderItemSelect').value; 
-            const item = inventory.find(i => i.id == id); 
-            document.getElementById('orderPrice').value = item ? item.price : ''; 
+        function autoFillItemPrice() {
+            const select = document.getElementById('orderItemName');
+            const item = inventory.find(i => Number(i.id) === Number(select?.value));
+            const price = document.getElementById('orderPrice') || document.getElementById('codAmount');
+            if (price && item) price.value = item.price;
         } 
  
         /* ---------------- Daily Orders ---------------- */ 
@@ -6395,6 +6409,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }).join(''); 
         } 
  
+        function getInventoryProductCode(item) {
+            return item ? String(item.productCode || item.code || item.sku || 'VIGA 50000') : '';
+        }
+
         function findInventoryItemByProductCode(code) { 
             const value = String(code || '').trim(); 
             return inventory.find(i => String(i.id) === value || String(i.code || '').trim() === value || String(i.sku || '').trim() === value || String(i.productCode || '').trim() === value) || null; 
@@ -6476,7 +6494,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 if (!result.ok) { showToast_(result.message, 'warn'); return; } 
  
                 order.id = orderId; 
-                order.productCode = 'VIGA 50000'; 
+                order.productCode = getInventoryProductCode(item); 
                 order.itemId = Number(item.id); 
                 order.itemName = item.name; 
                 Object.assign(order, fields); 
@@ -6500,7 +6518,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     ...fields, 
                     _key: makeOrderRecordKey(), 
                     id: orderId, 
-                    productCode: 'VIGA 50000', 
+                    productCode: getInventoryProductCode(item), 
                     itemId: Number(item.id), 
                     itemName: item.name, 
                     qty, 
@@ -7180,7 +7198,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (editId) { 
                 const item = inventory.find(i => i.id == editId); 
                 if (item) { 
-                    item.name = name; 
+                    item.name = name;
+                    item.productCode = item.productCode || '';
                     item.price = price; 
                     item.buyPrice = buyPrice; 
                     item.stock = stock; 
@@ -7188,7 +7207,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     showToast_(`Item #${item.id} updated.`, 'ok'); 
                 } 
             } else { 
-                const item = { id: nextItemId(), name, price, buyPrice, stock }; 
+                const item = { id: nextItemId(), name, productCode: '', price, buyPrice, stock }; 
                 inventory.push(item); 
                 showToast_(`${name} added to inventory.`, 'ok'); 
             } 
@@ -7473,7 +7492,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             order.id = newId;
             order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
             order.itemName = targetItem ? targetItem.name : (order.itemName || '');
-            order.productCode = 'VIGA 50000';
+            order.productCode = getInventoryProductCode(targetItem);
             order.customer = getVal('editCustomer');
             order.phone = getVal('editPhone');
             order.qty = newQty;
@@ -7659,7 +7678,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const stampDate=excelDateStamp(createdRaw);
             const stamp=stampDate?makeStamp(stampDate):makeStamp();
             return {ok:errors.length===0,errors,row,order:{
-                _key:makeOrderRecordKey(),id,productCode:'VIGA 50000',customer,phone,address,
+                _key:makeOrderRecordKey(),id,productCode:getInventoryProductCode(item),customer,phone,address,
                 itemId:item?Number(item.id):0,itemName:item?item.name:itemName,qty,codAmount:cod,
                 price:qty>0?cod/qty:0,itemCost:item?getInventoryUnitBuyPrice(item):null,clientOrderId,countryCode,deliverTo:'Oman',remarks,
                 status:STATUS.DRAFT,creationDate:stamp.date,createdStamp:stamp,submittedStamp:null,
@@ -7702,8 +7721,71 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             for(const x of validRows){const item=inventory.find(i=>Number(i.id)===Number(x.order.itemId));if(!item){showToast_(`Inventory item missing: ${x.order.itemName}`,'warn');return;}stockPlan.set(item.id,(stockPlan.get(item.id)||0)+Number(x.order.qty));}
             for(const [id,totalQty] of stockPlan){const item=inventory.find(i=>Number(i.id)===Number(id));if(!item||Number(item.stock||0)<totalQty){showToast_(`Import blocked: insufficient stock for ${item?.name||'an item'}. Need ${totalQty}, available ${Number(item?.stock||0)}.`,'warn');return;}}
             validRows.forEach(x=>{const item=inventory.find(i=>Number(i.id)===Number(x.order.itemId));item.stock=Number(item.stock||0)-Number(x.order.qty);orders.push(normalizeOrder(x.order));});
-            saveData('excel-orders-imported-as-drafts'); resetOrderForm(); renderAllTables(); closeExcelImport();
-            showToast_(`${validRows.length} order(s) imported successfully as Drafts. Stock synchronized. Now click Final Submit All Orders to Admin when ready.`,'ok');
+            saveData('excel-orders-imported-as-drafts');
+            resetOrderForm();
+            renderAllTables();
+            closeExcelImport();
+            showImportSuccessBox(validRows.length);
+        }
+
+        /* ---------------- Section Excel Exports ---------------- */
+        function showImportSuccessBox(count) {
+            const stack = document.getElementById('toastStack');
+            if (!stack) return;
+            const box = document.createElement('div');
+            box.className = 'toast ok import-success-toast';
+            box.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Order Import Successfully</strong><span>${count} order(s) imported as Drafts. The import window has been closed.</span>`;
+            stack.appendChild(box);
+            setTimeout(() => box.remove(), 5200);
+        }
+
+        function exportCellValue(value) {
+            if (value && typeof value === 'object' && value.display) return value.display;
+            return value ?? '';
+        }
+        function completeOrderExportRow(o) {
+            return {
+                'Order ID': o.id, 'Product Code': o.productCode || 'VIGA 50000',
+                'Customer Name': o.customer || '', 'Phone': o.phone || '', 'Address': o.address || '',
+                'Client Order ID': o.clientOrderId || '', 'Country Code': o.countryCode || '968',
+                'Deliver To': o.deliverTo || 'Oman', 'Item Name': o.itemName || '', 'Quantity': Number(o.qty) || 0,
+                'Unit Price (OMR)': Number(o.price) || 0, 'COD Amount (OMR)': Number(o.codAmount) || 0,
+                'Total (OMR)': Number(orderTotal(o)) || 0, 'Created': exportCellValue(o.createdStamp) || o.creationDate || '',
+                'Submitted': exportCellValue(o.submittedStamp), 'Approved / OFD': exportCellValue(o.approvedStamp),
+                'Delivered': exportCellValue(o.deliveredStamp), 'Returned': exportCellValue(o.returnStamp),
+                'Cancelled': exportCellValue(o.cancelStamp), 'Status': o.status || '',
+                'Reason': o.returnReason || o.cancelReason || '', 'Remarks': o.remarks || ''
+            };
+        }
+        function downloadExcelRows(rows, filename, sheetName, emptyLabel) {
+            if (!window.XLSX) { showToast_('Excel library is unavailable. Please refresh the page.', 'err'); return; }
+            const wb = XLSX.utils.book_new();
+            const safeRows = rows.length ? rows : [{ 'Result': emptyLabel || 'No records found' }];
+            const ws = XLSX.utils.json_to_sheet(safeRows);
+            const headers = Object.keys(safeRows[0] || {});
+            ws['!cols'] = headers.map((h, index) => {
+                const max = Math.max(String(h).length, ...safeRows.slice(0, 500).map(r => String(r[h] ?? '').length));
+                return { wch: Math.min(Math.max(max + 2, 12), index === 4 ? 42 : 30) };
+            });
+            ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+            XLSX.utils.book_append_sheet(wb, ws, String(sheetName).slice(0, 31));
+            XLSX.writeFile(wb, filename);
+            showToast_(`${sheetName} Excel file downloaded.`, 'ok');
+        }
+        function exportOrdersSection(section) {
+            const sorted = [...orders].sort((a,b) => Number(a.id) - Number(b.id));
+            let rows = []; let name = ''; let file = '';
+            if (section === 'daily') { rows = sorted.filter(o => o.status === STATUS.DRAFT || o.status === STATUS.APPROVAL); name = 'Daily Orders'; file = 'Daily_Orders'; }
+            else if (section === 'ofd') { rows = sorted.filter(o => o.status === STATUS.OFD); name = 'Out For Delivery'; file = 'Out_For_Delivery'; }
+            else if (section === 'delivered') { rows = sorted.filter(o => o.status === STATUS.DELIVERED); name = 'Delivered Orders'; file = 'Delivered_Orders'; }
+            else if (section === 'returned') { rows = sorted.filter(o => o.status === STATUS.RETURNED); name = 'Returned Orders'; file = 'Returned_Orders'; }
+            else if (section === 'history') { rows = sorted; name = 'Order History'; file = 'Order_History'; }
+            else if (section === 'inventory') {
+                const inventoryRows = [...inventory].sort((a,b) => Number(a.id)-Number(b.id)).map(i => ({ 'Item ID': i.id, 'Item Name': i.name || '', 'Sale Price (OMR)': Number(i.price)||0, 'Unit Buy Price (OMR)': Number(getInventoryUnitBuyPrice(i))||0, 'Current Stock': Number(i.stock)||0, 'Stock Status': Number(i.stock)>5 ? 'In Stock' : 'Low Stock' }));
+                downloadExcelRows(inventoryRows, `Inventory_${makeStamp().date}.xlsx`, 'Inventory Stock', 'No inventory records found');
+                return;
+            } else return;
+            downloadExcelRows(rows.map(completeOrderExportRow), `${file}_${makeStamp().date}.xlsx`, name, `No ${name.toLowerCase()} records found`);
         }
 
         /* ---------------- Excel Export ---------------- */ 
