@@ -2620,7 +2620,6 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                             <tbody id="adminOFDTableBody"></tbody>
                         </table>
                     </div>
-                    </div>
                 </div>
             </div>
 
@@ -5001,7 +5000,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if(message) message.innerText=`${w.title || 'Warning Letter'}\n\n${w.details || ''}`;
             if(date) date.innerText=`Issued: ${w.sentAt || w.date || '-'}`;
             if(expiry) expiry.innerText=warningExpiryLabel(w);
-            if(overlay) overlay.classList.add('open');
+            if(overlay){ overlay.style.display='flex'; overlay.classList.add('open'); }
             renderEmployeeSelfPortal();
         }
 
@@ -6193,9 +6192,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     document.getElementById(item[1]).classList.toggle('active', k === subTab); 
                 } 
             });
-            // Re-render at the moment Employee Management opens so its table
-            // cannot remain stale while Employee Sign In uses the same state.
+            /* Always rebuild the control tables at tab-open time. This keeps
+               Delivered, OFD, Returns and History synchronized after cloud
+               hydration or an order action without requiring a page refresh. */
+            renderAdminSectionTables();
             if (subTab === 'employees') renderAdminEmployeeManagement();
+            requestAnimationFrame(syncAdminHorizontalScrollbars);
         } 
  
         /* ---------------- Rendering ---------------- */ 
@@ -6609,15 +6611,19 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function adminOrderCells(o, actionHtml='') { 
             const stamp = x => stampCell(x, '-'); 
             const reason = o.status === STATUS.RETURNED ? o.returnReason : (o.status === STATUS.CANCELLED ? o.cancelReason : ''); 
-            const defaultActions = o.status === STATUS.OFD 
-                ? `<div class="ofd-actions"> 
-                    <button class="ofd-action ofd-edit" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button> 
-                    <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button> 
-                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button> 
-                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>
-                    <button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                   </div>` 
-                : `<button type="button" class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen"></i> Edit</button><button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`; 
+            const editButton = `<button type="button" class="btn-warning" onclick="adminEditOrder('${esc(o._key)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`;
+            const deleteButton = `<button type="button" class="btn-danger" onclick="adminDeleteOrder('${esc(o._key)}')"><i class="fa-solid fa-trash"></i> Delete</button>`;
+            let defaultActions = `${editButton}${deleteButton}`;
+            if (o.status === STATUS.OFD) {
+                defaultActions = `<div class="ofd-actions">${editButton}
+                    <button class="ofd-action ofd-sendback" onclick="sendBackOFDToApproval('${esc(o._key)}')"><i class="fa-solid fa-arrow-rotate-left"></i> Send Back</button>
+                    <button class="ofd-action ofd-delivered" onclick="markDelivered(${o.id})"><i class="fa-solid fa-check"></i> Delivered</button>
+                    <button class="ofd-action ofd-return" onclick="processReturn(${o.id})"><i class="fa-solid fa-rotate-left"></i> Return</button>${deleteButton}</div>`;
+            } else if (o.status === STATUS.DELIVERED) {
+                defaultActions = `${editButton}<button class="ofd-action ofd-return" onclick="moveDeliveredToReturn('${esc(o._key)}')"><i class="fa-solid fa-rotate-left"></i> Move to Return</button>${deleteButton}`;
+            } else if (o.status === STATUS.RETURNED) {
+                defaultActions = `${editButton}<button class="ofd-action ofd-delivered" onclick="moveReturnedToDelivered('${esc(o._key)}')"><i class="fa-solid fa-check"></i> Move to Delivered</button>${deleteButton}`;
+            } 
             return `<td><b>#${esc(o.id)}</b></td> 
                 <td>${esc(o.productCode)||'-'}</td><td>${esc(o.customer)||'-'}</td><td>${esc(o.phone)||'-'}</td> 
                 <td><div style="min-width:230px;white-space:normal;line-height:1.45">${esc(o.address)||'-'}</div></td> 
@@ -6834,6 +6840,56 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             ); 
         } 
  
+        function moveDeliveredToReturn(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.DELIVERED) { showToast_('Only Delivered orders can be moved to Return.', 'warn'); return; }
+            openReasonModal(
+                `Return Order #${order.id}`,
+                'Why is this delivered order being returned? Stock will be restored.',
+                'Move to Return',
+                'fa-solid fa-rotate-left',
+                'linear-gradient(135deg, #ef4444, #f87171)',
+                function(reason) {
+                    const stamp = makeStamp();
+                    order.status = STATUS.RETURNED;
+                    order.returnStamp = stamp;
+                    order.returnDate = stamp.display;
+                    order.returnReason = reason;
+                    order.deliveredStamp = order.deliveredStamp || null;
+                    const item = inventory.find(i => Number(i.id) === Number(order.itemId));
+                    if (item) item.stock = Number(item.stock || 0) + Number(order.qty || 0);
+                    returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
+                    returns.push({ orderId: order.id, customer: order.customer, phone: order.phone, itemName: order.itemName, qty: order.qty, amount: orderTotal(order), reason, date: stamp.date, time: stamp.time, day: stamp.day });
+                    saveData('admin-delivered-moved-to-return');
+                    renderAllTables();
+                    syncOrderWorkflowUI();
+                    refreshWorkflowUI();
+                    showToast_(`Order #${order.id} moved to Returns. Stock restored.`, 'warn');
+                }
+            );
+        }
+
+        function moveReturnedToDelivered(ref) {
+            const order = getOrderByRef(ref);
+            if (!order || order.status !== STATUS.RETURNED) { showToast_('Only Returned orders can be moved to Delivered.', 'warn'); return; }
+            const item = inventory.find(i => Number(i.id) === Number(order.itemId));
+            const qty = Number(order.qty || 0);
+            if (item && Number(item.stock || 0) < qty) { showToast_(`Cannot move order #${order.id}: only ${Number(item.stock || 0)} stock available.`, 'warn'); return; }
+            if (!confirm(`Move order #${order.id} from Return to Delivered? The stock will be deducted again.`)) return;
+            if (item) item.stock = Number(item.stock || 0) - qty;
+            const stamp = makeStamp();
+            order.status = STATUS.DELIVERED;
+            order.deliveredStamp = stamp;
+            order.deliveryDate = stamp.display;
+            order.returnStamp = order.returnStamp || null;
+            returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
+            saveData('admin-return-moved-to-delivered');
+            renderAllTables();
+            syncOrderWorkflowUI();
+            refreshWorkflowUI();
+            showToast_(`Order #${order.id} moved to Delivered. Stock synchronized.`, 'ok');
+        }
+
         /* ---------------- Delivered ---------------- */ 
         function renderDeliveredTable() { 
             const tbody = document.getElementById('deliveredTableBody'); 
@@ -7295,7 +7351,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const field = document.getElementById('productCode'); 
             const item = inventory.find(i => Number(i.id) === Number(select?.value)); 
             if (!field) return; 
-            field.value = item ? 'VIGA 50000' : ''; 
+            field.value = item ? getInventoryProductCode(item) : ''; 
             field.readOnly = true; 
             field.setAttribute('readonly', 'readonly'); 
         } 
@@ -7304,7 +7360,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const select = document.getElementById('editItemName'); 
             const item = inventory.find(i => Number(i.id) === Number(select.value)); 
             if (!item) return; 
-            document.getElementById('editProductCode').value = 'VIGA 50000'; 
+            document.getElementById('editProductCode').value = getInventoryProductCode(item); 
             document.getElementById('editProductCode').readOnly = true; 
         } 
  
@@ -7618,7 +7674,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         }
         function closeExcelImport(){
             const overlay=document.getElementById('excelImportOverlay');
-            if(overlay) overlay.classList.remove('open');
+            if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
             pendingExcelOrders=[]; pendingExcelRows=[];
         }
         function excelNormHeader(v){
@@ -7734,7 +7790,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!stack) return;
             const box = document.createElement('div');
             box.className = 'toast ok import-success-toast';
-            box.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Order Import Successfully</strong><span>${count} order(s) imported as Drafts. The import window has been closed.</span>`;
+            box.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Orders Imported Successfully</strong><span>${count} order(s) imported as Drafts. The import window has been closed.</span>`;
             stack.appendChild(box);
             setTimeout(() => box.remove(), 5200);
         }
