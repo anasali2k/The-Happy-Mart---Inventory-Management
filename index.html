@@ -2297,7 +2297,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
                         <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required value="" placeholder="Auto-filled from Inventory" readonly style="opacity:.8;cursor:not-allowed;"></div>
-                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><div id="orderItemPicker" style="position:relative"><button type="button" id="orderItemPickerButton" class="btn-back" style="width:100%;text-align:left;min-height:42px" onclick="toggleOrderItemPicker()">Select Item Name</button><div id="orderItemPickerMenu" style="display:none;position:absolute;z-index:50;left:0;right:0;max-height:240px;overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:10px;padding:6px;box-shadow:0 14px 30px rgba(0,0,0,.35)"></div></div></div>
+                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><div id="orderItemPicker" style="position:relative"><button type="button" id="orderItemPickerButton" class="btn-back" style="width:100%;text-align:left;min-height:42px;white-space:normal;line-height:1.35" onclick="toggleOrderItemPicker()">Select Item Name</button><div id="orderItemPickerMenu" style="display:none;position:absolute;z-index:50;left:0;right:0;max-height:240px;overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:10px;padding:6px;box-shadow:0 14px 30px rgba(0,0,0,.35)"></div></div></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
@@ -7455,13 +7455,21 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             menu.querySelectorAll('label').forEach(label => label.addEventListener('mouseenter', () => label.style.background = 'rgba(99,102,241,.18)'));
             menu.querySelectorAll('label').forEach(label => label.addEventListener('mouseleave', () => label.style.background = ''));
             const names = inventory.filter(item => selected.has(Number(item.id))).map(item => item.name);
-            button.textContent = names.length ? `${names.length} item${names.length === 1 ? '' : 's'} selected: ${names.join(', ')}` : 'Select Item Name';
+            button.innerHTML = names.length
+                ? `<span style="display:block;color:#cbd5e1;font-size:10px;margin-bottom:3px">${names.length} item${names.length === 1 ? '' : 's'} selected</span>${names.map(name => `<span style="display:block">${esc(name)}</span>`).join('')}`
+                : 'Select Item Name';
         }
 
         function toggleOrderItemPicker() {
             const menu = document.getElementById('orderItemPickerMenu');
             if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
+
+        document.addEventListener('click', function(event) {
+            const picker = document.getElementById('orderItemPicker');
+            const menu = document.getElementById('orderItemPickerMenu');
+            if (picker && menu && !picker.contains(event.target)) menu.style.display = 'none';
+        });
 
         function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) { 
             const select = document.getElementById(selectId); 
@@ -7484,7 +7492,9 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const ids = getSelectedOrderItemIds();
             const items = ids.map(id => inventory.find(item => Number(item.id) === id)).filter(Boolean);
             const button = document.getElementById('orderItemPickerButton');
-            if (button) button.textContent = items.length ? `${items.length} item${items.length === 1 ? '' : 's'} selected: ${items.map(item => item.name).join(', ')}` : 'Select Item Name';
+            if (button) button.innerHTML = items.length
+                ? `<span style="display:block;color:#cbd5e1;font-size:10px;margin-bottom:3px">${items.length} item${items.length === 1 ? '' : 's'} selected</span>${items.map(item => `<span style="display:block">${esc(item.name)}</span>`).join('')}`
+                : 'Select Item Name';
             if (field) {
                 field.value = items.map(getInventoryProductCode).join(', ');
                 field.readOnly = true;
