@@ -7277,6 +7277,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     </td> 
                 </tr>`).join(''); 
         } 
+
+        /* Generate a stable numeric ID for every newly added inventory item. */
+        function nextItemId() {
+            const ids = Array.isArray(inventory)
+                ? inventory.map(item => Number(item && item.id)).filter(Number.isFinite)
+                : [];
+            return (ids.length ? Math.max(...ids) : 0) + 1;
+        }
  
         function saveAdminItem(e) { 
             e.preventDefault(); 
