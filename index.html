@@ -2297,7 +2297,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     <div class="form-grid">
                         <div class="form-group"><label>Order ID</label><input type="number" id="orderId" min="1" step="1" value="1001" required placeholder="1001"></div>
                         <div class="form-group"><label>Product Code</label><input type="text" id="productCode" required value="" placeholder="Auto-filled from Inventory" readonly style="opacity:.8;cursor:not-allowed;"></div>
-                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><select id="orderItemName" required onfocus="refreshOrderItemOptions()" onclick="refreshOrderItemOptions()" onchange="syncSelectedOrderItem()"><option value="">Select Item Name</option></select></div>
+                        <div class="form-group"><label>Item Name <span style="color:#818cf8">(Inventory)</span></label><div id="orderItemPicker" style="position:relative"><button type="button" id="orderItemPickerButton" class="btn-back" style="width:100%;text-align:left;min-height:42px" onclick="toggleOrderItemPicker()">Select Item Name</button><div id="orderItemPickerMenu" style="display:none;position:absolute;z-index:50;left:0;right:0;max-height:240px;overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:10px;padding:6px;box-shadow:0 14px 30px rgba(0,0,0,.35)"></div></div></div>
                         <div class="form-group"><label>Customer Number</label><input type="text" id="custPhone" required placeholder="Customer Number"></div>
                         <div class="form-group"><label>Customer Name</label><input type="text" id="custName" required placeholder="Full Name"></div>
                         <div class="form-group"><label>Quantity</label><input type="number" id="orderQty" min="1" value="1" required></div>
@@ -5277,6 +5277,10 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                 address: o.address || o.customerAddress || '', 
                 itemId: Number(o.itemId) || 0, 
                 itemName: o.itemName || '', 
+                lineItems: Array.isArray(o.lineItems) ? o.lineItems.map(line => ({
+                    itemId: Number(line.itemId) || 0, itemName: line.itemName || '', productCode: String(line.productCode || ''),
+                    qty: Math.max(0, Number(line.qty) || 0), buyPrice: Number.isFinite(Number(line.buyPrice)) ? Math.max(0, Number(line.buyPrice)) : 0
+                })).filter(line => line.itemId) : [],
                 qty: qty, 
                 price: qty > 0 ? codAmount / qty : (Number(o.price) || 0), 
                 codAmount: codAmount, 
@@ -6476,46 +6480,80 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
          * This keeps inventory synchronized when an order's item, quantity, or status changes. 
          */ 
         function reconcileOrderStockChange(order, newItem, newQty, newStatus) { 
-            const oldItem = inventory.find(i => Number(i.id) === Number(order.itemId)); 
-            const oldQty = Number(order.qty) || 0; 
+            const newItems = Array.isArray(newItem) ? newItem : (newItem ? [newItem] : []);
+            const oldLines = getOrderLineItems(order);
             const oldDeducted = stockDeductedStatus(order.status); 
             const newDeducted = stockDeductedStatus(newStatus); 
-            const targetItem = newItem || oldItem; 
- 
-            if (newDeducted && !targetItem) { 
+            const restored = [];
+
+            if (newDeducted && !newItems.length) { 
                 return { ok:false, message:'Please select an Item Name from Inventory.' }; 
             } 
- 
-            if (oldDeducted && oldItem && oldQty > 0) { 
-                oldItem.stock = Number(oldItem.stock || 0) + oldQty; 
+
+            if (oldDeducted) {
+                oldLines.forEach(line => {
+                    const oldItem = inventory.find(item => Number(item.id) === Number(line.itemId));
+                    if (oldItem && line.qty > 0) { oldItem.stock = Number(oldItem.stock || 0) + line.qty; restored.push([oldItem, line.qty]); }
+                });
             } 
- 
-            if (newDeducted && targetItem) { 
-                const available = Number(targetItem.stock || 0); 
-                if (available < newQty) { 
-                    if (oldDeducted && oldItem && oldQty > 0) { 
-                        oldItem.stock = Math.max(0, Number(oldItem.stock || 0) - oldQty); 
-                    } 
-                    return { ok:false, message:`Only ${available} left in stock for ${targetItem.name}.` }; 
+
+            if (newDeducted) {
+                for (const targetItem of newItems) {
+                    const available = Number(targetItem.stock || 0);
+                    if (available < newQty) {
+                        restored.forEach(([item, qty]) => { item.stock = Math.max(0, Number(item.stock || 0) - qty); });
+                        return { ok:false, message:`Only ${available} left in stock for ${targetItem.name}.` };
+                    }
                 } 
-                targetItem.stock = available - newQty; 
+                newItems.forEach(targetItem => { targetItem.stock = Number(targetItem.stock || 0) - newQty; });
             } 
- 
+
             return { ok:true }; 
         } 
+
+        function getOrderLineItems(order) {
+            if (order && Array.isArray(order.lineItems) && order.lineItems.length) return order.lineItems.map(line => ({
+                itemId: Number(line.itemId), itemName: line.itemName || '', productCode: line.productCode || '', qty: Math.max(0, Number(line.qty) || 0),
+                buyPrice: Number(line.buyPrice) || 0
+            }));
+            return order && Number(order.itemId) ? [{ itemId:Number(order.itemId), itemName:order.itemName || '', productCode:order.productCode || '', qty:Math.max(0, Number(order.qty) || 0), buyPrice:Number(order.buyPrice) || 0 }] : [];
+        }
+
+        function orderItemNames(order) { return getOrderLineItems(order).map(line => line.itemName).filter(Boolean).join(', '); }
+        function orderProductCodes(order) { return getOrderLineItems(order).map(line => line.productCode).filter(Boolean).join(', '); }
+        function restoreOrderStock(order) {
+            getOrderLineItems(order).forEach(line => {
+                const item = inventory.find(candidate => Number(candidate.id) === Number(line.itemId));
+                if (item) item.stock = Number(item.stock || 0) + Number(line.qty || 0);
+            });
+        }
+        function reserveOrderStock(order) {
+            const lines = getOrderLineItems(order);
+            const blocked = lines.find(line => {
+                const item = inventory.find(candidate => Number(candidate.id) === Number(line.itemId));
+                return !item || Number(item.stock || 0) < Number(line.qty || 0);
+            });
+            if (blocked) return false;
+            lines.forEach(line => {
+                const item = inventory.find(candidate => Number(candidate.id) === Number(line.itemId));
+                if (item) item.stock = Number(item.stock || 0) - Number(line.qty || 0);
+            });
+            return true;
+        }
  
         function saveOrder(e) { 
             e.preventDefault(); 
  
             const editingKey = document.getElementById('editingOrderKey').value; 
             const orderId = Number(document.getElementById('orderId').value); 
-            const selectedItemId = Number(document.getElementById('orderItemName')?.value || 0); 
-            const item = inventory.find(i => Number(i.id) === selectedItemId) || null; 
+            const selectedItemIds = getSelectedOrderItemIds();
+            const selectedItems = selectedItemIds.map(id => inventory.find(i => Number(i.id) === id)).filter(Boolean);
+            const item = selectedItems[0] || null; 
             const qty = parseInt(document.getElementById('orderQty').value, 10); 
             const codAmount = parseFloat(document.getElementById('codAmount').value); 
  
             if (!Number.isInteger(orderId) || orderId < 1) { showToast_('Enter a valid Order ID.', 'warn'); return; } 
-            if (!item) { showToast_('Please select an Item Name from Inventory.', 'warn'); return; } 
+            if (!selectedItems.length) { showToast_('Please select at least one Item Name from Inventory.', 'warn'); return; } 
             if (!Number.isInteger(qty) || qty < 1) { showToast_('Quantity must be at least 1.', 'warn'); return; } 
             if (!Number.isFinite(codAmount) || codAmount < 0) { showToast_('Enter a valid COD Amount (OMR).', 'warn'); return; } 
  
@@ -6537,13 +6575,14 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     return; 
                 } 
  
-                const result = reconcileOrderStockChange(order, item, qty, STATUS.DRAFT); 
+                const result = reconcileOrderStockChange(order, selectedItems, qty, STATUS.DRAFT); 
                 if (!result.ok) { showToast_(result.message, 'warn'); return; } 
  
                 order.id = orderId; 
-                order.productCode = getInventoryProductCode(item); 
+                order.productCode = selectedItems.map(getInventoryProductCode).join(', '); 
                 order.itemId = Number(item.id); 
-                order.itemName = item.name; 
+                order.itemName = selectedItems.map(selected => selected.name).join(', '); 
+                order.lineItems = selectedItems.map(selected => ({ itemId:Number(selected.id), itemName:selected.name, productCode:getInventoryProductCode(selected), qty, buyPrice:getInventoryUnitBuyPrice(selected) }));
                 Object.assign(order, fields); 
                 order.qty = qty; 
                 order.codAmount = codAmount; 
@@ -6553,21 +6592,22 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
  
                 showToast_(`Order #${order.id} updated. Stock synchronized.`, 'ok'); 
             } else { 
-                if (Number(item.stock || 0) < qty) { 
-                    showToast_(`Only ${Number(item.stock || 0)} left in stock for ${item.name}.`, 'warn'); 
+                const insufficient = selectedItems.find(selected => Number(selected.stock || 0) < qty);
+                if (insufficient) { 
+                    showToast_(`Only ${Number(insufficient.stock || 0)} left in stock for ${insufficient.name}.`, 'warn'); 
                     return; 
                 } 
- 
-                item.stock = Number(item.stock || 0) - qty; 
+                selectedItems.forEach(selected => { selected.stock = Number(selected.stock || 0) - qty; });
                 const stamp = makeStamp(); 
  
                 orders.push(normalizeOrder({ 
                     ...fields, 
                     _key: makeOrderRecordKey(), 
                     id: orderId, 
-                    productCode: getInventoryProductCode(item), 
+                    productCode: selectedItems.map(getInventoryProductCode).join(', '), 
                     itemId: Number(item.id), 
-                    itemName: item.name, 
+                    itemName: selectedItems.map(selected => selected.name).join(', '), 
+                    lineItems: selectedItems.map(selected => ({ itemId:Number(selected.id), itemName:selected.name, productCode:getInventoryProductCode(selected), qty, buyPrice:getInventoryUnitBuyPrice(selected) })),
                     qty, 
                     codAmount, 
                     price: qty > 0 ? codAmount / qty : 0, 
@@ -6593,11 +6633,12 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be edited.', 'warn'); return; } 
             document.getElementById('editingOrderKey').value = order._key; 
             document.getElementById('orderId').value = order.id; 
-            document.getElementById('productCode').value = 'VIGA 50000'; 
-            populateProfessionalItemSelect('orderItemName', order.itemId, order.itemName); 
+            document.getElementById('productCode').value = orderProductCodes(order) || 'VIGA 50000'; 
+            renderOrderItemPicker(getOrderLineItems(order).map(line => line.itemId));
+            syncSelectedOrderItem();
             document.getElementById('custPhone').value = order.phone; 
             document.getElementById('custName').value = order.customer; 
-            document.getElementById('orderQty').value = order.qty; 
+            document.getElementById('orderQty').value = getOrderLineItems(order)[0]?.qty || order.qty; 
             document.getElementById('custAddress').value = order.address || ''; 
             document.getElementById('codAmount').value = Number(order.codAmount || orderTotal(order)).toFixed(2); 
             document.getElementById('clientOrderId').value = order.clientOrderId || ''; 
@@ -6614,7 +6655,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const order = getOrderByRef(ref); 
             if (!order || order.status !== STATUS.DRAFT) { showToast_('Only draft orders can be deleted here.', 'warn'); return; } 
             if (!confirm(`Delete draft order #${order.id}?`)) return; 
-            const item = inventory.find(i => i.id === order.itemId); if (item) item.stock += order.qty; 
+            getOrderLineItems(order).forEach(line => { const item = inventory.find(i => Number(i.id) === Number(line.itemId)); if (item) item.stock = Number(item.stock || 0) + Number(line.qty || 0); });
             orders = orders.filter(o => o._key !== order._key); 
             saveData(); resetOrderForm(); renderAllTables(); 
             showToast_(`Draft order #${order.id} deleted. Stock returned.`, 'ok'); 
@@ -6623,7 +6664,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function resetOrderForm() { 
             document.getElementById('editingOrderKey').value = ''; 
             document.getElementById('orderForm').reset(); 
-            populateProfessionalItemSelect('orderItemName', 0, ''); 
+            renderOrderItemPicker([]); 
             document.getElementById('productCode').value = ''; 
             document.getElementById('productCode').readOnly = true; 
             document.getElementById('orderId').value = nextOrderId(); 
@@ -6832,8 +6873,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     order.returnDate = stamp.display; 
                     order.returnReason = reason; 
  
-                    const item = inventory.find(i => i.id === order.itemId); 
-                    if (item) item.stock += order.qty; 
+                    restoreOrderStock(order);
  
                     returns = returns.filter(r => r.orderId !== order.id); 
                     returns.push({ 
@@ -6874,8 +6914,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     order.cancelDate = stamp.display; 
                     order.cancelReason = reason; 
  
-                    const item = inventory.find(i => i.id === order.itemId); 
-                    if (item) item.stock += order.qty; 
+                    restoreOrderStock(order);
  
                     saveData('order-cancelled'); 
                     syncOrderWorkflowUI(); 
@@ -6901,8 +6940,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     order.returnDate = stamp.display;
                     order.returnReason = reason;
                     order.deliveredStamp = order.deliveredStamp || null;
-                    const item = inventory.find(i => Number(i.id) === Number(order.itemId));
-                    if (item) item.stock = Number(item.stock || 0) + Number(order.qty || 0);
+                    restoreOrderStock(order);
                     returns = returns.filter(r => Number(r.orderId) !== Number(order.id));
                     returns.push({ orderId: order.id, customer: order.customer, phone: order.phone, itemName: order.itemName, qty: order.qty, amount: orderTotal(order), reason, date: stamp.date, time: stamp.time, day: stamp.day });
                     saveData('admin-delivered-moved-to-return');
@@ -6917,11 +6955,11 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         function moveReturnedToDelivered(ref) {
             const order = getOrderByRef(ref);
             if (!order || order.status !== STATUS.RETURNED) { showToast_('Only Returned orders can be moved to Delivered.', 'warn'); return; }
-            const item = inventory.find(i => Number(i.id) === Number(order.itemId));
-            const qty = Number(order.qty || 0);
-            if (item && Number(item.stock || 0) < qty) { showToast_(`Cannot move order #${order.id}: only ${Number(item.stock || 0)} stock available.`, 'warn'); return; }
+            const lines = getOrderLineItems(order);
+            const blocked = lines.find(line => { const item = inventory.find(candidate => Number(candidate.id) === Number(line.itemId)); return !item || Number(item.stock || 0) < Number(line.qty || 0); });
+            if (blocked) { showToast_(`Cannot move order #${order.id}: insufficient stock for ${blocked.itemName || 'an item'}.`, 'warn'); return; }
             if (!confirm(`Move order #${order.id} from Return to Delivered? The stock will be deducted again.`)) return;
-            if (item) item.stock = Number(item.stock || 0) - qty;
+            reserveOrderStock(order);
             const stamp = makeStamp();
             order.status = STATUS.DELIVERED;
             order.deliveredStamp = stamp;
@@ -7036,8 +7074,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     order.returnStamp = stamp;
                     order.returnDate = stamp.display;
                     order.returnReason = reason || order.cancelReason || 'Moved from Cancelled Orders';
-                    const item = inventory.find(i => Number(i.id) === Number(order.itemId));
-                    if (item) item.stock += Number(order.qty || 0);
+                    restoreOrderStock(order);
                     returns = returns.filter(r => r.orderId !== order.id);
                     returns.push({ orderId: order.id, customer: order.customer, phone: order.phone, itemName: order.itemName, qty: order.qty, amount: orderTotal(order), reason: order.returnReason, date: stamp.date, time: stamp.time, day: stamp.day });
                     saveData('cancelled-order-sent-to-returns');
@@ -7388,12 +7425,42 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         } 
  
         function refreshOrderItemOptions() {
-            const select = document.getElementById('orderItemName');
-            if (!select) return;
-            const selectedId = Number(select.value) || 0;
-            const selectedItem = inventory.find(i => Number(i.id) === selectedId);
-            populateProfessionalItemSelect('orderItemName', selectedId, selectedItem ? selectedItem.name : '');
+            const menu = document.getElementById('orderItemPickerMenu');
+            if (!menu) return;
+            const selectedIds = getSelectedOrderItemIds();
+            renderOrderItemPicker(selectedIds);
             syncSelectedOrderItem();
+        }
+
+        function getSelectedOrderItemIds() {
+            return Array.from(document.querySelectorAll('#orderItemPickerMenu input[data-item-id]:checked'))
+                .map(input => Number(input.dataset.itemId)).filter(Number.isFinite);
+        }
+
+        function renderOrderItemPicker(selectedIds = []) {
+            const menu = document.getElementById('orderItemPickerMenu');
+            const button = document.getElementById('orderItemPickerButton');
+            if (!menu || !button) return;
+            const selected = new Set((selectedIds || []).map(Number));
+            if (!inventory.length) {
+                menu.innerHTML = '<div style="padding:10px;color:var(--text-muted)">No inventory items available.</div>';
+                button.textContent = 'Select Item Name';
+                return;
+            }
+            menu.innerHTML = inventory.map(item => {
+                const id = Number(item.id);
+                const checked = selected.has(id) ? ' checked' : '';
+                return `<label style="display:flex;align-items:center;gap:9px;padding:9px 8px;cursor:pointer;border-radius:7px;color:#f8fafc"><input type="checkbox" data-item-id="${id}"${checked} onchange="syncSelectedOrderItem()"><span>${esc(item.name)} — Stock: ${Number(item.stock || 0)}</span></label>`;
+            }).join('');
+            menu.querySelectorAll('label').forEach(label => label.addEventListener('mouseenter', () => label.style.background = 'rgba(99,102,241,.18)'));
+            menu.querySelectorAll('label').forEach(label => label.addEventListener('mouseleave', () => label.style.background = ''));
+            const names = inventory.filter(item => selected.has(Number(item.id))).map(item => item.name);
+            button.textContent = names.length ? `${names.length} item${names.length === 1 ? '' : 's'} selected: ${names.join(', ')}` : 'Select Item Name';
+        }
+
+        function toggleOrderItemPicker() {
+            const menu = document.getElementById('orderItemPickerMenu');
+            if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
         function populateProfessionalItemSelect(selectId, currentItemId, currentItemName) { 
@@ -7413,13 +7480,16 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         } 
  
         function syncSelectedOrderItem() { 
-            const select = document.getElementById('orderItemName'); 
             const field = document.getElementById('productCode'); 
-            const item = inventory.find(i => Number(i.id) === Number(select?.value)); 
-            if (!field) return; 
-            field.value = item ? getInventoryProductCode(item) : ''; 
-            field.readOnly = true; 
-            field.setAttribute('readonly', 'readonly'); 
+            const ids = getSelectedOrderItemIds();
+            const items = ids.map(id => inventory.find(item => Number(item.id) === id)).filter(Boolean);
+            const button = document.getElementById('orderItemPickerButton');
+            if (button) button.textContent = items.length ? `${items.length} item${items.length === 1 ? '' : 's'} selected: ${items.map(item => item.name).join(', ')}` : 'Select Item Name';
+            if (field) {
+                field.value = items.map(getInventoryProductCode).join(', ');
+                field.readOnly = true;
+                field.setAttribute('readonly', 'readonly');
+            }
         } 
  
         function syncProfessionalEditItem() { 
@@ -7615,6 +7685,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             order.itemId = targetItem ? Number(targetItem.id) : Number(order.itemId || 0);
             order.itemName = targetItem ? targetItem.name : (order.itemName || '');
             order.productCode = getInventoryProductCode(targetItem);
+            order.lineItems = targetItem ? [{ itemId:Number(targetItem.id), itemName:targetItem.name, productCode:getInventoryProductCode(targetItem), qty:newQty, buyPrice:getInventoryUnitBuyPrice(targetItem) }] : [];
             order.customer = getVal('editCustomer');
             order.phone = getVal('editPhone');
             order.qty = newQty;
@@ -7713,8 +7784,7 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const order = ref ? getOrderByRef(ref) : null;
             if (!order) { closeDeleteConfirm(); showToast_('Order could not be found. Please refresh and try again.', 'warn'); return; }
             if (stockDeductedStatus(order.status)) {
-                const item=inventory.find(i=>Number(i.id)===Number(order.itemId));
-                if(item)item.stock += Number(order.qty || 0);
+                restoreOrderStock(order);
             }
             orders=orders.filter(o=>o._key!==order._key);
             returns=returns.filter(r=>r.orderId!==order.id);
