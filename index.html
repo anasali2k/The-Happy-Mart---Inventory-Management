@@ -5309,8 +5309,16 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
         } 
  
         function loadLocalData() { 
-            let raw = null; 
-            try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; } 
+            let raw = null;
+            let latestBackup = null;
+            try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; }
+            try { latestBackup = JSON.parse(localStorage.getItem(DB_KEY + '_backup_latest')); } catch (e) { latestBackup = null; }
+            /* Prefer the most complete valid local snapshot. A partial current
+               cache must not hide a fuller emergency backup from an earlier session. */
+            const recordScore = value => value && typeof value === 'object'
+                ? ['inventory','orders','returns','employees'].reduce((sum, key) => sum + (Array.isArray(value[key]) ? value[key].length : 0), 0)
+                : -1;
+            if (recordScore(latestBackup) > recordScore(raw)) raw = latestBackup;
             let legacyInventory = null;
             try { legacyInventory = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {}
             if (raw && Array.isArray(raw.inventory) && raw.inventory.length === 0 && Array.isArray(legacyInventory) && legacyInventory.length) {
@@ -5518,9 +5526,48 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                while an older/partial inventory field is still empty. */
             const incomingInventory = Array.isArray(payload.inventory) ? payload.inventory : [];
             const localInventory = Array.isArray(inventory) ? inventory : [];
-            inventory = incomingInventory.length ? incomingInventory : localInventory;
-            orders = Array.isArray(payload.orders) ? payload.orders.map(normalizeOrder) : []; 
-            returns = Array.isArray(payload.returns) ? payload.returns : []; 
+            const localOrders = Array.isArray(orders) ? orders : [];
+            const localReturns = Array.isArray(returns) ? returns : [];
+            /* Recovery-safe hydration: cloud records win when IDs overlap, while
+               local-only records from the browser safety snapshot are retained.
+               This prevents an incomplete cloud snapshot from silently hiding
+               previously saved orders or inventory items. */
+            const mergeById = (cloudRows, localRows, keyFn) => {
+                const result = [];
+                const positions = new Map();
+                (Array.isArray(localRows) ? localRows : []).forEach(row => {
+                    const key = keyFn(row);
+                    if (key === null || key === '') { result.push(row); return; }
+                    if (!positions.has(String(key))) {
+                        positions.set(String(key), result.length);
+                        result.push(row);
+                    }
+                });
+                (Array.isArray(cloudRows) ? cloudRows : []).forEach(row => {
+                    const key = keyFn(row);
+                    if (key === null || key === '') { result.push(row); return; }
+                    const pos = positions.get(String(key));
+                    if (pos === undefined) {
+                        positions.set(String(key), result.length);
+                        result.push(row);
+                    } else {
+                        result[pos] = row;
+                    }
+                });
+                return result;
+            };
+            inventory = mergeById(incomingInventory, localInventory, row => row && row.id)
+                .map(i => ({
+                    id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '',
+                    price: Number(i.price) || 0,
+                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : 1,
+                    purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
+                    cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
+                    stock: Number(i.stock) || 0
+                }));
+            orders = mergeById(payload.orders, localOrders, row => row && (row.id ?? row.orderId))
+                .map(normalizeOrder);
+            returns = mergeById(payload.returns, localReturns, row => row && (row.id ?? row.orderId ?? row.returnId)); 
             meta = payload.meta && typeof payload.meta === 'object' 
                 ? payload.meta 
                 : { lastUpdated: null, device: '' }; 
