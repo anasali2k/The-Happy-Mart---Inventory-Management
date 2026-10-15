@@ -5308,52 +5308,86 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             }; 
         } 
  
-        function loadLocalData() { 
-            let raw = null;
-            let latestBackup = null;
-            try { raw = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { raw = null; }
-            try { latestBackup = JSON.parse(localStorage.getItem(DB_KEY + '_backup_latest')); } catch (e) { latestBackup = null; }
-            /* Prefer the most complete valid local snapshot. A partial current
-               cache must not hide a fuller emergency backup from an earlier session. */
-            const recordScore = value => value && typeof value === 'object'
-                ? ['inventory','orders','returns','employees'].reduce((sum, key) => sum + (Array.isArray(value[key]) ? value[key].length : 0), 0)
-                : -1;
-            if (recordScore(latestBackup) > recordScore(raw)) raw = latestBackup;
-            let legacyInventory = null;
-            try { legacyInventory = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {}
-            if (raw && Array.isArray(raw.inventory) && raw.inventory.length === 0 && Array.isArray(legacyInventory) && legacyInventory.length) {
-                raw.inventory = legacyInventory;
+        function loadLocalData() {
+            /* Recovery-first loading: inspect every known browser snapshot and
+               legacy store before selecting/merging data. Do not discard a
+               fuller backup merely because the current cache has the same score. */
+            const readJSON = key => {
+                try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
+            };
+            const current = readJSON(DB_KEY);
+            const backup = readJSON(DB_KEY + '_backup_latest');
+            const legacyInventory = readJSON('urbanhub_inventory');
+            const legacyOrders = readJSON('urbanhub_orders');
+            const legacyReturns = readJSON('urbanhub_returns');
+            const legacyEmployees = readJSON(EMPLOYEE_DB_KEY);
+
+            const candidates = [];
+            if (legacyInventory || legacyOrders || legacyReturns) {
+                candidates.push({
+                    inventory: Array.isArray(legacyInventory) ? legacyInventory : [],
+                    orders: Array.isArray(legacyOrders) ? legacyOrders : [],
+                    returns: Array.isArray(legacyReturns) ? legacyReturns : [],
+                    employees: Array.isArray(legacyEmployees) ? legacyEmployees : [],
+                    meta: {}
+                });
+            }
+            if (backup && typeof backup === 'object') candidates.push(backup);
+            if (current && typeof current === 'object') candidates.push(current);
+
+            const valid = candidates.filter(x => x && typeof x === 'object' &&
+                ['inventory','orders','returns','employees'].some(k => Array.isArray(x[k])));
+            if (!valid.length) {
+                inventory = JSON.parse(JSON.stringify(defaultInventory));
+                orders = defaultOrders.map(normalizeOrder);
+                returns = [];
+                meta = { lastUpdated: null, device: '' };
+                return;
             }
 
-            if (!raw) { 
-                let oldInv = null, oldOrd = null, oldRet = null; 
-                try { oldInv = JSON.parse(localStorage.getItem('urbanhub_inventory')); } catch (e) {} 
-                try { oldOrd = JSON.parse(localStorage.getItem('urbanhub_orders')); } catch (e) {} 
-                try { oldRet = JSON.parse(localStorage.getItem('urbanhub_returns')); } catch (e) {} 
-                if (oldInv || oldOrd || oldRet) { 
-                    raw = { inventory: oldInv || defaultInventory, orders: oldOrd || [], returns: oldRet || [], meta: { lastUpdated: null } }; 
-                } 
-            } 
- 
-            if (raw && Array.isArray(raw.orders)) { 
-                inventory = Array.isArray(raw.inventory) ? raw.inventory.map(i => ({ 
-                    id: Number(i.id), name: i.name || '', productCode: i.productCode || i.code || i.sku || '', price: Number(i.price) || 0,
-                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) : (Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : 1),
+            const mergeRows = (key, getId) => {
+                const result = [], positions = new Map();
+                valid.forEach(snapshot => {
+                    (Array.isArray(snapshot[key]) ? snapshot[key] : []).forEach(row => {
+                        const id = getId(row);
+                        if (id === null || id === undefined || id === '') { result.push(row); return; }
+                        const normalized = String(id);
+                        if (positions.has(normalized)) result[positions.get(normalized)] = row;
+                        else { positions.set(normalized, result.length); result.push(row); }
+                    });
+                });
+                return result;
+            };
+            inventory = mergeRows('inventory', row => row && (row.id ?? row.productId ?? row.productCode ?? row.sku))
+                .map(i => ({
+                    ...i,
+                    id: Number(i.id), name: i.name || '',
+                    productCode: i.productCode || i.code || i.sku || '',
+                    price: Number(i.price) || 0,
+                    buyPrice: Number.isFinite(Number(i.buyPrice)) ? Math.max(0, Number(i.buyPrice)) :
+                        (Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : 1),
                     purchasePrice: Number.isFinite(Number(i.purchasePrice)) ? Math.max(0, Number(i.purchasePrice)) : null,
                     cost: Number.isFinite(Number(i.cost)) ? Math.max(0, Number(i.cost)) : null,
-                    stock: Number(i.stock) || 0 
-                })) : JSON.parse(JSON.stringify(defaultInventory)); 
-                orders = raw.orders.map(normalizeOrder); 
-                returns = Array.isArray(raw.returns) ? raw.returns : []; 
-                meta = raw.meta || { lastUpdated: null, device: '' }; 
-            } else { 
-                inventory = JSON.parse(JSON.stringify(defaultInventory)); 
-                orders = defaultOrders.map(normalizeOrder); 
-                returns = []; 
-                meta = { lastUpdated: null, device: '' }; 
-            } 
-        } 
- 
+                    stock: Number(i.stock) || 0
+                }));
+            orders = mergeRows('orders', row => row && (row.id ?? row.orderId)).map(normalizeOrder);
+            returns = mergeRows('returns', row => row && (row.id ?? row.orderId ?? row.returnId));
+            employees = mergeRows('employees', row => row && (row.id ?? row.employeeId)).map(normalizeEmployee);
+            meta = {};
+            valid.forEach(snapshot => {
+                if (snapshot.meta && typeof snapshot.meta === 'object') meta = { ...meta, ...snapshot.meta };
+            });
+            const adsDays = {};
+            valid.forEach(snapshot => {
+                const days = snapshot.meta && snapshot.meta.metaAdsExpenses && snapshot.meta.metaAdsExpenses.days;
+                if (days && typeof days === 'object') Object.assign(adsDays, days);
+            });
+            if (Object.keys(adsDays).length) {
+                meta.metaAdsExpenses = { ...(meta.metaAdsExpenses || {}), version: 2, days: adsDays };
+            }
+            employees.forEach(syncEmployeeOrderCollection);
+        }
+
         function buildPayload() { 
             return { inventory, orders, returns, meta, employees }; 
         } 
@@ -5765,6 +5799,13 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
                     cloudReady = true;
                     cloudLastUpdated = result.updatedAt || null;
                     persistLocalBackup();
+                    const cloudRecordCount = ['inventory','orders','returns','employees'].reduce((sum, key) =>
+                        sum + (Array.isArray(cloudPayload[key]) ? cloudPayload[key].length : 0), 0);
+                    const mergedRecordCount = ['inventory','orders','returns','employees'].reduce((sum, key) =>
+                        sum + (Array.isArray(({inventory,orders,returns,employees})[key]) ? ({inventory,orders,returns,employees})[key].length : 0), 0);
+                    if (mergedRecordCount > cloudRecordCount) {
+                        await pushCloudState('reconcile-recovered-local-records');
+                    }
                     renderAllTables();
                     return;
                 }
@@ -5841,7 +5882,8 @@ td{border-top:1px solid rgba(125,193,220,.07)!important;border-bottom:1px solid 
             const directSearch = document.getElementById('directOrderSearchInput');
             if (directSearch) { directSearch.value = ''; directSearch.removeAttribute('value'); } 
             normalizeAllOrdersInMemory(); 
-            persistLocalBackup(); 
+            /* Do not rewrite local backups until cloud hydration has completed;
+               this protects a fuller recovery snapshot during startup. */
             startWorkflowBadgeHeartbeat(); 
  
             renderAllTables(); 
